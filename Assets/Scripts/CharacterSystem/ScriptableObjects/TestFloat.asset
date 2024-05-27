@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c6a683474c142854082145a214c2bf07, type: 3}
-  m_Name: FancyClass
+  m_Script: {fileID: 11500000, guid: 6aefc8afd4fecee41ae829fec1a6f0e8, type: 3}
+  m_Name: TestFloat
   m_EditorClassIdentifier: 
-  m_ClassName: Shitty Class
-  m_Type: {fileID: 11400000, guid: 1ac4dd0cffd980942bdd8f5fc3bb75c4, type: 2}
+  m_StatName: Health
+  m_Value: 0

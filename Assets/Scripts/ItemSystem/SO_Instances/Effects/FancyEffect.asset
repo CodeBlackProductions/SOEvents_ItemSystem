@@ -9,10 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e965ca9395dfae4489d0d6ca22b544c, type: 3}
+  m_Script: {fileID: 11500000, guid: 727238865d913414ea54e6ac43f28971, type: 3}
   m_Name: FancyEffect
   m_EditorClassIdentifier: 
-  m_EffectName: Test
-  m_Trigger: {fileID: 0}
-  m_EffectTarget: 0
-  m_Range: 10
+  m_EffectName: Shitty Effect of Shitness
+  m_Trigger: {fileID: 11400000, guid: 53247783f60fd8e48aa977a2f932eb13, type: 2}
+  m_EffectTarget: 1
+  m_TargetRange: 0
