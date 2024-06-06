@@ -3,15 +3,16 @@ using UnityEngine;
 
 public class ItemEventHandler : MonoBehaviour
 {
-    private static ItemEventHandler _instance;
+    private static ItemEventHandler m_instance;
 
-    public static ItemEventHandler Instance { get => _instance; }
+    public static ItemEventHandler Instance { get => m_instance; }
 
     private void Awake()
     {
-        if (_instance == null)
+        if (m_instance == null)
         {
-            _instance = this;
+            m_instance = this;
+            DontDestroyOnLoad(this.gameObject);
         }
         else
         {

@@ -1,12 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New_Trigger", menuName = "ItemSystem/Effect/Trigger/Trigger")]
-public class SO_Effect_Trigger : ScriptableObject
+public abstract class SO_Effect_Trigger : ScriptableObject
 {
     [SerializeField] private string m_TriggerName = "NewTrigger";
 
-    private List<SO_Item_Effect> m_Listener = new List<SO_Item_Effect>();
+    protected List<SO_Item_Effect> m_Listener = new List<SO_Item_Effect>();
 
     public string TriggerName { get => m_TriggerName; set => m_TriggerName = value; }
 
@@ -39,10 +38,16 @@ public class SO_Effect_Trigger : ScriptableObject
 
         if (m_Listener.Count > 0)
         {
-            for (int i = m_Listener.Count - 1; i >= 0; i--)
+            if (CheckCondition(_Source, _Target)) 
             {
-                m_Listener[i]?.OnInvoke(_Source, _Target);
+                for (int i = m_Listener.Count - 1; i >= 0; i--)
+                {
+                    m_Listener[i]?.OnInvoke(_Source, _Target);
+                }
             }
+           
         }
     }
+
+    protected abstract bool CheckCondition(IItemUser _Source, IItemUser _Target);
 }

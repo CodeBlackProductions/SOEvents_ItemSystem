@@ -9,7 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ea0421f6dadc7944b11f6928c5acd06, type: 3}
-  m_Name: OnHitShit
+  m_Script: {fileID: 11500000, guid: 5988fe7e1b2dfe64b937f84cd83f36c8, type: 3}
+  m_Name: New_Interval
   m_EditorClassIdentifier: 
-  m_TriggerName: OnHit
+  m_TriggerName: NewTrigger
+  m_Interval: 1
