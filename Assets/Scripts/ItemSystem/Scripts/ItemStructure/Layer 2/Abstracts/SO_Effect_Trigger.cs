@@ -55,7 +55,7 @@ public abstract class SO_Effect_Trigger : ScriptableObject
         }
     }
 
-    private bool CheckEffectRegistry(IItemUser _Source, SO_Item_Effect _Listener)
+    protected bool CheckEffectRegistry(IItemUser _Source, SO_Item_Effect _Listener)
     {
        return _Source.EffectRegistry[this].Contains(_Listener);
     }

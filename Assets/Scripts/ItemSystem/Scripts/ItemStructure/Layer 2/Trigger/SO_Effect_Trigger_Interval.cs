@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 [CreateAssetMenu(fileName = "New_Interval", menuName = "ItemSystem/Effect/Trigger/Interval")]
 public class SO_Effect_Trigger_Interval : SO_Effect_Trigger
 {
@@ -49,6 +50,11 @@ public class SO_Effect_Trigger_Interval : SO_Effect_Trigger
         {
             for (int i = m_Listener.Count - 1; i >= 0; i--)
             {
+                if (!CheckEffectRegistry(_Source, m_Listener[i]))
+                {
+                    continue;
+                }
+
                 m_Listener[i]?.OnInvoke(_Source, _Target);
             }
         }
