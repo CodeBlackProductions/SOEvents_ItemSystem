@@ -42,11 +42,22 @@ public abstract class SO_Effect_Trigger : ScriptableObject
             {
                 for (int i = m_Listener.Count - 1; i >= 0; i--)
                 {
+                    if (!CheckEffectRegistry(_Source, m_Listener[i]))
+                    {
+                        continue;
+                    }
+
                     m_Listener[i]?.OnInvoke(_Source, _Target);
+
                 }
             }
            
         }
+    }
+
+    private bool CheckEffectRegistry(IItemUser _Source, SO_Item_Effect _Listener)
+    {
+       return _Source.EffectRegistry[this].Contains(_Listener);
     }
 
     protected abstract bool CheckCondition(IItemUser _Source, IItemUser _Target);

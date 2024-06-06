@@ -15,6 +15,7 @@ public abstract class SO_Item_Effect : ScriptableObject
     public string EffectName { get => m_EffectName; }
     public ETarget EffectTarget { get => m_EffectTarget; }
     public float TargetRange { get => m_TargetRange; }
+    public SO_Effect_Trigger Trigger { get => m_Trigger;}
 
     private void OnEnable()
     {
