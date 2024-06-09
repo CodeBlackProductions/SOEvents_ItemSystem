@@ -11,11 +11,6 @@ public class SO_Effect_Trigger_Interval : SO_Effect_Trigger
 
     protected override bool CheckCondition(IItemUser _Source, IItemUser _Target)
     {
-        if (ItemCoroutineHandler.Instance == null)
-        {
-            GameObject singletonObject = new GameObject("ItemCoroutineManager");
-            singletonObject.AddComponent<ItemCoroutineHandler>();
-        }
         if (activeCoroutines.ContainsKey(_Source))
         {
             ItemCoroutineHandler.Instance.StopCoroutine(activeCoroutines[_Source]);

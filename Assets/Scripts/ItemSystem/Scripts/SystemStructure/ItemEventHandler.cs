@@ -1,39 +1,48 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEditor.PackageManager;
 using UnityEngine;
 
 public class ItemEventHandler : MonoBehaviour
 {
     private static ItemEventHandler m_instance;
 
-    public static ItemEventHandler Instance { get => m_instance; }
-
-    private void Awake()
+    public static ItemEventHandler Instance
     {
-        if (m_instance == null)
+        get
         {
-            m_instance = this;
-            DontDestroyOnLoad(this.gameObject);
-        }
-        else
-        {
-            Destroy(this.gameObject);
+            if (m_instance == null)
+            {
+                m_instance = FindObjectOfType<ItemEventHandler>();
+
+                if (m_instance == null)
+                {
+                    GameObject singletonObject = new GameObject("ItemEventHandler");
+                    m_instance = singletonObject.AddComponent<ItemEventHandler>();
+                    DontDestroyOnLoad(singletonObject);
+                }
+            }
+
+            return m_instance;
         }
     }
+
+    public static event System.Action Initialized;
 
     private Dictionary<System.Type, ScriptableObject> events = new Dictionary<System.Type, ScriptableObject>();
 
     public void RegisterEvent<T>(T eventSO) where T : ScriptableObject
     {
-        var type = typeof(T);
+        var type = eventSO.GetType();
         if (!events.ContainsKey(type))
         {
-            events[type] = eventSO;
+            events.Add(type, eventSO);
         }
     }
 
     public void RemoveEvent<T>(T eventSO) where T : ScriptableObject
     {
-        var type = typeof(T);
+        var type = eventSO.GetType();
         if (events.ContainsKey(type))
         {
             events.Remove(type);
@@ -55,5 +64,10 @@ public class ItemEventHandler : MonoBehaviour
             return events[type] as T;
         }
         return null;
+    }
+
+    private void Awake()
+    {
+        Initialized?.Invoke();
     }
 }

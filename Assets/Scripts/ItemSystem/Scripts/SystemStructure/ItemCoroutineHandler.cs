@@ -5,18 +5,23 @@ using UnityEngine;
 public class ItemCoroutineHandler : MonoBehaviour
 {
     private static ItemCoroutineHandler m_instance;
-    public static ItemCoroutineHandler Instance { get => m_instance; }
-
-    private void Awake()
+    public static ItemCoroutineHandler Instance
     {
-        if (m_instance == null)
+        get
         {
-            m_instance = this;
-            DontDestroyOnLoad(this.gameObject);
-        }
-        else
-        {
-            Destroy(this.gameObject);
+            if (m_instance == null)
+            {
+                m_instance = FindObjectOfType<ItemCoroutineHandler>();
+
+                if (m_instance == null)
+                {
+                    GameObject singletonObject = new GameObject("ItemEventHandler");
+                    m_instance = singletonObject.AddComponent<ItemCoroutineHandler>();
+                    DontDestroyOnLoad(singletonObject);
+                }
+            }
+
+            return m_instance;
         }
     }
 }

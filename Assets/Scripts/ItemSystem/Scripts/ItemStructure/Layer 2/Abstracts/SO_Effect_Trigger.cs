@@ -9,14 +9,19 @@ public abstract class SO_Effect_Trigger : ScriptableObject
 
     public string TriggerName { get => m_TriggerName; set => m_TriggerName = value; }
 
-    private void OnEnable()
+    public void OnEnable()
     {
-        ItemEventHandler.Instance?.RegisterEvent(this);
+        ItemEventHandler.Initialized += Initialize;
     }
 
     private void OnDisable()
     {
         ItemEventHandler.Instance?.RemoveEvent(this);
+    }
+
+    private void Initialize()
+    {
+        ItemEventHandler.Instance?.RegisterEvent(this);
     }
 
     public void RegisterEffect(SO_Item_Effect _Effect)
@@ -38,7 +43,7 @@ public abstract class SO_Effect_Trigger : ScriptableObject
 
         if (m_Listener.Count > 0)
         {
-            if (CheckCondition(_Source, _Target)) 
+            if (CheckCondition(_Source, _Target))
             {
                 for (int i = m_Listener.Count - 1; i >= 0; i--)
                 {
@@ -48,16 +53,18 @@ public abstract class SO_Effect_Trigger : ScriptableObject
                     }
 
                     m_Listener[i]?.OnInvoke(_Source, _Target);
-
                 }
             }
-           
         }
     }
 
     protected bool CheckEffectRegistry(IItemUser _Source, SO_Item_Effect _Listener)
     {
-       return _Source.EffectRegistry[this].Contains(_Listener);
+        if (!_Source.EffectRegistry.ContainsKey(this)) 
+        { 
+            return false;
+        }
+        return _Source.EffectRegistry[this].Contains(_Listener);
     }
 
     protected abstract bool CheckCondition(IItemUser _Source, IItemUser _Target);
