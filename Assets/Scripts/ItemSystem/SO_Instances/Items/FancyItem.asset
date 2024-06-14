@@ -18,4 +18,5 @@ MonoBehaviour:
   m_Effects:
   - {fileID: 11400000, guid: a8c2a7575d855054e8c1f0a4080230eb, type: 2}
   - {fileID: 11400000, guid: 96c2a15fb6e573d4b884d89b1b4599b4, type: 2}
+  - {fileID: 11400000, guid: cd8268707b3c0a74f99357d7aa1716aa, type: 2}
   m_GoldValue: 0

@@ -10,8 +10,7 @@ public class SO_ItemSlot : ScriptableObject
     [SerializeField] private SO_Class_Type[] m_AllowedTypes;
 
     public SO_Item StoredItem
-    {
-        get => m_StoredItem;
+    {        get => m_StoredItem;
         set
         {
             if (m_AllowedClasses.Contains(value.Class) || m_AllowedTypes.Contains(value.Class.Type))

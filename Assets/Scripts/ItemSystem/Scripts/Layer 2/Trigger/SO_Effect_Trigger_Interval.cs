@@ -19,18 +19,18 @@ public class SO_Effect_Trigger_Interval : SO_Effect_Trigger
         }
         else
         {
-            Coroutine newCoroutine = ItemCoroutineHandler.Instance.StartCoroutine(IntervalRoutine(_Source, m_Interval));
+            Coroutine newCoroutine = ItemCoroutineHandler.Instance.StartCoroutine(IntervalRoutine(_Source, _Target, m_Interval));
             activeCoroutines.Add(_Source, newCoroutine);
             return true;
         }
     }
 
-    private IEnumerator IntervalRoutine(IItemUser _Source, float _Interval)
+    private IEnumerator IntervalRoutine(IItemUser _Source, IItemUser _Target, float _Interval)
     {
         while (true)
         {
             yield return new WaitForSeconds(_Interval);
-            InvokeInterval(_Source, null);
+            InvokeInterval(_Source, _Target);
         }
     }
 

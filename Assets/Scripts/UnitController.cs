@@ -13,6 +13,9 @@ public class UnitController : MonoBehaviour, IItemUser
     [SerializeField] private SO_ItemSlot m_TestSlot;
     [SerializeField] private SO_Item m_TestItem;
     [SerializeField] private SO_Item m_WrongTestItem;
+    [SerializeField] private GameObject m_TestTarget;
+
+    private IItemUser m_TestUser;
 
     [SerializeField] private List<SO_Item> m_Items = new List<SO_Item>();
     private float timer = 1f;
@@ -33,6 +36,11 @@ public class UnitController : MonoBehaviour, IItemUser
             Items.Add(m_TestSlot.StoredItem);
         }
 
+        if (m_TestTarget != null)
+        {
+            m_TestUser = m_TestTarget.GetComponent<IItemUser>();
+        }
+
         this.GetComponent<IItemUser>().OnInitialize();
 
         Debug.Log("Health: " + m_unitStats["Health"].GetValue());
@@ -51,13 +59,17 @@ public class UnitController : MonoBehaviour, IItemUser
     private void Start()
     {
         ItemEventHandler.Instance.InvokeEvent<SO_Effect_Trigger_Interval>(this, this);
+        if (m_TestUser != null)
+        {
+            ItemEventHandler.Instance.InvokeEvent<SO_Effect_Trigger_Stack>(this, m_TestUser);
+        }
     }
 
     private void Update()
     {
-        if (timer <= 0.0f)
+        if (timer <= 0.0f && m_TestUser != null)
         {
-            ItemEventHandler.Instance.InvokeEvent<SO_Effect_Trigger_OnHit>(this, this);
+            ItemEventHandler.Instance.InvokeEvent<SO_Effect_Trigger_OnHit>(this, m_TestUser);
             timer = 1.0f;
         }
         else
