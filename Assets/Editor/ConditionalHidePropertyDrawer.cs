@@ -54,17 +54,17 @@ public class ConditionalHidePropertyDrawer : PropertyDrawer
 
         bool conditionMet = false;
 
-        // Check the type of the condition property and compare with target value
+        // Check the type of the condition property and compare with target values
         switch (conditionProperty.propertyType)
         {
             case SerializedPropertyType.Boolean:
-                conditionMet = conditionProperty.boolValue == (conditional.TargetValue == 1);
+                conditionMet = ArrayContains(conditional.TargetValues, conditionProperty.boolValue ? 1 : 0);
                 break;
             case SerializedPropertyType.Enum:
-                conditionMet = conditionProperty.enumValueIndex == conditional.TargetValue;
+                conditionMet = ArrayContains(conditional.TargetValues, conditionProperty.enumValueIndex);
                 break;
             case SerializedPropertyType.Integer:
-                conditionMet = conditionProperty.intValue == conditional.TargetValue;
+                conditionMet = ArrayContains(conditional.TargetValues, conditionProperty.intValue);
                 break;
             default:
                 Debug.LogWarning($"Unsupported property type: {conditionProperty.propertyType} for {conditional.ConditionName}");
@@ -72,6 +72,18 @@ public class ConditionalHidePropertyDrawer : PropertyDrawer
         }
 
         return conditionMet;
+    }
+
+    private bool ArrayContains(int[] array, int value)
+    {
+        foreach (int val in array)
+        {
+            if (val == value)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     private T GetCustomAttribute<T>(SerializedProperty property) where T : PropertyAttribute

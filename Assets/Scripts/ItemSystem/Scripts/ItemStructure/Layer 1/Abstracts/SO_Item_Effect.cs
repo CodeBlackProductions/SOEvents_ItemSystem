@@ -10,6 +10,8 @@ public abstract class SO_Item_Effect : ScriptableObject
     [SerializeField] private string m_EffectName = "NewEffect";
     [SerializeField] private SO_Effect_Trigger m_Trigger;
     [SerializeField] private ETarget m_EffectTarget;
+
+    [ConditionalHide(nameof(m_EffectTarget), 2,3)]
     [SerializeField] private float m_TargetRange = 0;
 
     public string EffectName { get => m_EffectName; }
