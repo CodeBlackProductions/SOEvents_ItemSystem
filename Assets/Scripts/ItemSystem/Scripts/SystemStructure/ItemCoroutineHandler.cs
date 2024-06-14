@@ -15,7 +15,7 @@ public class ItemCoroutineHandler : MonoBehaviour
 
                 if (m_instance == null)
                 {
-                    GameObject singletonObject = new GameObject("ItemEventHandler");
+                    GameObject singletonObject = new GameObject("ItemCoroutineHandler");
                     m_instance = singletonObject.AddComponent<ItemCoroutineHandler>();
                     DontDestroyOnLoad(singletonObject);
                 }

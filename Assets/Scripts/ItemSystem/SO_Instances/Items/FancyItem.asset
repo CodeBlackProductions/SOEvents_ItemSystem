@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: FancyItem
   m_EditorClassIdentifier: 
   m_ItemName: Shitty Item
-  m_Class: {fileID: 11400000, guid: 33594af4e6a16fd459bdc7d058cb58f3, type: 2}
+  m_Class: {fileID: 11400000, guid: c6d4018ce217c994fb31a9ffb5a1476a, type: 2}
   m_Rarity: 0
   m_Effects:
   - {fileID: 11400000, guid: a8c2a7575d855054e8c1f0a4080230eb, type: 2}
