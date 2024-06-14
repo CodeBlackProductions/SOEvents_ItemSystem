@@ -1,6 +1,5 @@
 using AYellowpaper.SerializedCollections;
 using System.Collections.Generic;
-using System.Threading;
 using UnityEngine;
 
 public class UnitController : MonoBehaviour, IItemUser
@@ -10,6 +9,10 @@ public class UnitController : MonoBehaviour, IItemUser
     private SerializedDictionary<string, SO_Stat> m_unitStats = new SerializedDictionary<string, SO_Stat>();
 
     private SerializedDictionary<SO_Effect_Trigger, List<SO_Item_Effect>> m_effectRegistry = new SerializedDictionary<SO_Effect_Trigger, List<SO_Item_Effect>>();
+
+    [SerializeField] private SO_ItemSlot m_TestSlot;
+    [SerializeField] private SO_Item m_TestItem;
+    [SerializeField] private SO_Item m_WrongTestItem;
 
     [SerializeField] private List<SO_Item> m_Items = new List<SO_Item>();
     private float timer = 1f;
@@ -22,6 +25,14 @@ public class UnitController : MonoBehaviour, IItemUser
 
     private void Awake()
     {
+        if (m_TestSlot != null)
+        {
+            m_TestSlot.StoredItem = m_TestItem;
+            m_TestSlot.StoredItem = m_WrongTestItem;
+
+            Items.Add(m_TestSlot.StoredItem);
+        }
+
         this.GetComponent<IItemUser>().OnInitialize();
 
         Debug.Log("Health: " + m_unitStats["Health"].GetValue());
@@ -49,7 +60,7 @@ public class UnitController : MonoBehaviour, IItemUser
             ItemEventHandler.Instance.InvokeEvent<SO_Effect_Trigger_OnHit>(this, this);
             timer = 1.0f;
         }
-        else 
+        else
         {
             timer -= Time.deltaTime;
         }

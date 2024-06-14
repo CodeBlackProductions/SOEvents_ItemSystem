@@ -14,6 +14,11 @@ public class SOEditor : Editor
 
         ScriptableObject targetSO = (ScriptableObject)target;
 
+        if (targetSO != null && targetSO.GetType() == typeof(SO_ItemSlot))
+        {
+            return;
+        }
+
         // Display the contents of the selected ScriptableObject
         DisplayScriptableObjectContents(targetSO);
     }

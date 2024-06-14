@@ -413,8 +413,10 @@ MonoBehaviour:
       Value: {fileID: 11400000, guid: 06b9d79a4e7aa7b48ae728c2cc396d8d, type: 2}
     - Key: Armor
       Value: {fileID: 11400000, guid: 179b104711c079448886dc2024f10570, type: 2}
-  m_Items:
-  - {fileID: 11400000, guid: 47ab9c0e029d909468d8db2803ae23f9, type: 2}
+  m_TestSlot: {fileID: 11400000, guid: 74f3c2949da42b14db0d78bd8997636b, type: 2}
+  m_TestItem: {fileID: 11400000, guid: 47ab9c0e029d909468d8db2803ae23f9, type: 2}
+  m_WrongTestItem: {fileID: 11400000, guid: 4de126c92aec0744dab315c3546b485d, type: 2}
+  m_Items: []
 --- !u!4 &491776187
 Transform:
   m_ObjectHideFlags: 0
@@ -514,6 +516,9 @@ MonoBehaviour:
       Value: {fileID: 11400000, guid: 06b9d79a4e7aa7b48ae728c2cc396d8d, type: 2}
     - Key: Armor
       Value: {fileID: 11400000, guid: 179b104711c079448886dc2024f10570, type: 2}
+  m_TestSlot: {fileID: 0}
+  m_TestItem: {fileID: 0}
+  m_WrongTestItem: {fileID: 0}
   m_Items: []
 --- !u!4 &1091566121
 Transform:

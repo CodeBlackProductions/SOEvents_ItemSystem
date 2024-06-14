@@ -11,7 +11,7 @@ public enum EType
     Melee, Ranged
 }
 
-[CreateAssetMenu(fileName = "New_Type", menuName = "ItemSystem/Class/Type_Weapon")]
+[CreateAssetMenu(fileName = "New_Type", menuName = "ItemSystem/Class/Type/Weapon")]
 public class Type_Weapon : SO_Class_Type
 {
     [SerializeField] private EHands m_hands;
