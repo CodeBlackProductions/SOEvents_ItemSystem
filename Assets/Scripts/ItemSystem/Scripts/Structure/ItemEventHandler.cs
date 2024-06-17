@@ -1,8 +1,9 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor.PackageManager;
 using UnityEngine;
 
+/// <summary>
+/// Automatically handles events from the item system. Call this to invoke item functionality.
+/// </summary>
 public class ItemEventHandler : MonoBehaviour
 {
     private static ItemEventHandler m_instance;
@@ -31,31 +32,50 @@ public class ItemEventHandler : MonoBehaviour
 
     private Dictionary<System.Type, ScriptableObject> events = new Dictionary<System.Type, ScriptableObject>();
 
-    public void RegisterEvent<T>(T eventSO) where T : ScriptableObject
+    /// <summary>
+    /// Registers an <see cref="SO_Effect_Trigger"/> as event.
+    /// </summary>
+    /// <typeparam name="T">Type of <see cref="SO_Effect_Trigger"/> to register</typeparam>
+    /// <param name="_eventSO"><see cref="SO_Effect_Trigger"/> to register</param>
+    public void RegisterEvent<T>(T _eventSO) where T : ScriptableObject
     {
-        var type = eventSO.GetType();
+        var type = _eventSO.GetType();
         if (!events.ContainsKey(type))
         {
-            events.Add(type, eventSO);
+            events.Add(type, _eventSO);
         }
     }
 
-    public void RemoveEvent<T>(T eventSO) where T : ScriptableObject
+    /// <summary>
+    /// Removes an event from registry based on its related <see cref="SO_Effect_Trigger"/>.
+    /// </summary>
+    /// <typeparam name="T">Type of <see cref="SO_Effect_Trigger"/> to remove</typeparam>
+    /// <param name="_eventSO"><see cref="SO_Effect_Trigger"/> to remove</param>
+    public void RemoveEvent<T>(T _eventSO) where T : ScriptableObject
     {
-        var type = eventSO.GetType();
+        var type = _eventSO.GetType();
         if (events.ContainsKey(type))
         {
             events.Remove(type);
         }
     }
-
+    /// <summary>
+    /// Invokes a registered <see cref="SO_Effect_Trigger"/> event.
+    /// </summary>
+    /// <typeparam name="T">Type of <see cref="SO_Effect_Trigger"/> event to invoke</typeparam>
+    /// <param name="_Source"><see cref="IItemUser"/> that invokes the effect</param>
+    /// <param name="_Target"><see cref="IItemUser"/> that gets targeted by the effect</param>
     public void InvokeEvent<T>(IItemUser _Source, IItemUser _Target) where T : SO_Effect_Trigger
     {
         T eventSO = GetEvent<T>();
 
         eventSO?.Invoke(_Source, _Target);
     }
-
+    /// <summary>
+    /// Fetches an <see cref="SO_Effect_Trigger"/> evént from the registry.
+    /// </summary>
+    /// <typeparam name="T">Type of <see cref="SO_Effect_Trigger"/> to fetch</typeparam>
+    /// <returns><see cref="SO_Effect_Trigger"/> event</returns>
     private T GetEvent<T>() where T : ScriptableObject
     {
         var type = typeof(T);
@@ -65,7 +85,9 @@ public class ItemEventHandler : MonoBehaviour
         }
         return null;
     }
-
+    /// <summary>
+    /// Calls initialize function for scriptable objects that need to be initialized after the event handler.
+    /// </summary>
     private void Awake()
     {
         Initialized?.Invoke();

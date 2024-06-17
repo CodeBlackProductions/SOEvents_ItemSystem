@@ -16,3 +16,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c6d4018ce217c994fb31a9ffb5a1476a, type: 2}
   m_AllowedTypes:
   - {fileID: 11400000, guid: 1ac4dd0cffd980942bdd8f5fc3bb75c4, type: 2}
+  m_AllowConidtions: 1

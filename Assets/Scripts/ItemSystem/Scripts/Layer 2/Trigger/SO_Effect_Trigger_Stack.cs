@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// This trigger adds and manages stacks for stackable <see cref="SO_Item_Effect"/>.
+/// Call from another effect (e.g. On Hit Poison).
+/// </summary>
 [CreateAssetMenu(fileName = "New_StackTrigger", menuName = "ItemSystem/Effect/Trigger/Stack")]
 public class SO_Effect_Trigger_Stack : SO_Effect_Trigger
 {
@@ -13,7 +17,13 @@ public class SO_Effect_Trigger_Stack : SO_Effect_Trigger
 
     private Dictionary<IItemUser, Dictionary<SO_Item_Effect, StackEffectData>> activeEffects = new Dictionary<IItemUser, Dictionary<SO_Item_Effect, StackEffectData>>();
 
-    protected override bool CheckCondition(IItemUser _Source, IItemUser _Target)
+    /// <summary>
+    /// Add/ Remove Stacks for stackable <see cref="SO_Item_Effect"/>.
+    /// </summary>
+    /// <param name="_Source"><see cref="IItemUser"/> that called the trigger</param>
+    /// <param name="_Target"><see cref="IItemUser"/> that should get targeted by effect</param>
+    /// <returns>Always returns false, since we dont want to call the effects multiple times.</returns>
+    protected override bool CustomFunctionality(IItemUser _Source, IItemUser _Target)
     {
         foreach (var effect in m_Listener)
         {
@@ -47,7 +57,13 @@ public class SO_Effect_Trigger_Stack : SO_Effect_Trigger
         }
         return false;
     }
-
+    /// <summary>
+    /// Coroutine that invokes the corresponding effects based on stack amount.
+    /// </summary>
+    /// <param name="_Source"><see cref="IItemUser"/> that called the trigger</param>
+    /// <param name="_Target"><see cref="IItemUser"/> that should get targeted by effect</param>
+    /// <param name="_Interval">time between invokes</param>
+    /// <returns></returns>
     private IEnumerator IntervalRoutine(IItemUser _Source, IItemUser _Target, float _Interval, SO_Item_Effect effect)
     {
         while (true)
@@ -55,7 +71,6 @@ public class SO_Effect_Trigger_Stack : SO_Effect_Trigger
             yield return new WaitForSeconds(_Interval);
             InvokeInterval(_Source, _Target, effect);
 
-            // Reduce stacks after each interval
             if (activeEffects[_Target].ContainsKey(effect))
             {
                 var stackData = activeEffects[_Target][effect];
@@ -73,7 +88,12 @@ public class SO_Effect_Trigger_Stack : SO_Effect_Trigger
             }
         }
     }
-
+    /// <summary>
+    /// Invokes the corresponding effects. Gets called by the coroutines.
+    /// </summary>
+    /// <param name="_Source"><see cref="IItemUser"/> that called the trigger</param>
+    /// <param name="_Target"><see cref="IItemUser"/> that should get targeted by effect</param>
+    /// <exception cref="System.Exception"></exception>
     private void InvokeInterval(IItemUser _Source, IItemUser _Target, SO_Item_Effect effect)
     {
         if (effect == null)

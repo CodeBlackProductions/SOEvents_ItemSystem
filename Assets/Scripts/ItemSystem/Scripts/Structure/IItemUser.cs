@@ -1,14 +1,19 @@
 using AYellowpaper.SerializedCollections;
 using System.Collections.Generic;
-using System.Diagnostics;
 
+/// <summary>
+/// Adds item system functionality to a custom unit/character script.
+/// </summary>
 public interface IItemUser
 {
     public List<SO_Item> Items { get; set; }
     public SerializedDictionary<string, SO_Stat> UserStats { get; set; }
-    public SerializedDictionary<SO_Effect_Trigger, List<SO_Item_Effect>> EffectRegistry { get;}
+    public SerializedDictionary<SO_Effect_Trigger, List<SO_Item_Effect>> EffectRegistry { get; }
 
-    public void OnInitialize() 
+    /// <summary>
+    /// Initializes the item effects into the registry. Needed for checking if an effect has to be triggered later on.
+    /// </summary>
+    public void OnInitialize()
     {
         for (int i = 0; i < Items.Count; i++)
         {
@@ -18,13 +23,12 @@ public interface IItemUser
                 {
                     EffectRegistry[Items[i].Effects[e].Trigger].Add(Items[i].Effects[e]);
                 }
-                else 
+                else
                 {
                     EffectRegistry.Add(Items[i].Effects[e].Trigger, new List<SO_Item_Effect>());
                     EffectRegistry[Items[i].Effects[e].Trigger].Add(Items[i].Effects[e]);
                 }
-                
-            } 
+            }
         }
     }
 }

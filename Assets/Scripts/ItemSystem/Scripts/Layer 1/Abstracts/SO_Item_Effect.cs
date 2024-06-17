@@ -5,6 +5,10 @@ public enum ETarget
     Self, Target, TargetsInRangeSelf, TargetsInRangeTarget
 }
 
+/// <summary>
+/// Base item effect. Contains all necessary elements to add additional effects to items. (e.g. Poison or Stat boosts)
+/// Inherit from this when creating new effects.
+/// </summary>
 public abstract class SO_Item_Effect : ScriptableObject
 {
     [SerializeField] private string m_EffectName = "NewEffect";
@@ -29,10 +33,20 @@ public abstract class SO_Item_Effect : ScriptableObject
         m_Trigger?.RemoveEffect(this);
     }
 
+    /// <summary>
+    /// Calls the actual effect when the corresponding <see cref="SO_Effect_Trigger"/> got activated.
+    /// </summary>
+    /// <param name="_Source"><see cref="IItemUser"/> that called the effect</param>
+    /// <param name="_Target"><see cref="IItemUser"/> that gets hit by the effect</param>
     public void OnInvoke(IItemUser _Source, IItemUser _Target)
     {
         ItemEffect(_Source, _Target);
     }
 
+    /// <summary>
+    /// Override this to add your custom item effect. You can access the characters stats through <see cref="IItemUser.UserStats"/> .
+    /// </summary>
+    /// <param name="_Source"><see cref="IItemUser"/> that called the effect</param>
+    /// <param name="_Target"><see cref="IItemUser"/> that gets hit by the effect</param>
     protected abstract void ItemEffect(IItemUser _Source, IItemUser _Target);
 }

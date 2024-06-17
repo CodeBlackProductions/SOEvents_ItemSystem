@@ -1,10 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Dummy class that runs all coroutines of the item system. Does nothing on its own.
+/// </summary>
 public class ItemCoroutineHandler : MonoBehaviour
 {
     private static ItemCoroutineHandler m_instance;
+
     public static ItemCoroutineHandler Instance
     {
         get

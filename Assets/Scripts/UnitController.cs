@@ -2,6 +2,10 @@ using AYellowpaper.SerializedCollections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// This is just an example implementation of the item System.
+/// Its not clean in any way. Please do not use this... create your own version.
+/// </summary>
 public class UnitController : MonoBehaviour, IItemUser
 {
     [SerializeField]
@@ -15,7 +19,7 @@ public class UnitController : MonoBehaviour, IItemUser
     [SerializeField] private SO_Item m_WrongTestItem;
     [SerializeField] private GameObject m_TestTarget;
 
-    private IItemUser m_TestUser;
+    private IItemUser m_TestTargetUser;
 
     [SerializeField] private List<SO_Item> m_Items = new List<SO_Item>();
     private float timer = 1f;
@@ -38,7 +42,7 @@ public class UnitController : MonoBehaviour, IItemUser
 
         if (m_TestTarget != null)
         {
-            m_TestUser = m_TestTarget.GetComponent<IItemUser>();
+            m_TestTargetUser = m_TestTarget.GetComponent<IItemUser>();
         }
 
         this.GetComponent<IItemUser>().OnInitialize();
@@ -59,22 +63,24 @@ public class UnitController : MonoBehaviour, IItemUser
     private void Start()
     {
         ItemEventHandler.Instance.InvokeEvent<SO_Effect_Trigger_Interval>(this, this);
-        if (m_TestUser != null)
+        if (m_TestTargetUser != null)
         {
-            ItemEventHandler.Instance.InvokeEvent<SO_Effect_Trigger_Stack>(this, m_TestUser);
+            ItemEventHandler.Instance.InvokeEvent<SO_Effect_Trigger_Stack>(this, m_TestTargetUser);
         }
     }
 
     private void Update()
     {
-        if (timer <= 0.0f && m_TestUser != null)
+        if (timer <= 0.0f && m_TestTargetUser != null)
         {
-            ItemEventHandler.Instance.InvokeEvent<SO_Effect_Trigger_OnHit>(this, m_TestUser);
+            ItemEventHandler.Instance.InvokeEvent<SO_Effect_Trigger_OnHit>(this, m_TestTargetUser);
             timer = 1.0f;
         }
         else
         {
             timer -= Time.deltaTime;
         }
+
     }
+
 }

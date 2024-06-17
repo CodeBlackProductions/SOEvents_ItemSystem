@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using UnityEngine;
 
 public enum EHands
@@ -20,8 +19,10 @@ public class Type_Weapon : SO_Class_Type
     //Only show When Ranged
     [ConditionalHide(nameof(m_Type), 1)]
     [SerializeField] private float m_Range;
+
     [ConditionalHide(nameof(m_Type), 1)]
     [SerializeField] private float m_MinRange;
+
     [ConditionalHide(nameof(m_Type), 1)]
     [SerializeField] private GameObject m_Projectile;
 

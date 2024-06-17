@@ -5,6 +5,9 @@ public enum ERarity
     Common, Uncommon, Rare, Legendary, Unique
 }
 
+/// <summary>
+/// Core class of the entire system. Contains all necessary pieces to create a functioning item.
+/// </summary>
 [CreateAssetMenu(fileName = "New_Item", menuName = "ItemSystem/Item")]
 public class SO_Item : ScriptableObject
 {

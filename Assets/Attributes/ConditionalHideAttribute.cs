@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// Shows/Hides serialized fields based on a condition bool or enum state.
+/// </summary>
 public class ConditionalHideAttribute : PropertyAttribute
 {
     public string ConditionName { get; private set; }

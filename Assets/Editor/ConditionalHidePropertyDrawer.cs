@@ -2,6 +2,11 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
+/// <summary>
+/// Shows/Hides properties based on their tagged condition.
+/// DO NOT TOUCH!
+/// Unless you know what you are doing...
+/// </summary>
 [CustomPropertyDrawer(typeof(ConditionalHideAttribute))]
 public class ConditionalHidePropertyDrawer : PropertyDrawer
 {
@@ -27,7 +32,7 @@ public class ConditionalHidePropertyDrawer : PropertyDrawer
         }
         else
         {
-            return 0f; // Hide the property if conditions are not met
+            return 0f;
         }
     }
 
@@ -49,12 +54,11 @@ public class ConditionalHidePropertyDrawer : PropertyDrawer
         if (conditionProperty == null)
         {
             Debug.LogWarning($"Could not find condition property for {conditional.ConditionName}");
-            return true; // Default to showing property if condition property not found
+            return true;
         }
 
         bool conditionMet = false;
 
-        // Check the type of the condition property and compare with target values
         switch (conditionProperty.propertyType)
         {
             case SerializedPropertyType.Boolean:

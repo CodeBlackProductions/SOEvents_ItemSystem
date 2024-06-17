@@ -3,6 +3,11 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
+/// <summary>
+/// Shows content of all nested Scriptable objects within the selected Scriptable object and lets you edit them.
+/// DO NOT TOUCH!
+/// Unless you know what you are doing...
+/// </summary>
 [CustomEditor(typeof(ScriptableObject), true)]
 public class SOEditor : Editor
 {
@@ -19,7 +24,6 @@ public class SOEditor : Editor
             return;
         }
 
-        // Display the contents of the selected ScriptableObject
         DisplayScriptableObjectContents(targetSO);
     }
 
@@ -27,17 +31,13 @@ public class SOEditor : Editor
     {
         EditorGUILayout.Space();
 
-        // Get or generate a color for the ScriptableObject
         Color sectionHeaderColor = Color.grey;
 
-        // Display the contents of each ScriptableObject field
         EditorGUILayout.LabelField(scriptableObject.name + " Contents", EditorStyles.boldLabel);
         EditorGUI.indentLevel++;
 
-        // Get the fields of the ScriptableObject
         var fields = scriptableObject.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
-        // Iterate through each field
         foreach (var field in fields)
         {
             if (typeof(ScriptableObject).IsAssignableFrom(field.FieldType))
@@ -64,13 +64,11 @@ public class SOEditor : Editor
 
         EditorGUI.indentLevel++;
 
-        // Display the properties of the referenced ScriptableObject
         SerializedObject nestedObjectSerialized = new SerializedObject(scriptableObject);
         SerializedProperty property = nestedObjectSerialized.GetIterator();
         bool enterChildren = true;
         while (property.NextVisible(enterChildren))
         {
-            // Skip script property
             if (property.name == "m_Script")
                 continue;
 
@@ -87,7 +85,6 @@ public class SOEditor : Editor
 
         EditorGUI.indentLevel--;
 
-        // Apply modified properties of the nested ScriptableObject
         nestedObjectSerialized.ApplyModifiedProperties();
     }
 
@@ -102,7 +99,6 @@ public class SOEditor : Editor
 
         EditorGUI.indentLevel++;
 
-        // Display each element of the array
         for (int i = 0; i < array.Length; i++)
         {
             DisplaySingleScriptableObjectContents(array[i], sectionHeaderColor);

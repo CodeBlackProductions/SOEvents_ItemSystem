@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// This trigger calls each registered <see cref="SO_Item_Effect"/> in fixed intervals.
+/// Call at character initialization.
+/// </summary>
 [CreateAssetMenu(fileName = "New_Interval", menuName = "ItemSystem/Effect/Trigger/Interval")]
 public class SO_Effect_Trigger_Interval : SO_Effect_Trigger
 {
@@ -9,7 +13,13 @@ public class SO_Effect_Trigger_Interval : SO_Effect_Trigger
 
     private Dictionary<IItemUser, Coroutine> activeCoroutines = new Dictionary<IItemUser, Coroutine>();
 
-    protected override bool CheckCondition(IItemUser _Source, IItemUser _Target)
+    /// <summary>
+    /// Add/ Remove Coroutine for effects.
+    /// </summary>
+    /// <param name="_Source"><see cref="IItemUser"/> that called the trigger</param>
+    /// <param name="_Target"><see cref="IItemUser"/> that should get targeted by effect</param>
+    /// <returns>true if new coroutine is registered, false if coroutine got removed</returns>
+    protected override bool CustomFunctionality(IItemUser _Source, IItemUser _Target)
     {
         if (activeCoroutines.ContainsKey(_Source))
         {
@@ -24,7 +34,13 @@ public class SO_Effect_Trigger_Interval : SO_Effect_Trigger
             return true;
         }
     }
-
+    /// <summary>
+    /// Coroutine that invokes the corresponding effects.
+    /// </summary>
+    /// <param name="_Source"><see cref="IItemUser"/> that called the trigger</param>
+    /// <param name="_Target"><see cref="IItemUser"/> that should get targeted by effect</param>
+    /// <param name="_Interval">time between invokes</param>
+    /// <returns></returns>
     private IEnumerator IntervalRoutine(IItemUser _Source, IItemUser _Target, float _Interval)
     {
         while (true)
@@ -33,7 +49,12 @@ public class SO_Effect_Trigger_Interval : SO_Effect_Trigger
             InvokeInterval(_Source, _Target);
         }
     }
-
+    /// <summary>
+    /// Invokes the corresponding effects. Gets called by the coroutines.
+    /// </summary>
+    /// <param name="_Source"><see cref="IItemUser"/> that called the trigger</param>
+    /// <param name="_Target"><see cref="IItemUser"/> that should get targeted by effect</param>
+    /// <exception cref="System.Exception"></exception>
     private void InvokeInterval(IItemUser _Source, IItemUser _Target)
     {
         if (m_Listener == null)
