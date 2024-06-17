@@ -1,13 +1,7 @@
 using System.Collections.Generic;
-using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
-/// <summary>
-/// Shows content of all nested Scriptable objects within the selected Scriptable object and lets you edit them.
-/// DO NOT TOUCH!
-/// Unless you know what you are doing...
-/// </summary>
 [CustomEditor(typeof(ScriptableObject), true)]
 public class SOEditor : Editor
 {
@@ -18,11 +12,6 @@ public class SOEditor : Editor
         base.OnInspectorGUI();
 
         ScriptableObject targetSO = (ScriptableObject)target;
-
-        if (targetSO != null && targetSO.GetType() == typeof(SO_ItemSlot))
-        {
-            return;
-        }
 
         DisplayScriptableObjectContents(targetSO);
     }
@@ -36,7 +25,7 @@ public class SOEditor : Editor
         EditorGUILayout.LabelField(scriptableObject.name + " Contents", EditorStyles.boldLabel);
         EditorGUI.indentLevel++;
 
-        var fields = scriptableObject.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        var fields = scriptableObject.GetType().GetFields(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
 
         foreach (var field in fields)
         {
@@ -48,9 +37,38 @@ public class SOEditor : Editor
             {
                 DisplayArrayOfScriptableObjects(field.GetValue(scriptableObject) as ScriptableObject[], sectionHeaderColor);
             }
+
+            if (scriptableObject.GetType() == typeof(SO_Item) && field.Name == "m_Class")
+            {
+                DisplayTypeDropdown(scriptableObject as SO_Item, sectionHeaderColor);
+            }
         }
 
         EditorGUI.indentLevel--;
+    }
+
+    private void DisplayTypeDropdown(SO_Item item, Color sectionHeaderColor)
+    {
+        if (item.Class.Types != null && item.Class.Types.Length > 0)
+        {
+            string[] typeNames = new string[item.Class.Types.Length];
+            for (int i = 0; i < item.Class.Types.Length; i++)
+            {
+                typeNames[i] = item.Class.Types[i].name;
+            }
+
+            int selectedIndex = EditorGUILayout.Popup("Select Type", item.TypeIndex, typeNames);
+            if (selectedIndex != item.TypeIndex)
+            {
+                Undo.RecordObject(item, "Change Item Type");
+                item.TypeIndex = selectedIndex;
+                EditorUtility.SetDirty(item);
+            }
+        }
+        else
+        {
+            EditorGUILayout.LabelField("No Types Defined", EditorStyles.miniLabel);
+        }
     }
 
     private void DisplaySingleScriptableObjectContents(ScriptableObject scriptableObject, Color sectionHeaderColor)

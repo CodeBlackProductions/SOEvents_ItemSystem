@@ -17,9 +17,11 @@ public class SO_Item : ScriptableObject
     [SerializeField] private SO_Item_Effect[] m_Effects;
     [SerializeField] private int m_GoldValue = 0;
 
+    private int m_TypeIndex;
     private string m_SlotType;
 
     public SO_Item_Class Class { get => m_Class; set => m_Class = value; }
+    public int TypeIndex { get => m_TypeIndex; set => m_TypeIndex = value; }
     public ERarity Rarity { get => m_Rarity; set => m_Rarity = value; }
     public SO_Item_Effect[] Effects { get => m_Effects; set => m_Effects = value; }
     public int GoldValue { get => m_GoldValue; set => m_GoldValue = value; }

@@ -25,7 +25,7 @@ public class SO_ItemSlot : ScriptableObject
             switch (m_AllowConidtions)
             {
                 case Allowed.ClassOrType:
-                    if (m_AllowedClasses.Contains(value.Class) || m_AllowedTypes.Contains(value.Class.Type))
+                    if (m_AllowedClasses.Contains(value.Class) || m_AllowedTypes.Contains(value.Class.Types[value.TypeIndex]))
                     {
                         m_StoredItem = value;
                     }
@@ -35,7 +35,7 @@ public class SO_ItemSlot : ScriptableObject
                     }
                     break;
                 case Allowed.ClassAndType:
-                    if (m_AllowedClasses.Contains(value.Class) && m_AllowedTypes.Contains(value.Class.Type))
+                    if (m_AllowedClasses.Contains(value.Class) && m_AllowedTypes.Contains(value.Class.Types[value.TypeIndex]))
                     {
                         m_StoredItem = value;
                     }

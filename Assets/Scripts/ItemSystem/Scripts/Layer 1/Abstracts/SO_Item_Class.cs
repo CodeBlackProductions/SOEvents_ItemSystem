@@ -7,8 +7,8 @@ using UnityEngine;
 public abstract class SO_Item_Class : ScriptableObject
 {
     [SerializeField] private string m_ClassName = "NewClass";
-    [SerializeField] private SO_Class_Type m_Type;
+    [SerializeField] private SO_Class_Type[] m_Types;
 
     public string ClassName { get => m_ClassName; set => m_ClassName = value; }
-    public SO_Class_Type Type { get => m_Type; set => m_Type = value; }
+    public SO_Class_Type[] Types { get => m_Types; set => m_Types = value; }
 }
