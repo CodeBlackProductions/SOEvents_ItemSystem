@@ -31,7 +31,7 @@ public class SO_Effect_Trigger_Interval : SO_Effect_Trigger
         {
             Coroutine newCoroutine = ItemCoroutineHandler.Instance.StartCoroutine(IntervalRoutine(_Source, _Target, m_Interval));
             activeCoroutines.Add(_Source, newCoroutine);
-            return true;
+            return false;
         }
     }
     /// <summary>

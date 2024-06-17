@@ -1,5 +1,9 @@
 using UnityEngine;
 
+/// <summary>
+/// Base stackable item effect. Contains all necessary elements to add additional stackable effects to items. (e.g. Poison or bleed)
+/// Inherit from this when creating new stackable effects.
+/// </summary>
 public abstract class So_Item_StackEffect : SO_Item_Effect
 {
     [SerializeField] private float m_Interval = 1.0f;

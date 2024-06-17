@@ -62,25 +62,15 @@ public class UnitController : MonoBehaviour, IItemUser
 
     private void Start()
     {
-        //ItemEventHandler.Instance.InvokeEvent<SO_Effect_Trigger_Interval>(this, this);
+        ItemEventHandler.Instance.InvokeEvent<SO_Effect_Trigger_Interval>(this, this);
         if (m_TestTargetUser != null)
         {
-            //ItemEventHandler.Instance.InvokeEvent<SO_Effect_Trigger_Stack>(this, m_TestTargetUser);
             ItemEventHandler.Instance.InvokeEvent<SO_Effect_Trigger_OnHit>(this, m_TestTargetUser);
         }
     }
 
     private void Update()
     {
-        //if (timer <= 0.0f && m_TestTargetUser != null)
-        //{
-        //    ItemEventHandler.Instance.InvokeEvent<SO_Effect_Trigger_OnHit>(this, m_TestTargetUser);
-        //    timer = 1.0f;
-        //}
-        //else
-        //{
-        //    timer -= Time.deltaTime;
-        //}
 
     }
 

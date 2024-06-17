@@ -21,6 +21,7 @@ public abstract class SO_Effect_Trigger : ScriptableObject
     private void OnDisable()
     {
         ItemEventHandler.Instance?.RemoveEvent(this);
+        m_Listener = new List<SO_Item_Effect>();
     }
 
     /// <summary>
@@ -30,6 +31,7 @@ public abstract class SO_Effect_Trigger : ScriptableObject
     {
         ItemEventHandler.Instance?.RegisterEvent(this);
     }
+
     /// <summary>
     /// Registers an <see cref="SO_Item_Effect"/> as listener to this trigger event.
     /// </summary>
@@ -38,6 +40,7 @@ public abstract class SO_Effect_Trigger : ScriptableObject
     {
         m_Listener.Add(_Effect);
     }
+
     /// <summary>
     /// Removes an <see cref="SO_Item_Effect"/> as listener from this trigger event.
     /// </summary>
@@ -46,6 +49,7 @@ public abstract class SO_Effect_Trigger : ScriptableObject
     {
         m_Listener.Remove(_Effect);
     }
+
     /// <summary>
     /// Checks custom condition, then calls custom functionality and registered listeners.
     /// </summary>
@@ -78,6 +82,7 @@ public abstract class SO_Effect_Trigger : ScriptableObject
             }
         }
     }
+
     /// <summary>
     /// Checks if _Source has effect registered and is thus allowed to call it.
     /// </summary>
@@ -92,6 +97,7 @@ public abstract class SO_Effect_Trigger : ScriptableObject
         }
         return _Source.EffectRegistry[this].Contains(_Listener);
     }
+
     /// <summary>
     /// Override this to do custom checks before calling custom functionality and/or listeners.
     /// </summary>
@@ -102,6 +108,7 @@ public abstract class SO_Effect_Trigger : ScriptableObject
     {
         return true;
     }
+
     /// <summary>
     /// Override this to add custom functionality to your trigger.
     /// </summary>

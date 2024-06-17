@@ -414,7 +414,7 @@ MonoBehaviour:
     - Key: Armor
       Value: {fileID: 11400000, guid: 179b104711c079448886dc2024f10570, type: 2}
   m_TestSlot: {fileID: 11400000, guid: 74f3c2949da42b14db0d78bd8997636b, type: 2}
-  m_TestItem: {fileID: 11400000, guid: ea81d69cddc7094478bebc671dd6390b, type: 2}
+  m_TestItem: {fileID: 11400000, guid: 47ab9c0e029d909468d8db2803ae23f9, type: 2}
   m_WrongTestItem: {fileID: 11400000, guid: 4de126c92aec0744dab315c3546b485d, type: 2}
   m_TestTarget: {fileID: 1091566119}
   m_Items: []
