@@ -3,22 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// This trigger adds and manages stacks for stackable <see cref="SO_Item_Effect"/>.
+/// This trigger adds and manages stacks for <see cref="So_Item_StackEffect"/>.
 /// Call from another effect (e.g. On Hit Poison).
 /// </summary>
 [CreateAssetMenu(fileName = "New_StackTrigger", menuName = "ItemSystem/Effect/Trigger/Stack")]
 public class SO_Effect_Trigger_Stack : SO_Effect_Trigger
 {
-    [SerializeField] private float m_Interval = 1.0f;
-    [SerializeField] [Range(0.0f,1.0f)] private float m_ChanceToAddStacks = 1.0f;
-    [SerializeField] private int m_StacksAddedPerHit = 1;
-    [SerializeField] private int m_MaxStacks = 0;
-    [SerializeField] private int m_StacksConsumedPerInterval = 1;
-
-    private Dictionary<IItemUser, Dictionary<SO_Item_Effect, StackEffectData>> activeEffects = new Dictionary<IItemUser, Dictionary<SO_Item_Effect, StackEffectData>>();
+    private Dictionary<IItemUser, Dictionary<So_Item_StackEffect, StackEffectData>> activeEffects = new Dictionary<IItemUser, Dictionary<So_Item_StackEffect, StackEffectData>>();
 
     /// <summary>
-    /// Add/ Remove Stacks for stackable <see cref="SO_Item_Effect"/>.
+    /// Add/ Remove Stacks for <see cref="So_Item_StackEffect"/>.
     /// </summary>
     /// <param name="_Source"><see cref="IItemUser"/> that called the trigger</param>
     /// <param name="_Target"><see cref="IItemUser"/> that should get targeted by effect</param>
@@ -27,36 +21,48 @@ public class SO_Effect_Trigger_Stack : SO_Effect_Trigger
     {
         foreach (var effect in m_Listener)
         {
-            if (!activeEffects.ContainsKey(_Target))
+            So_Item_StackEffect stackEffect = effect as So_Item_StackEffect;
+
+            if (stackEffect == null)
             {
-                activeEffects[_Target] = new Dictionary<SO_Item_Effect, StackEffectData>();
+                continue;
             }
 
-            if (activeEffects[_Target].ContainsKey(effect))
+            if (Random.Range(0.0f, 1.0f) > stackEffect.ChanceToAddStacks)
             {
-                var stackData = activeEffects[_Target][effect];
-                stackData.StackCount += m_StacksAddedPerHit;
-                if (m_MaxStacks != 0)
+                continue;
+            }
+
+            if (!activeEffects.ContainsKey(_Target))
+            {
+                activeEffects[_Target] = new Dictionary<So_Item_StackEffect, StackEffectData>();
+            }
+
+            if (activeEffects[_Target].ContainsKey(stackEffect))
+            {
+                var stackData = activeEffects[_Target][stackEffect];
+                stackData.StackCount += stackEffect.StacksAddedPerHit;
+                if (stackEffect.MaxStacks != 0)
                 {
-                    if (stackData.StackCount > m_MaxStacks)
+                    if (stackData.StackCount > stackEffect.MaxStacks)
                     {
-                        stackData.StackCount = m_MaxStacks;
+                        stackData.StackCount = stackEffect.MaxStacks;
                     }
                 }
-               
             }
             else
             {
                 StackEffectData newEffect = new StackEffectData
                 {
-                    StackCount = m_StacksAddedPerHit,
-                    EffectCoroutine = ItemCoroutineHandler.Instance.StartCoroutine(IntervalRoutine(_Source, _Target, m_Interval, effect))
+                    StackCount = stackEffect.StacksAddedPerHit,
+                    EffectCoroutine = ItemCoroutineHandler.Instance.StartCoroutine(IntervalRoutine(_Source, _Target, stackEffect.Interval, stackEffect))
                 };
-                activeEffects[_Target][effect] = newEffect;
+                activeEffects[_Target][stackEffect] = newEffect;
             }
         }
         return false;
     }
+
     /// <summary>
     /// Coroutine that invokes the corresponding effects based on stack amount.
     /// </summary>
@@ -64,7 +70,7 @@ public class SO_Effect_Trigger_Stack : SO_Effect_Trigger
     /// <param name="_Target"><see cref="IItemUser"/> that should get targeted by effect</param>
     /// <param name="_Interval">time between invokes</param>
     /// <returns></returns>
-    private IEnumerator IntervalRoutine(IItemUser _Source, IItemUser _Target, float _Interval, SO_Item_Effect effect)
+    private IEnumerator IntervalRoutine(IItemUser _Source, IItemUser _Target, float _Interval, So_Item_StackEffect effect)
     {
         while (true)
         {
@@ -74,7 +80,7 @@ public class SO_Effect_Trigger_Stack : SO_Effect_Trigger
             if (activeEffects[_Target].ContainsKey(effect))
             {
                 var stackData = activeEffects[_Target][effect];
-                stackData.StackCount -= m_StacksConsumedPerInterval;
+                stackData.StackCount -= effect.StacksConsumedPerInterval;
                 if (stackData.StackCount <= 0)
                 {
                     ItemCoroutineHandler.Instance.StopCoroutine(stackData.EffectCoroutine);
@@ -88,28 +94,29 @@ public class SO_Effect_Trigger_Stack : SO_Effect_Trigger
             }
         }
     }
+
     /// <summary>
     /// Invokes the corresponding effects. Gets called by the coroutines.
     /// </summary>
     /// <param name="_Source"><see cref="IItemUser"/> that called the trigger</param>
     /// <param name="_Target"><see cref="IItemUser"/> that should get targeted by effect</param>
     /// <exception cref="System.Exception"></exception>
-    private void InvokeInterval(IItemUser _Source, IItemUser _Target, SO_Item_Effect effect)
+    private void InvokeInterval(IItemUser _Source, IItemUser _Target, So_Item_StackEffect effect)
     {
         if (effect == null)
         {
             throw new System.Exception("Effect not initialized in " + this.name);
         }
 
-        if (CheckEffectRegistry(_Source, _Target, effect))
+        if (CheckStackRegistry(_Source, _Target, effect))
         {
-            effect?.OnInvoke(_Source, _Target);
+            effect?.OnStackInvoke(_Source, _Target, activeEffects[_Target][effect].StackCount);
         }
     }
 
-    private bool CheckEffectRegistry(IItemUser _Source, IItemUser _Target, SO_Item_Effect effect)
+    private bool CheckStackRegistry(IItemUser _Source, IItemUser _Target, So_Item_StackEffect effect)
     {
-        return _Source.EffectRegistry.ContainsKey(this) && _Source.EffectRegistry[this].Contains(effect);
+        return (activeEffects.ContainsKey(_Target) && activeEffects[_Target].ContainsKey(effect));
     }
 
     private class StackEffectData

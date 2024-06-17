@@ -1,0 +1,29 @@
+using UnityEngine;
+
+public abstract class So_Item_StackEffect : SO_Item_Effect
+{
+    [SerializeField] private float m_Interval = 1.0f;
+    [SerializeField][Range(0.0f, 1.0f)] private float m_ChanceToAddStacks = 1.0f;
+    [SerializeField] private int m_StacksAddedPerHit = 1;
+    [SerializeField] private int m_MaxStacks = 0;
+    [SerializeField] private int m_StacksConsumedPerInterval = 1;
+
+    public float Interval { get => m_Interval; }
+    public float ChanceToAddStacks { get => m_ChanceToAddStacks; }
+    public int StacksAddedPerHit { get => m_StacksAddedPerHit; }
+    public int MaxStacks { get => m_MaxStacks; }
+    public int StacksConsumedPerInterval { get => m_StacksConsumedPerInterval; }
+
+    public void OnStackInvoke(IItemUser _Source, IItemUser _Target, int _StackAmount) 
+    {
+        ItemStackEffect(_Source, _Target, _StackAmount);
+    }
+
+    /// <summary>
+    /// Override this to add your custom item stack effect. You can access the characters stats through <see cref="IItemUser.UserStats"/> .
+    /// Leave the ItemEffect method empty / make it instantly return, if you dont want it to have a regular / non stackable effect as well.
+    /// </summary>
+    /// <param name="_Source"><see cref="IItemUser"/> that called the effect</param>
+    /// <param name="_Target"><see cref="IItemUser"/> that gets hit by the effect</param>
+    protected abstract void ItemStackEffect(IItemUser _Source, IItemUser _Target, int _StackAmount);
+}

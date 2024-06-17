@@ -10,12 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f9d1bc8c88308a9418d893a2bc28e3be, type: 3}
-  m_Name: FancyItem
+  m_Name: StackItem
   m_EditorClassIdentifier: 
-  m_ItemName: Shitty Item
+  m_ItemName: StackItem
   m_Class: {fileID: 11400000, guid: c6d4018ce217c994fb31a9ffb5a1476a, type: 2}
   m_Rarity: 0
   m_Effects:
-  - {fileID: 11400000, guid: a8c2a7575d855054e8c1f0a4080230eb, type: 2}
-  - {fileID: 11400000, guid: 96c2a15fb6e573d4b884d89b1b4599b4, type: 2}
+  - {fileID: 11400000, guid: 3e1a294f374559c4da55394cfda7ea2a, type: 2}
   m_GoldValue: 0

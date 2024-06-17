@@ -9,10 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 727238865d913414ea54e6ac43f28971, type: 3}
-  m_Name: FancyEffect
+  m_Script: {fileID: 11500000, guid: e28f3995e2ccd6541bb41cd5e9648925, type: 3}
+  m_Name: ApllyShittyStacks
   m_EditorClassIdentifier: 
-  m_EffectName: Shitty Effect of Interval Shitness
-  m_Trigger: {fileID: 11400000, guid: b13c9b3470c1a2e479664357e8f531b2, type: 2}
+  m_EffectName: ApplyShittyStacks
+  m_Trigger: {fileID: 11400000, guid: 7728480bed9e5ab4e9b1a6106c1666d7, type: 2}
   m_EffectTarget: 0
   m_TargetRange: 0
+  m_StackEffect: {fileID: 11400000, guid: 545c1c796ebbcfe4d8852f44e51d5ba9, type: 2}
