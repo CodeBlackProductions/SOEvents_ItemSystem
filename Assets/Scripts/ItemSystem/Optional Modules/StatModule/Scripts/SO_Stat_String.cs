@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewStat", menuName = "CharacterSystem/Stat/String")]
+[CreateAssetMenu(fileName = "NewStat", menuName = "StatSystem/Stat/Stat_String")]
 [Serializable]
 public class SO_Stat_String : SO_Stat
 {

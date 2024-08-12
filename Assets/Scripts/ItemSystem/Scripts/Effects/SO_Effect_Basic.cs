@@ -1,7 +1,7 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New_Effect", menuName = "ItemSystem/Effect/BasicEffect")]
-public class test : SO_Item_Effect
+[CreateAssetMenu(fileName = "New_Effect", menuName = "ItemSystem/Item/Effect/Effect_Basic")]
+public class SO_Effect_Basic : SO_Item_Effect
 {
     protected override void ItemEffect(IItemUser _Source, IItemUser _Target)
     {

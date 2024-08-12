@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Class_Armor
   m_EditorClassIdentifier: 
   m_ClassName: ArmorClass
-  m_Types:
-  - {fileID: 0}
+  m_Types: []
+  m_ClassStats: []

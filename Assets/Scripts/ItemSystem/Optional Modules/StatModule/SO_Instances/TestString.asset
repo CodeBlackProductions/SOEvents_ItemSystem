@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 033c0ad1eb7eecd4089c5fc63502a879, type: 3}
   m_Name: TestString
   m_EditorClassIdentifier: 
-  m_StatName: ArmorType
+  m_StatName: Armor Type
   m_Value: Heavy

@@ -6,7 +6,7 @@ using UnityEngine;
 /// This trigger adds and manages stacks for <see cref="So_Item_StackEffect"/>.
 /// Call from another effect (e.g. On Hit Poison).
 /// </summary>
-[CreateAssetMenu(fileName = "New_StackTrigger", menuName = "ItemSystem/Effect/Trigger/Stack")]
+[CreateAssetMenu(fileName = "New_StackTrigger", menuName = "ItemSystem/Item/Effect/Trigger/Trigger_Stack")]
 public class SO_Effect_Trigger_Stack : SO_Effect_Trigger
 {
     private Dictionary<IItemUser, Dictionary<So_Item_StackEffect, StackEffectData>> activeEffects = new Dictionary<IItemUser, Dictionary<So_Item_StackEffect, StackEffectData>>();

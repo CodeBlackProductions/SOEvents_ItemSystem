@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewStat", menuName = "CharacterSystem/Stat/Float")]
+[CreateAssetMenu(fileName = "NewStat", menuName = "StatSystem/Stat/Stat_Float")]
 [Serializable]
 public class SO_Stat_Float : SO_Stat
 {

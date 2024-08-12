@@ -2,8 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New_Effect", menuName = "ItemSystem/Effect/StackEffect")]
-public class TestStackEffect : So_Item_StackEffect
+[CreateAssetMenu(fileName = "New_Effect", menuName = "ItemSystem/Item/Effect/Effect_Stack")]
+public class SO_Effect_Stack : So_Item_StackEffect
 {
     protected override void ItemEffect(IItemUser _Source, IItemUser _Target)
     {

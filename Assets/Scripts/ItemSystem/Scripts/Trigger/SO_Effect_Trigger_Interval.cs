@@ -6,7 +6,7 @@ using UnityEngine;
 /// This trigger calls each registered <see cref="SO_Item_Effect"/> in fixed intervals.
 /// Call at character initialization.
 /// </summary>
-[CreateAssetMenu(fileName = "New_Interval", menuName = "ItemSystem/Effect/Trigger/Interval")]
+[CreateAssetMenu(fileName = "New_Interval", menuName = "ItemSystem/Item/Effect/Trigger/Trigger_Interval")]
 public class SO_Effect_Trigger_Interval : SO_Effect_Trigger
 {
     [SerializeField] private float m_Interval = 1.0f;
