@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 033c0ad1eb7eecd4089c5fc63502a879, type: 3}
-  m_Name: TestString
+  m_Script: {fileID: 11500000, guid: 6aefc8afd4fecee41ae829fec1a6f0e8, type: 3}
+  m_Name: Test_Health
   m_EditorClassIdentifier: 
-  m_StatName: Armor Type
-  m_Value: Heavy
+  m_StatName: Health
+  m_Value: 100

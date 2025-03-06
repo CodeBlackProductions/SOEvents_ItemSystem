@@ -457,16 +457,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_unitStats:
-    _serializedList:
-    - Key: Health
-      Value: {fileID: 11400000, guid: 06b9d79a4e7aa7b48ae728c2cc396d8d, type: 2}
-    - Key: Armor
-      Value: {fileID: 11400000, guid: 179b104711c079448886dc2024f10570, type: 2}
+  - {fileID: 11400000, guid: 06b9d79a4e7aa7b48ae728c2cc396d8d, type: 2}
+  - {fileID: 11400000, guid: d57de04d677348541a955e6902d9df5b, type: 2}
+  - {fileID: 11400000, guid: 179b104711c079448886dc2024f10570, type: 2}
   m_TestSlot: {fileID: 0}
   m_TestItem: {fileID: 0}
   m_WrongTestItem: {fileID: 0}
   m_TestTarget: {fileID: 0}
-  m_Items: []
 --- !u!4 &1091566121
 Transform:
   m_ObjectHideFlags: 0

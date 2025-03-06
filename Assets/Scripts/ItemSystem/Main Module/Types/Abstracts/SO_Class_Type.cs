@@ -23,9 +23,9 @@ public class SO_Class_Type : ScriptableObject
             m_Stats.Clear();
             foreach (SO_Stat stat in m_TypeStats)
             {
-                if (stat != null && !m_Stats.ContainsKey(stat.name))
+                if (stat != null && !m_Stats.ContainsKey(stat.GetName()))
                 {
-                    m_Stats.Add(stat.name, stat);
+                    m_Stats.Add(stat.GetName(), stat);
                 }
             }
         }

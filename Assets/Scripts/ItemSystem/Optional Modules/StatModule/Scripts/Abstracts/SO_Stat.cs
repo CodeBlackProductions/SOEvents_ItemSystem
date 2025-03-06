@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI;
 
 /// <summary>
 /// Base class for user stats of different types.
@@ -8,7 +9,11 @@ using UnityEngine;
 [Serializable]
 public abstract class SO_Stat : ScriptableObject
 {
-    [SerializeField] private string m_StatName = "NewStat";
+    [SerializeField] protected string m_StatName = "NewStat";
+
+    public abstract string GetName();
+
+    public abstract Type GetStatType();
 
     public abstract object GetValue();
 

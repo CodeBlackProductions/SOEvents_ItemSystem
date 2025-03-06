@@ -1,19 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
-<engine:UXML
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:engine="UnityEngine.UIElements"
-    xmlns:editor="UnityEditor.UIElements"
-    xsi:noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd">
-
-    <engine:VisualElement class="main-window">
-        <engine:VisualElement class="tabs">
-            <engine:Button name="tab1Button" text="Tab 1" class="tab-button" />
-            <engine:Button name="tab2Button" text="Tab 2" class="tab-button" />
-        </engine:VisualElement>
-
-        <engine:VisualElement name="tab1" class="tab-content">
-        </engine:VisualElement>
-        <engine:VisualElement name="tab2" class="tab-content">
-        </engine:VisualElement>
-    </engine:VisualElement>
-</engine:UXML>
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement class="main-window">
+        <ui:VisualElement class="tabs">
+            <ui:Button name="tab1Button" text="Tab 1" class="tab-button" />
+            <ui:Button name="tab2Button" text="Tab 2" class="tab-button" />
+            <ui:Button name="tab3Button" text="Tab 3" class="tab-button" />
+        </ui:VisualElement>
+        <ui:VisualElement name="tab1" class="tab-content" />
+        <ui:VisualElement name="tab2" class="tab-content" />
+        <ui:VisualElement name="tab3" class="tab-content" />
+    </ui:VisualElement>
+</ui:UXML>

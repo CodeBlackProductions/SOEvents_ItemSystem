@@ -1,6 +1,9 @@
 using AYellowpaper.SerializedCollections;
+using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
 
 /// <summary>
 /// This is just an example implementation of the item System.
@@ -8,12 +11,10 @@ using UnityEngine;
 /// </summary>
 public class UnitController : MonoBehaviour, IItemUser
 {
-    [SerializeField]
-    [SerializedDictionary("Name", "Stat Value")]
-    private SerializedDictionary<string, SO_Stat> m_unitStats = new SerializedDictionary<string, SO_Stat>();
-
     private SerializedDictionary<SO_Effect_Trigger, List<SO_Item_Effect>> m_effectRegistry = new SerializedDictionary<SO_Effect_Trigger, List<SO_Item_Effect>>();
+    private SerializedDictionary<string, Runtime_Stat> m_UserStats = new SerializedDictionary<string, Runtime_Stat>();
 
+    [SerializeField] private List<SO_Stat> m_unitStats;
     [SerializeField] private SO_ItemSlot m_TestSlot;
     [SerializeField] private SO_Item m_TestItem;
     [SerializeField] private SO_Item m_WrongTestItem;
@@ -21,13 +22,13 @@ public class UnitController : MonoBehaviour, IItemUser
 
     private IItemUser m_TestTargetUser;
 
-    [SerializeField] private List<SO_Item> m_Items = new List<SO_Item>();
+    private List<SO_Item> m_Items = new List<SO_Item>();
     private float timer = 1f;
 
     public List<SO_Item> Items { get => m_Items; set => m_Items = value; }
+    public List<SO_Stat> Stats { get => m_unitStats; set => m_unitStats = value; }
 
-    SerializedDictionary<string, SO_Stat> IItemUser.UserStats { get => m_unitStats; set => m_unitStats = value; }
-
+    public SerializedDictionary<string, Runtime_Stat> UserStats { get => m_UserStats; }
     SerializedDictionary<SO_Effect_Trigger, List<SO_Item_Effect>> IItemUser.EffectRegistry { get => m_effectRegistry; }
 
     private void Awake()
@@ -47,8 +48,18 @@ public class UnitController : MonoBehaviour, IItemUser
 
         this.GetComponent<IItemUser>().OnInitialize();
 
-        Debug.Log("Health: " + m_unitStats["Health"].GetValue());
-        Debug.Log("Amor Type: " + m_unitStats["Armor"].GetValue());
+        Type healthType = UserStats["Health"].Type;
+        var health = UserStats["Health"].Value;
+
+        Type armorType = UserStats["Armor"].Type;
+        var armor = UserStats["Armor"].Value;
+
+        Type typeOfArmorType = UserStats["Armor Type"].Type;
+        var typeOfArmor = UserStats["Armor Type"].Value;
+
+        Debug.Log("Health: " + health + " of type: " + healthType.Name);
+        Debug.Log("Armor: " + armor + " of type: " + armorType.Name);
+        Debug.Log("Armor Type: " + typeOfArmor + " of type: " + typeOfArmorType.Name);
 
         foreach (var item in m_effectRegistry)
         {
@@ -71,7 +82,5 @@ public class UnitController : MonoBehaviour, IItemUser
 
     private void Update()
     {
-
     }
-
 }
