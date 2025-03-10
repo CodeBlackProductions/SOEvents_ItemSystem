@@ -1,6 +1,7 @@
 using AYellowpaper.SerializedCollections;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
 /// Adds item system functionality to a custom unit/character script.
@@ -11,11 +12,13 @@ public interface IItemUser
 
     public List<SO_Stat> Stats { get; set; }
 
+    public GameObject m_ImplementingUser { get; }
+
     public SerializedDictionary<string, Runtime_Stat> UserStats { get;}
     public SerializedDictionary<SO_Effect_Trigger, List<SO_Item_Effect>> EffectRegistry { get; }
 
     /// <summary>
-    /// Initializes the item effects into the registry. Needed for checking if an effect has to be triggered later on.
+    /// Initializes the item effects and stats into the registry. Needed for checking if an effect has to be triggered later on.
     /// </summary>
     public void OnInitialize()
     {

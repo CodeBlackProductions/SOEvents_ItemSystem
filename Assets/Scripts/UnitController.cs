@@ -29,6 +29,9 @@ public class UnitController : MonoBehaviour, IItemUser
     public List<SO_Stat> Stats { get => m_unitStats; set => m_unitStats = value; }
 
     public SerializedDictionary<string, Runtime_Stat> UserStats { get => m_UserStats; }
+
+    public GameObject m_ImplementingUser => this.gameObject;
+
     SerializedDictionary<SO_Effect_Trigger, List<SO_Item_Effect>> IItemUser.EffectRegistry { get => m_effectRegistry; }
 
     private void Awake()

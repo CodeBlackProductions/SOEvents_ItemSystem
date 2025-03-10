@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -20,7 +21,47 @@ public abstract class So_Item_StackEffect : SO_Item_Effect
 
     public void OnStackInvoke(IItemUser _Source, IItemUser _Target, int _StackAmount) 
     {
-        ItemStackEffect(_Source, _Target, _StackAmount);
+        switch (EffectTarget)
+        {
+            case ETarget.Self:
+                ItemStackEffect(_Source,_Source,_StackAmount);
+                break;
+
+            case ETarget.Target:
+                ItemStackEffect(_Source, _Target, _StackAmount);
+                break;
+
+            case ETarget.TargetsInRangeSelf:
+
+                Collider[] targetsSelf = Physics.OverlapSphere(_Source.m_ImplementingUser.transform.position, TargetRange);
+                foreach (Collider target in targetsSelf)
+                {
+                    IItemUser itemUser;
+                    if (target.TryGetComponent<IItemUser>(out itemUser))
+                    {
+                        ItemStackEffect(_Source, itemUser, _StackAmount);
+                    }
+                }
+                break;
+
+            case ETarget.TargetsInRangeTarget:
+
+                Collider[] targets = Physics.OverlapSphere(_Target.m_ImplementingUser.transform.position, TargetRange);
+                foreach (Collider target in targets)
+                {
+                    IItemUser itemUser;
+                    if (target.TryGetComponent<IItemUser>(out itemUser))
+                    {
+                        ItemStackEffect(_Source, itemUser, _StackAmount);
+                    }
+                }
+                break;
+
+            default:
+                ItemStackEffect(_Source, _Target, _StackAmount);
+                break;
+        }
+       
     }
 
     /// <summary>
