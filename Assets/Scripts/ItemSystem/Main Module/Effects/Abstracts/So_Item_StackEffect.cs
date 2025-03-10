@@ -33,7 +33,7 @@ public abstract class So_Item_StackEffect : SO_Item_Effect
 
             case ETarget.TargetsInRangeSelf:
 
-                Collider[] targetsSelf = Physics.OverlapSphere(_Source.m_ImplementingUser.transform.position, TargetRange);
+                Collider[] targetsSelf = Physics.OverlapSphere(_Source.ImplementingUser.transform.position, TargetRange);
                 foreach (Collider target in targetsSelf)
                 {
                     IItemUser itemUser;
@@ -46,7 +46,7 @@ public abstract class So_Item_StackEffect : SO_Item_Effect
 
             case ETarget.TargetsInRangeTarget:
 
-                Collider[] targets = Physics.OverlapSphere(_Target.m_ImplementingUser.transform.position, TargetRange);
+                Collider[] targets = Physics.OverlapSphere(_Target.ImplementingUser.transform.position, TargetRange);
                 foreach (Collider target in targets)
                 {
                     IItemUser itemUser;

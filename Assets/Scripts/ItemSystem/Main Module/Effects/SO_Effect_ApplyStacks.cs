@@ -6,7 +6,8 @@ using static UnityEngine.GraphicsBuffer;
 [CreateAssetMenu(fileName = "New_ApplyStackEffect", menuName = "ItemSystem/Item/Effect/Effect_ApplyStack")]
 public class SO_Effect_ApplyStacks : SO_Item_Effect
 {
-    [SerializeField] So_Item_StackEffect m_StackEffect;
+    [SerializeField] private So_Item_StackEffect m_StackEffect;
+
     protected override void ItemEffect(IItemUser _Source, IItemUser _Target)
     {
         Debug.Log(EffectName + " just applied stacks!");

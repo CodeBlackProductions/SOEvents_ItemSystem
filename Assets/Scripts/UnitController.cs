@@ -1,9 +1,7 @@
 using AYellowpaper.SerializedCollections;
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.SocialPlatforms;
 
 /// <summary>
 /// This is just an example implementation of the item System.
@@ -19,6 +17,7 @@ public class UnitController : MonoBehaviour, IItemUser
     [SerializeField] private SO_Item m_TestItem;
     [SerializeField] private SO_Item m_WrongTestItem;
     [SerializeField] private GameObject m_TestTarget;
+    [SerializeField] private int m_Team = 0;
 
     private IItemUser m_TestTargetUser;
 
@@ -30,7 +29,9 @@ public class UnitController : MonoBehaviour, IItemUser
 
     public SerializedDictionary<string, Runtime_Stat> UserStats { get => m_UserStats; }
 
-    public GameObject m_ImplementingUser => this.gameObject;
+    public GameObject ImplementingUser => this.gameObject;
+
+    public int Team => m_Team;
 
     SerializedDictionary<SO_Effect_Trigger, List<SO_Item_Effect>> IItemUser.EffectRegistry { get => m_effectRegistry; }
 

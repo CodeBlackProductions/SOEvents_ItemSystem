@@ -464,6 +464,7 @@ MonoBehaviour:
   m_TestItem: {fileID: 0}
   m_WrongTestItem: {fileID: 0}
   m_TestTarget: {fileID: 0}
+  m_Team: 1
 --- !u!4 &1091566121
 Transform:
   m_ObjectHideFlags: 0

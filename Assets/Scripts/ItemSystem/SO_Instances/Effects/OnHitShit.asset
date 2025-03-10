@@ -14,5 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_EffectName: OnHitShit
   m_Trigger: {fileID: 11400000, guid: 7728480bed9e5ab4e9b1a6106c1666d7, type: 2}
-  m_EffectTarget: 0
+  m_EffectTarget: 1
+  m_AllowedEffectTargets: 2
   m_TargetRange: 0

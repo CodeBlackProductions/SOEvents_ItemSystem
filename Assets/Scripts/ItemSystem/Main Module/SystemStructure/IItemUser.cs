@@ -1,5 +1,4 @@
 using AYellowpaper.SerializedCollections;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,9 +11,10 @@ public interface IItemUser
 
     public List<SO_Stat> Stats { get; set; }
 
-    public GameObject m_ImplementingUser { get; }
+    public GameObject ImplementingUser { get; }
+    public int Team { get; }
 
-    public SerializedDictionary<string, Runtime_Stat> UserStats { get;}
+    public SerializedDictionary<string, Runtime_Stat> UserStats { get; }
     public SerializedDictionary<SO_Effect_Trigger, List<SO_Item_Effect>> EffectRegistry { get; }
 
     /// <summary>
@@ -45,7 +45,7 @@ public interface IItemUser
         {
             for (int i = 0; i < Stats.Count; i++)
             {
-                UserStats.Add(Stats[i].GetName(), new Runtime_Stat(Stats[i].GetValue(),Stats[i].GetStatType()));
+                UserStats.Add(Stats[i].GetName(), new Runtime_Stat(Stats[i].GetValue(), Stats[i].GetStatType()));
             }
         }
     }
