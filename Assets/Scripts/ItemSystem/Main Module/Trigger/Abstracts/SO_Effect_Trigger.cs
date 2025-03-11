@@ -11,7 +11,7 @@ public abstract class SO_Effect_Trigger : ScriptableObject
 
     protected List<SO_Item_Effect> m_Listener = new List<SO_Item_Effect>();
 
-    public string TriggerName { get => m_TriggerName; set => m_TriggerName = value; }
+    [ItemToolkitAccess] public string TriggerName { get => m_TriggerName; set => m_TriggerName = value; }
 
     public void OnEnable()
     {

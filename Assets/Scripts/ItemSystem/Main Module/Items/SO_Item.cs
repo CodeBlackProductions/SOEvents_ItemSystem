@@ -22,12 +22,12 @@ public class SO_Item : ScriptableObject
     private string m_SlotType;
     private Dictionary<string, SO_Stat> m_Stats = new Dictionary<string, SO_Stat>();
 
-    public SO_Item_Class Class { get => m_Class; set => m_Class = value; }
-    public int TypeIndex { get => m_TypeIndex; set => m_TypeIndex = value; }
-    public ERarity Rarity { get => m_Rarity; set => m_Rarity = value; }
-    public SO_Item_Effect[] Effects { get => m_Effects; set => m_Effects = value; }
-    public string ItemName { get => m_ItemName; set => m_ItemName = value; }
-    public Dictionary<string, SO_Stat> Stats { get => m_Stats; set => m_Stats = value; }
+    [ItemToolkitAccess] public SO_Item_Class Class { get => m_Class; set => m_Class = value; }
+    [ItemToolkitAccess] public int TypeIndex { get => m_TypeIndex; set => m_TypeIndex = value; }
+    [ItemToolkitAccess] public ERarity Rarity { get => m_Rarity; set => m_Rarity = value; }
+    [ItemToolkitAccess] public SO_Item_Effect[] Effects { get => m_Effects; set => m_Effects = value; }
+    [ItemToolkitAccess] public string ItemName { get => m_ItemName; set => m_ItemName = value; }
+    [ItemToolkitAccess] public Dictionary<string, SO_Stat> Stats { get => m_Stats; set => m_Stats = value; }
 
     private void OnValidate()
     {

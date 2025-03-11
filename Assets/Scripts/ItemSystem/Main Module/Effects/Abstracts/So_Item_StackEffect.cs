@@ -13,18 +13,18 @@ public abstract class So_Item_StackEffect : SO_Item_Effect
     [SerializeField] private int m_MaxStacks = 0;
     [SerializeField] private int m_StacksConsumedPerInterval = 1;
 
-    public float Interval { get => m_Interval; }
-    public float ChanceToAddStacks { get => m_ChanceToAddStacks; }
-    public int StacksAddedPerHit { get => m_StacksAddedPerHit; }
-    public int MaxStacks { get => m_MaxStacks; }
-    public int StacksConsumedPerInterval { get => m_StacksConsumedPerInterval; }
+    [ItemToolkitAccess] public float Interval { get => m_Interval; set => m_Interval = value; }
+    [ItemToolkitAccess] public float ChanceToAddStacks { get => m_ChanceToAddStacks; set => m_ChanceToAddStacks = value; }
+    [ItemToolkitAccess] public int StacksAddedPerHit { get => m_StacksAddedPerHit; set => m_StacksAddedPerHit = value; }
+    [ItemToolkitAccess] public int MaxStacks { get => m_MaxStacks; set => m_MaxStacks = value; }
+    [ItemToolkitAccess] public int StacksConsumedPerInterval { get => m_StacksConsumedPerInterval; set => m_StacksConsumedPerInterval = value; }
 
-    public void OnStackInvoke(IItemUser _Source, IItemUser _Target, int _StackAmount) 
+    public void OnStackInvoke(IItemUser _Source, IItemUser _Target, int _StackAmount)
     {
         switch (EffectTarget)
         {
             case ETarget.Self:
-                ItemStackEffect(_Source,_Source,_StackAmount);
+                ItemStackEffect(_Source, _Source, _StackAmount);
                 break;
 
             case ETarget.Target:
@@ -61,7 +61,6 @@ public abstract class So_Item_StackEffect : SO_Item_Effect
                 ItemStackEffect(_Source, _Target, _StackAmount);
                 break;
         }
-       
     }
 
     /// <summary>

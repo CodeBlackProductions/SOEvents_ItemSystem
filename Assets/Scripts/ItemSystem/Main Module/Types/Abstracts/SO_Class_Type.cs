@@ -12,12 +12,11 @@ public class SO_Class_Type : ScriptableObject
 
     private Dictionary<string, SO_Stat> m_Stats = new Dictionary<string, SO_Stat>();
 
-    public string TypeName { get => m_TypeName; set => m_TypeName = value; }
-    public Dictionary<string, SO_Stat> Stats { get => m_Stats; set => m_Stats = value; }
+    [ItemToolkitAccess] public string TypeName { get => m_TypeName; set => m_TypeName = value; }
+    [ItemToolkitAccess] public Dictionary<string, SO_Stat> Stats { get => m_Stats; set => m_Stats = value; }
 
     private void OnValidate()
     {
-
         if (m_TypeStats != null && m_TypeStats.Count > 0)
         {
             m_Stats.Clear();

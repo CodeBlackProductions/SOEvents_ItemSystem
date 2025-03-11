@@ -13,9 +13,9 @@ public abstract class SO_Item_Class : ScriptableObject
 
     private Dictionary<string, SO_Stat> m_Stats = new Dictionary<string, SO_Stat>();
 
-    public string ClassName { get => m_ClassName; set => m_ClassName = value; }
-    public SO_Class_Type[] Types { get => m_Types; set => m_Types = value; }
-    public Dictionary<string, SO_Stat> Stats { get => m_Stats; set => m_Stats = value; }
+    [ItemToolkitAccess] public string ClassName { get => m_ClassName; set => m_ClassName = value; }
+    [ItemToolkitAccess] public SO_Class_Type[] Types { get => m_Types; set => m_Types = value; }
+    [ItemToolkitAccess] public Dictionary<string, SO_Stat> Stats { get => m_Stats; set => m_Stats = value; }
 
     private void OnValidate()
     {

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -8,7 +9,9 @@ public class ItemSystemEditor : EditorWindow
 {
     private VisualElement root;
     private TabbedMenu tabMenu;
-    private TreeView itemTreeView;
+    private VisualElement tabContent;
+    private UnityEngine.UIElements.TreeView itemTreeView;
+    private InspectorPanel inspectorPanel;
 
     [MenuItem("Tools/Item System")]
     public static void ShowWindow()
@@ -21,18 +24,25 @@ public class ItemSystemEditor : EditorWindow
     {
         root = rootVisualElement;
 
-        // Create Tabs
         tabMenu = new TabbedMenu(new string[] { "Items", "Classes", "Types", "Effects", "Triggers" }, OnTabChanged);
+        tabContent = new VisualElement();
+        itemTreeView = new TreeView();
+        inspectorPanel = new InspectorPanel();
+
+        tabContent.style.flexDirection = FlexDirection.Row;
+
         root.Add(tabMenu);
+        root.Add(tabContent);
 
         // Default to Items Tab
         ShowItemTreeView();
+
+        tabContent.Add(inspectorPanel);
     }
 
     private void OnTabChanged(string tabName)
     {
-        root.Clear();
-        root.Add(tabMenu);
+        tabContent.Clear();
 
         if (tabName == "Items")
         {
@@ -42,18 +52,22 @@ public class ItemSystemEditor : EditorWindow
         {
             ShowModuleListView(tabName);
         }
+
+        tabContent.Add(inspectorPanel);
     }
 
     private void ShowItemTreeView()
     {
+        itemTreeView.selectionChanged -= OnTreeViewSelectionChanged;
         itemTreeView = new TreeView();
+        itemTreeView.selectionChanged += OnTreeViewSelectionChanged;
         itemTreeView.style.flexGrow = 1;
 
         // Populate TreeView with scriptable objects
         List<TreeViewItemData<string>> treeItems = LoadItemHierarchy();
         itemTreeView.SetRootItems(treeItems);
 
-        root.Add(itemTreeView);
+        tabContent.Add(itemTreeView);
     }
 
     private List<TreeViewItemData<string>> LoadItemHierarchy()
@@ -103,8 +117,10 @@ public class ItemSystemEditor : EditorWindow
 
     private void ShowModuleListView(string moduleType)
     {
-        var moduleListView = new TreeView();
-        moduleListView.style.flexGrow = 1;
+        itemTreeView.selectionChanged -= OnTreeViewSelectionChanged;
+        itemTreeView = new TreeView();
+        itemTreeView.selectionChanged += OnTreeViewSelectionChanged;
+        itemTreeView.style.flexGrow = 1;
 
         List<TreeViewItemData<string>> treeItems = new List<TreeViewItemData<string>>();
         int idCounter = 0;
@@ -160,22 +176,16 @@ public class ItemSystemEditor : EditorWindow
             }
         }
 
-        moduleListView.SetRootItems(treeItems);
-        root.Add(moduleListView);
+        itemTreeView.SetRootItems(treeItems);
+        tabContent.Add(itemTreeView);
     }
-}
 
-public class TabbedMenu : VisualElement
-{
-    public TabbedMenu(string[] tabNames, System.Action<string> onTabChanged)
+    private void OnTreeViewSelectionChanged(IEnumerable<object> selectedItems)
     {
-        var tabContainer = new VisualElement { style = { flexDirection = FlexDirection.Row } };
-        foreach (var tabName in tabNames)
+        foreach (var selectedItem in selectedItems)
         {
-            var tabButton = new Button(() => onTabChanged(tabName)) { text = tabName };
-            tabButton.style.flexGrow = 1;
-            tabContainer.Add(tabButton);
+            ScriptableObject so = UIAssetLoader.LoadAssetByName<ScriptableObject>(selectedItem.ToString());
+            inspectorPanel.Show(so);
         }
-        Add(tabContainer);
     }
 }

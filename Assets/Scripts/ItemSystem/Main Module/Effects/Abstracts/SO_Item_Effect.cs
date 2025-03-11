@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using static Unity.VisualScripting.Member;
 
 public enum ETarget
 {
@@ -28,11 +27,11 @@ public abstract class SO_Item_Effect : ScriptableObject
     [ConditionalHide(nameof(m_EffectTarget), 2, 3)]
     [SerializeField] private float m_TargetRange = 0;
 
-    public string EffectName { get => m_EffectName; }
-    public ETarget EffectTarget { get => m_EffectTarget; }
-    public EAllowedTargets AllowedEffectTargets { get => m_AllowedEffectTargets; }
-    public float TargetRange { get => m_TargetRange; }
-    public SO_Effect_Trigger Trigger { get => m_Trigger; }
+    [ItemToolkitAccess] public string EffectName { get => m_EffectName; set => m_EffectName = value; }
+    [ItemToolkitAccess] public ETarget EffectTarget { get => m_EffectTarget; set => m_EffectTarget = value; }
+    [ItemToolkitAccess] public EAllowedTargets AllowedEffectTargets { get => m_AllowedEffectTargets; set => m_AllowedEffectTargets = value; }
+    [ItemToolkitAccess] public float TargetRange { get => m_TargetRange; set => m_TargetRange = value; }
+    [ItemToolkitAccess] public SO_Effect_Trigger Trigger { get => m_Trigger; set => m_Trigger = value; }
 
     private void OnEnable()
     {
@@ -141,7 +140,7 @@ public abstract class SO_Item_Effect : ScriptableObject
 
     private List<IItemUser> GetTargetsInRange(Vector3 _StartPoint, float _Range)
     {
-        Collider[] colliders = Physics.OverlapSphere(_StartPoint, _Range, Physics.AllLayers ,QueryTriggerInteraction.Collide);
+        Collider[] colliders = Physics.OverlapSphere(_StartPoint, _Range, Physics.AllLayers, QueryTriggerInteraction.Collide);
         List<IItemUser> targets = new List<IItemUser>();
         foreach (Collider collider in colliders)
         {
