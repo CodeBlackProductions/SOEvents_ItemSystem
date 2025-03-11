@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5967834873567413903}
   - component: {fileID: 4670976891314511188}
+  - component: {fileID: 457359583531355100}
   m_Layer: 0
   m_Name: TestUser
   m_TagString: Untagged
@@ -52,3 +53,25 @@ MonoBehaviour:
   m_TestItem: {fileID: 11400000, guid: 47ab9c0e029d909468d8db2803ae23f9, type: 2}
   m_WrongTestItem: {fileID: 11400000, guid: 4de126c92aec0744dab315c3546b485d, type: 2}
   m_TestTarget: {fileID: 0}
+  m_Team: 0
+--- !u!65 &457359583531355100
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 926482983179771703}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}

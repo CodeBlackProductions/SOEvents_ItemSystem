@@ -141,7 +141,7 @@ public abstract class SO_Item_Effect : ScriptableObject
 
     private List<IItemUser> GetTargetsInRange(Vector3 _StartPoint, float _Range)
     {
-        Collider[] colliders = Physics.OverlapSphere(_StartPoint, _Range);
+        Collider[] colliders = Physics.OverlapSphere(_StartPoint, _Range, Physics.AllLayers ,QueryTriggerInteraction.Collide);
         List<IItemUser> targets = new List<IItemUser>();
         foreach (Collider collider in colliders)
         {
