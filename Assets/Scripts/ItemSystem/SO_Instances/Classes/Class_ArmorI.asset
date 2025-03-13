@@ -10,9 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c6a683474c142854082145a214c2bf07, type: 3}
-  m_Name: Class_Weapon
+  m_Name: Class_ArmorI
   m_EditorClassIdentifier: 
-  m_ClassName: Weapon_Class
-  m_Types:
-  - {fileID: 11400000, guid: 1ac4dd0cffd980942bdd8f5fc3bb75c4, type: 2}
-  - {fileID: 11400000, guid: 745b43294e374964fb869df164313360, type: 2}
+  m_ClassName: ArmorClass
+  m_Types: []
+  m_ClassStats: []
