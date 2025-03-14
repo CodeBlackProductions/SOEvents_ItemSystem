@@ -13,6 +13,8 @@ public class SO_Effect_Trigger_Interval : SO_Effect_Trigger
 
     private Dictionary<IItemUser, Coroutine> activeCoroutines = new Dictionary<IItemUser, Coroutine>();
 
+    [ItemToolkitAccess] public float Interval { get => m_Interval; set => m_Interval = value; }
+
     /// <summary>
     /// Add/ Remove Coroutine for effects.
     /// </summary>
@@ -34,6 +36,7 @@ public class SO_Effect_Trigger_Interval : SO_Effect_Trigger
             return false;
         }
     }
+
     /// <summary>
     /// Coroutine that invokes the corresponding effects.
     /// </summary>
@@ -49,6 +52,7 @@ public class SO_Effect_Trigger_Interval : SO_Effect_Trigger
             InvokeInterval(_Source, _Target);
         }
     }
+
     /// <summary>
     /// Invokes the corresponding effects. Gets called by the coroutines.
     /// </summary>

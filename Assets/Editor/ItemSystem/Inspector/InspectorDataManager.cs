@@ -33,10 +33,34 @@ public static class InspectorDataManager
             if (_Property.PropertyType.IsEnum)
             {
                 List<string> enumNames = Enum.GetNames(_Property.PropertyType).ToList();
-                DropdownField dropdownField = new DropdownField(enumNames, Enum.GetName(_Property.PropertyType, _Property.GetValue(_ParentSO)));
-                parent.Add(dropdownField);
 
-                return parent;
+                if (enumNames.Count > 0)
+                {
+                    string currentEntry = Enum.GetName(_Property.PropertyType, _Property.GetValue(_ParentSO));
+
+                    if (currentEntry != null)
+                    {
+                        DropdownField dropdownField = new DropdownField(enumNames, currentEntry);
+
+                        parent.Add(dropdownField);
+
+                        return parent;
+                    }
+                    else
+                    {
+                        currentEntry = $"Select Option";
+                        enumNames.Insert(0, currentEntry);
+
+                        DropdownField dropdownField = new DropdownField(enumNames, currentEntry);
+
+                        parent.Add(dropdownField);
+
+                        return parent;
+                    }
+                }
+
+                Debug.LogWarning($"Enum entries could not be found for {_ParentSO} : {_Property.Name}");
+                return null;
             }
             else if (_Property.PropertyType.IsSubclassOf(typeof(ScriptableObject)))
             {
@@ -49,10 +73,34 @@ public static class InspectorDataManager
                         soNames.Add(soList[i].name + " (" + soList[i].GetType() + ")");
                     }
                 }
-                DropdownField dropdownField = new DropdownField(soNames, _Property.GetValue(_ParentSO).ToString());
-                parent.Add(dropdownField);
 
-                return parent;
+                if (soNames.Count > 0)
+                {
+                    string currentEntry = _Property.GetValue(_ParentSO)?.ToString();
+
+                    if (currentEntry != null)
+                    {
+                        DropdownField dropdownField = new DropdownField(soNames, currentEntry);
+
+                        parent.Add(dropdownField);
+
+                        return parent;
+                    }
+                    else
+                    {
+                        currentEntry = $"Select {_Property.PropertyType}";
+                        soNames.Insert(0, currentEntry);
+
+                        DropdownField dropdownField = new DropdownField(soNames, currentEntry);
+
+                        parent.Add(dropdownField);
+
+                        return parent;
+                    }
+                }
+
+                Debug.LogWarning($"ScriptableObject entries could not be found for {_ParentSO} : {_Property.Name}");
+                return null;
             }
             else if (typeof(IDictionary).IsAssignableFrom(_Property.PropertyType))
             {
@@ -67,6 +115,67 @@ public static class InspectorDataManager
                     return parent;
                 }
 
+                Debug.LogWarning($"Could not generate InspectorList for Dictionary {_ParentSO} : {_Property.Name}");
+                return null;
+            }
+            else if (typeof(Array).IsAssignableFrom(_Property.PropertyType))
+            {
+                if (_Property.PropertyType == typeof(SO_Item_Effect[]))
+                {
+                    List<SO_Item_Effect> effects = (_Property.GetValue(_ParentSO) as SO_Item_Effect[]).ToList();
+
+                    InspectorList<SO_Item_Effect> effectList = new InspectorList<SO_Item_Effect>(effects, "Effects");
+                    parent.Add(effectList);
+                    return parent;
+                }
+
+                if (_Property.PropertyType == typeof(SO_Class_Type[]))
+                {
+                    List<SO_Class_Type> types = (_Property.GetValue(_ParentSO) as SO_Class_Type[]).ToList();
+
+                    InspectorList<SO_Class_Type> typeList = new InspectorList<SO_Class_Type>(types, "Types");
+                    parent.Add(typeList);
+                    return parent;
+                }
+
+                Debug.LogWarning($"Could not generate InspectorList for Array {_ParentSO} : {_Property.Name}");
+                return null;
+            }
+            else if (typeof(IProjectile).IsAssignableFrom(_Property.PropertyType))
+            {
+                List<GameObject> projectileList = UIAssetLoader.LoadAssetsByType<GameObject>().Where(asset => asset.GetComponent<IProjectile>() != null).ToList();
+                List<string> projectileNames = new List<string>();
+                for (int i = 0; i < projectileList.Count; i++)
+                {
+                    projectileNames.Add(projectileList[i].name);
+                }
+
+                if (projectileNames.Count > 0)
+                {
+                    string currentEntry = _Property.GetValue(_ParentSO)?.ToString();
+
+                    if (currentEntry != null)
+                    {
+                        DropdownField dropdownField = new DropdownField(projectileNames, currentEntry);
+
+                        parent.Add(dropdownField);
+
+                        return parent;
+                    }
+                    else
+                    {
+                        currentEntry = "Select Projectile";
+                        projectileNames.Insert(0,currentEntry);
+
+                        DropdownField dropdownField = new DropdownField(projectileNames, currentEntry);
+
+                        parent.Add(dropdownField);
+
+                        return parent;
+                    }
+                }
+
+                Debug.LogWarning($"Projectile Class entries could not be found for {_ParentSO} : {_Property.Name}");
                 return null;
             }
             else if (m_Typedictionary.ContainsKey(_Property.PropertyType))

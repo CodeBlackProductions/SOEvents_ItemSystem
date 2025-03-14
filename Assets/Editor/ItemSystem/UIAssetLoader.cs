@@ -18,7 +18,7 @@ public static class UIAssetLoader
         return null;
     }
 
-    public static List<T> LoadAssetsByType<T>() where T : ScriptableObject
+    public static List<T> LoadAssetsByType<T>() where T : Object
     {
         string[] guids = AssetDatabase.FindAssets($"t:{typeof(T).Name}");
 

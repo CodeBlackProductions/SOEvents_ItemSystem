@@ -49,7 +49,7 @@ public class InspectorList<T> : VisualElement where T : ScriptableObject
     {
         List<T> soList = UIAssetLoader.LoadAssetsByType<T>();
         List<string> soNames = new List<string>();
-        soNames.Add("Choose Stat");
+        soNames.Add("Choose new entry");
         for (int i = 0; i < soList.Count; i++)
         {
             soNames.Add(soList[i].name);
