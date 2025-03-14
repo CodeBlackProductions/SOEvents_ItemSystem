@@ -1,4 +1,3 @@
-using Codice.CM.SEIDInfo;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -20,9 +19,6 @@ public static class InspectorDataManager
         { typeof(int), ETypes.Int },
         { typeof(float), ETypes.Float }
     };
-
-    public static void Test(ScriptableObject test)
-    { }
 
     public static VisualElement CreateEntry(ScriptableObject _ParentSO, PropertyInfo _Property)
     {
@@ -60,21 +56,17 @@ public static class InspectorDataManager
             }
             else if (typeof(IDictionary).IsAssignableFrom(_Property.PropertyType))
             {
-                //Type[] dictTypes = _Property.PropertyType.GetGenericArguments();
-                //Type dictValType = dictTypes[1];
+                object dict = _Property.GetValue(_ParentSO);
 
-                //object dict = _Property.GetValue(_ParentSO);
-                //if (dict is IDictionary dictionary)
-                //{
-                //    List<ScriptableObject> values = new List<ScriptableObject>();
-                //    foreach (DictionaryEntry entry in dictionary)
-                //    {
-                //        values.Add(entry.Value as ScriptableObject);
-                //    }
-                //    InspectorList<ScriptableObject> list = new InspectorList<ScriptableObject>(values, "test", Test);
-                //    parent.Add(list);
-                //    return parent;
-                //}
+                if (_Property.PropertyType == typeof(Dictionary<string, SO_Stat>))
+                {
+                    List<SO_Stat> stats = (dict as Dictionary<string, SO_Stat>).Values.ToList();
+
+                    InspectorList<SO_Stat> statList = new InspectorList<SO_Stat>(stats, "Stats");
+                    parent.Add(statList);
+                    return parent;
+                }
+
                 return null;
             }
             else if (m_Typedictionary.ContainsKey(_Property.PropertyType))
