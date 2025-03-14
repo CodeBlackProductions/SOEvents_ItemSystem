@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed37ad9e12e02ad46a5476aeb72d7183, type: 3}
   m_Name: Type_OneHandedMelee
   m_EditorClassIdentifier: 
+  m_TypeName: NewType
+  m_TypeStats: []
   m_hands: 1
   m_Type: 0
   m_Range: 10
   m_MinRange: 0
-  m_Projectile: {fileID: 0}
   m_Damage: 10
   m_AtkCooldown: 0.5
