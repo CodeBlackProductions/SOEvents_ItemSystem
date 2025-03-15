@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public enum ERarity
@@ -16,7 +17,6 @@ public class SO_Item : ScriptableObject
     [SerializeField] private SO_Item_Class m_Class;
     [SerializeField] private ERarity m_Rarity;
     [SerializeField] private SO_Item_Effect[] m_Effects;
-    [SerializeField] private List<SO_Stat> m_ItemStats;
 
     private int m_TypeIndex;
     private string m_SlotType;
@@ -34,18 +34,6 @@ public class SO_Item : ScriptableObject
         if (m_Class != null)
         {
             m_SlotType = m_Class.ClassName;
-        }
-
-        if (m_ItemStats != null && m_ItemStats.Count > 0)
-        {
-            m_Stats.Clear();
-            foreach (SO_Stat stat in m_ItemStats)
-            {
-                if (stat != null && !m_Stats.ContainsKey(stat.GetName()))
-                {
-                    m_Stats.Add(stat.GetName(), stat);
-                }
-            }
         }
     }
 }

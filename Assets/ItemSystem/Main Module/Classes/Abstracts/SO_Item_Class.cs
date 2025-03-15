@@ -25,9 +25,9 @@ public abstract class SO_Item_Class : ScriptableObject
             m_Stats.Clear();
             foreach (SO_Stat stat in m_ClassStats)
             {
-                if (stat != null && !m_Stats.ContainsKey(stat.GetName()))
+                if (stat != null && !m_Stats.ContainsKey(stat.GetStatName()))
                 {
-                    m_Stats.Add(stat.GetName(), stat);
+                    m_Stats.Add(stat.GetStatName(), stat);
                 }
             }
         }

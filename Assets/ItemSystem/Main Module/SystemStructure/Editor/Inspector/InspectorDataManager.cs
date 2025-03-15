@@ -20,7 +20,7 @@ public static class InspectorDataManager
         { typeof(float), ETypes.Float }
     };
 
-    public static VisualElement CreateEntry(ScriptableObject _ParentSO, PropertyInfo _Property)
+    public static VisualElement CreateEntry(ScriptableObject _ParentSO, PropertyInfo _Property, InspectorPanel _ParentPanel)
     {
         if (_Property.CanRead && _Property.CanWrite && _Property.IsDefined(typeof(ItemToolkitAccess), false))
         {
@@ -30,7 +30,6 @@ public static class InspectorDataManager
                 parent.style.flexDirection = FlexDirection.Row;
                 Label label = new Label($"{_Property.Name}: ");
                 parent.Add(label);
-                TextField field = new TextField();
 
                 if (_Property.PropertyType.IsEnum)
                 {
@@ -40,25 +39,23 @@ public static class InspectorDataManager
                     {
                         string currentEntry = Enum.GetName(_Property.PropertyType, _Property.GetValue(_ParentSO));
 
-                        if (currentEntry != null)
-                        {
-                            DropdownField dropdownField = new DropdownField(enumNames, currentEntry);
-
-                            parent.Add(dropdownField);
-
-                            return parent;
-                        }
-                        else
+                        if (currentEntry == null)
                         {
                             currentEntry = $"Select Option";
                             enumNames.Insert(0, currentEntry);
-
-                            DropdownField dropdownField = new DropdownField(enumNames, currentEntry);
-
-                            parent.Add(dropdownField);
-
-                            return parent;
                         }
+
+                        DropdownField dropdownField = new DropdownField(enumNames, currentEntry);
+
+                        dropdownField.RegisterValueChangedCallback(c =>
+                        {
+                            _Property.SetValue(_ParentSO, Enum.Parse(_Property.PropertyType, c.newValue));
+                            _ParentPanel.Show(_ParentSO);
+                        });
+
+                        parent.Add(dropdownField);
+
+                        return parent;
                     }
 
                     Debug.LogWarning($"Enum entries could not be found for {_ParentSO} : {_Property.Name}");
@@ -72,7 +69,7 @@ public static class InspectorDataManager
                     {
                         if (soList[i].GetType().IsSubclassOf(_Property.PropertyType))
                         {
-                            soNames.Add(soList[i].name + " (" + soList[i].GetType() + ")");
+                            soNames.Add($"{soList[i].name} ({soList[i].GetType().Name})");
                         }
                     }
 
@@ -80,25 +77,27 @@ public static class InspectorDataManager
                     {
                         string currentEntry = _Property.GetValue(_ParentSO)?.ToString();
 
-                        if (currentEntry != null)
-                        {
-                            DropdownField dropdownField = new DropdownField(soNames, currentEntry);
-
-                            parent.Add(dropdownField);
-
-                            return parent;
-                        }
-                        else
+                        if (currentEntry == null)
                         {
                             currentEntry = $"Select {_Property.PropertyType}";
                             soNames.Insert(0, currentEntry);
-
-                            DropdownField dropdownField = new DropdownField(soNames, currentEntry);
-
-                            parent.Add(dropdownField);
-
-                            return parent;
                         }
+
+                        DropdownField dropdownField = new DropdownField(soNames, currentEntry);
+
+                        dropdownField.RegisterValueChangedCallback(c =>
+                        {
+                            _Property.SetValue(
+                                _ParentSO, soList.Find(so =>
+                                $"{so.name} ({so.GetType().Name})" == c.newValue && _Property.PropertyType.IsAssignableFrom(so.GetType())
+                                )
+                            );
+                            _ParentPanel.Show(_ParentSO);
+                        });
+
+                        parent.Add(dropdownField);
+
+                        return parent;
                     }
 
                     Debug.LogWarning($"ScriptableObject entries could not be found for {_ParentSO} : {_Property.Name}");
@@ -110,9 +109,23 @@ public static class InspectorDataManager
 
                     if (_Property.PropertyType == typeof(Dictionary<string, SO_Stat>))
                     {
-                        List<SO_Stat> stats = (dict as Dictionary<string, SO_Stat>).Values.ToList();
+                        Dictionary<string, SO_Stat> dictionary = dict as Dictionary<string, SO_Stat>;
+                        InspectorList<SO_Stat> statList = new InspectorList<SO_Stat>(dictionary, "Stats");
 
-                        InspectorList<SO_Stat> statList = new InspectorList<SO_Stat>(stats, "Stats");
+                        statList.ItemAddCallback += (newItem) =>
+                        {
+                            dictionary.Add(newItem.GetStatName(), newItem);
+                            _Property.SetValue(_ParentSO, dictionary);
+                            _ParentPanel.Show(_ParentSO);
+                        };
+
+                        statList.ItemRemoveCallback += (removeItem) =>
+                        {
+                            dictionary.Remove(removeItem.GetStatName());
+                            _Property.SetValue(_ParentSO, dictionary);
+                            _ParentPanel.Show(_ParentSO);
+                        };
+
                         parent.Add(statList);
                         return parent;
                     }
@@ -124,18 +137,80 @@ public static class InspectorDataManager
                 {
                     if (_Property.PropertyType == typeof(SO_Item_Effect[]))
                     {
-                        List<SO_Item_Effect> effects = (_Property.GetValue(_ParentSO) as SO_Item_Effect[]).ToList();
+                        SO_Item_Effect[] array = _Property.GetValue(_ParentSO) as SO_Item_Effect[];
+                        InspectorList<SO_Item_Effect> effectList = new InspectorList<SO_Item_Effect>(array, "Effects");
 
-                        InspectorList<SO_Item_Effect> effectList = new InspectorList<SO_Item_Effect>(effects, "Effects");
+                        effectList.ItemAddCallback += (newItem) =>
+                        {
+                            SO_Item_Effect[] newArray = new SO_Item_Effect[array.Length + 1];
+                            Array.Copy(array, newArray, array.Length);
+                            newArray[newArray.Length - 1] = newItem;
+
+                            array = newArray;
+
+                            _Property.SetValue(_ParentSO, newArray);
+
+                            _ParentPanel.Show(_ParentSO);
+                        };
+
+                        effectList.ItemRemoveCallback += (newItem) =>
+                        {
+                            SO_Item_Effect[] newArray = new SO_Item_Effect[array.Length - 1];
+                            int index = Array.IndexOf(array, newItem);
+
+                            if (index >= 0)
+                            {
+                                Array.Copy(array, 0, newArray, 0, index);
+                                Array.Copy(array, index + 1, newArray, index, array.Length - index - 1);
+                            }
+
+                            array = newArray;
+
+                            _Property.SetValue(_ParentSO, newArray);
+
+                            _ParentPanel.Show(_ParentSO);
+                        };
+
                         parent.Add(effectList);
                         return parent;
                     }
 
                     if (_Property.PropertyType == typeof(SO_Class_Type[]))
                     {
-                        List<SO_Class_Type> types = (_Property.GetValue(_ParentSO) as SO_Class_Type[]).ToList();
+                        SO_Class_Type[] array = _Property.GetValue(_ParentSO) as SO_Class_Type[];
+                        InspectorList<SO_Class_Type> typeList = new InspectorList<SO_Class_Type>(_Property.GetValue(_ParentSO) as SO_Class_Type[], "Types");
 
-                        InspectorList<SO_Class_Type> typeList = new InspectorList<SO_Class_Type>(types, "Types");
+                        typeList.ItemAddCallback += (newItem) =>
+                        {
+                            SO_Class_Type[] newArray = new SO_Class_Type[array.Length + 1];
+                            Array.Copy(array, newArray, array.Length);
+                            newArray[newArray.Length - 1] = newItem;
+
+                            array = newArray;
+
+                            _Property.SetValue(_ParentSO, newArray);
+
+                            _ParentPanel.Show(_ParentSO);
+                        };
+
+                        typeList.ItemRemoveCallback += (newItem) =>
+                        {
+                            SO_Class_Type[] newArray = new SO_Class_Type[array.Length - 1];
+                            int index = Array.IndexOf(array, newItem);
+
+                            if (index >= 0)
+                            {
+                                Array.Copy(array, 0, newArray, 0, index);
+                                Array.Copy(array, index + 1, newArray, index, array.Length - index - 1);
+                            }
+
+                            array = newArray;
+
+                            _Property.SetValue(_ParentSO, newArray);
+
+                            _ParentPanel.Show(_ParentSO);
+                        };
+
                         parent.Add(typeList);
                         return parent;
                     }
@@ -154,27 +229,28 @@ public static class InspectorDataManager
 
                     if (projectileNames.Count > 0)
                     {
-                        string currentEntry = _Property.GetValue(_ParentSO)?.ToString();
+                        string currentEntry = (_Property.GetValue(_ParentSO) as IProjectile)?.Name;
 
-                        if (currentEntry != null)
-                        {
-                            DropdownField dropdownField = new DropdownField(projectileNames, currentEntry);
-
-                            parent.Add(dropdownField);
-
-                            return parent;
-                        }
-                        else
+                        if (currentEntry == null || !projectileNames.Contains(currentEntry))
                         {
                             currentEntry = "Select Projectile";
                             projectileNames.Insert(0, currentEntry);
-
-                            DropdownField dropdownField = new DropdownField(projectileNames, currentEntry);
-
-                            parent.Add(dropdownField);
-
-                            return parent;
                         }
+
+                        DropdownField dropdownField = new DropdownField(projectileNames, currentEntry);
+
+                        dropdownField.RegisterValueChangedCallback(c =>
+                        {
+                            _Property.SetValue(_ParentSO, projectileList.Find(obj =>
+                                obj.name == c.newValue && obj.GetComponent<IProjectile>() != null)
+                                .GetComponent<IProjectile>());
+
+                            _ParentPanel.Show(_ParentSO);
+                        });
+
+                        parent.Add(dropdownField);
+
+                        return parent;
                     }
 
                     Debug.LogWarning($"Projectile Class entries could not be found for {_ParentSO} : {_Property.Name}");
@@ -182,6 +258,7 @@ public static class InspectorDataManager
                 }
                 else if (m_Typedictionary.ContainsKey(_Property.PropertyType))
                 {
+                    TextField field = new TextField();
                     switch (m_Typedictionary[_Property.PropertyType])
                     {
                         case ETypes.String:
@@ -190,6 +267,11 @@ public static class InspectorDataManager
                             field.value = _Property.GetValue(_ParentSO)?.ToString() ?? string.Empty;
                             parent.Add(field);
 
+                            field.RegisterValueChangedCallback(t =>
+                            {
+                                _Property.SetValue(_ParentSO, t.newValue);
+                            });
+
                             return parent;
 
                         case ETypes.Int:
@@ -197,12 +279,36 @@ public static class InspectorDataManager
                             field.value = _Property.GetValue(_ParentSO)?.ToString() ?? string.Empty;
                             parent.Add(field);
 
+                            field.RegisterValueChangedCallback(t =>
+                            {
+                                if (int.TryParse(t.newValue, out int result))
+                                {
+                                    _Property.SetValue(_ParentSO, result);
+                                }
+                                else
+                                {
+                                    Debug.LogWarning("Invalid input");
+                                }
+                            });
+
                             return parent;
 
                         case ETypes.Float:
                             field.maxLength = 10;
                             field.value = _Property.GetValue(_ParentSO)?.ToString() ?? string.Empty;
                             parent.Add(field);
+
+                            field.RegisterValueChangedCallback(t =>
+                            {
+                                if (float.TryParse(t.newValue, out float result))
+                                {
+                                    _Property.SetValue(_ParentSO, result);
+                                }
+                                else
+                                {
+                                    Debug.LogWarning("Invalid input");
+                                }
+                            });
 
                             return parent;
 

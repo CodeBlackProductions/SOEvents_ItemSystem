@@ -24,7 +24,7 @@ public class InspectorPanel : VisualElement
 
         foreach (var property in obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
         {
-            VisualElement entry = InspectorDataManager.CreateEntry(obj, property);
+            VisualElement entry = InspectorDataManager.CreateEntry(obj, property, this);
             if (entry != null)
             {
                 Add(entry);

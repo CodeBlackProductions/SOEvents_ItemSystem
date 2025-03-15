@@ -20,7 +20,6 @@ public class ItemEventHandler : MonoBehaviour
                 {
                     GameObject singletonObject = new GameObject("ItemEventHandler");
                     m_instance = singletonObject.AddComponent<ItemEventHandler>();
-                    DontDestroyOnLoad(singletonObject);
                 }
             }
 

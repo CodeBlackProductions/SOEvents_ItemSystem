@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -8,13 +9,34 @@ public class InspectorList<T> : VisualElement where T : ScriptableObject
     private VisualElement parentView = new VisualElement();
     private ListView listView;
     private List<T> items;
-    private Action<T> onItemSelected;
+
+    private T[] originalArray;
+    private Dictionary<string, T> originalDictionary;
+
+    public Action<T> ItemAddCallback;
+    public Action<T> ItemRemoveCallback;
 
     public InspectorList(List<T> sourceList, string title)
     {
         items = sourceList;
-        onItemSelected = OnListSelectionChange;
+        InstantiateUI(title);
+    }
 
+    public InspectorList(T[] sourceArray, string title)
+    {
+        items = sourceArray.ToList();
+        InstantiateUI(title);
+    }
+
+    public InspectorList(Dictionary<string, T> sourceDictionary, string title)
+    {
+        items = sourceDictionary.Values.ToList();
+
+        InstantiateUI(title);
+    }
+
+    private void InstantiateUI(string title)
+    {
         // Create title label
         Label titleLabel = new Label(title) { style = { unityFontStyleAndWeight = FontStyle.Bold } };
         parentView.Add(titleLabel);
@@ -23,7 +45,6 @@ public class InspectorList<T> : VisualElement where T : ScriptableObject
         listView = new ListView(items, 20, CreateItem, BindItem);
         listView.selectionType = SelectionType.Single;
         listView.style.flexGrow = 1;
-        listView.selectionChanged += selection => onItemSelected?.Invoke(listView.selectedItem as T);
 
         // Buttons
         var buttonContainer = new VisualElement { style = { flexDirection = FlexDirection.Row } };
@@ -65,18 +86,20 @@ public class InspectorList<T> : VisualElement where T : ScriptableObject
 
         T newItem = UIAssetLoader.LoadAssetByName<T>(_Item);
         items.Add(newItem);
+
+        ItemAddCallback?.Invoke(newItem);
+
         listView.Rebuild();
     }
 
     private void RemoveSelectedItem()
     {
         if (listView.selectedItem == null) return;
-        items.Remove((T)listView.selectedItem);
-        listView.Rebuild();
-    }
 
-    private void OnListSelectionChange(T _Selection)
-    {
-        Debug.Log($"You selected something on an Inspector-List: {_Selection?.name}");
+        ItemRemoveCallback?.Invoke((T)listView.selectedItem);
+
+        items.Remove((T)listView.selectedItem);
+
+        listView.Rebuild();
     }
 }

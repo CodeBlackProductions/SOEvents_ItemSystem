@@ -19,7 +19,7 @@ public class ItemCoroutineHandler : MonoBehaviour
                 {
                     GameObject singletonObject = new GameObject("ItemCoroutineHandler");
                     m_instance = singletonObject.AddComponent<ItemCoroutineHandler>();
-                    DontDestroyOnLoad(singletonObject);
+
                 }
             }
 

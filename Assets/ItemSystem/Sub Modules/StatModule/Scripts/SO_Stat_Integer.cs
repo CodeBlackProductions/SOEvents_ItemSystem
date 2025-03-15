@@ -7,7 +7,7 @@ public class SO_Stat_Integer : SO_Stat
 {
     [SerializeField] private int m_Value = 0;
 
-    public override string GetName()
+    public override string GetStatName()
     {
         return m_StatName;
     }
@@ -17,12 +17,12 @@ public class SO_Stat_Integer : SO_Stat
         return m_Value.GetType();
     }
 
-    public override object GetValue()
+    public override object GetStatValue()
     {
         return m_Value;
     }
 
-    public override void SetValue(object value)
+    public override void SetStatValue(object value)
     {
         if (int.TryParse(value.ToString(), out int result))
         {

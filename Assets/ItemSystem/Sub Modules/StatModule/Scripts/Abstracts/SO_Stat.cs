@@ -11,11 +11,11 @@ public abstract class SO_Stat : ScriptableObject
 {
     [SerializeField] protected string m_StatName = "NewStat";
 
-    public abstract string GetName();
+    public abstract string GetStatName();
 
     public abstract Type GetStatType();
 
-    public abstract object GetValue();
+    public abstract object GetStatValue();
 
-    public abstract void SetValue(object value);
+    public abstract void SetStatValue(object value);
 }

@@ -34,8 +34,12 @@ public class UnitController : MonoBehaviour, IItemUser
 
     Dictionary<SO_Effect_Trigger, List<SO_Item_Effect>> IItemUser.EffectRegistry { get => m_effectRegistry; }
 
+    private ItemEventHandler m_ItemEventHandler;
+
     private void Awake()
     {
+        m_ItemEventHandler = ItemEventHandler.Instance;
+
         if (m_TestSlot != null)
         {
             m_TestSlot.StoredItem = m_TestItem;

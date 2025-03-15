@@ -8,7 +8,7 @@ public class SO_Stat_Float : SO_Stat
 {
     [SerializeField] private float m_Value = 0;
 
-    public override string GetName()
+    public override string GetStatName()
     {
         return m_StatName;
     }
@@ -18,12 +18,12 @@ public class SO_Stat_Float : SO_Stat
         return m_Value.GetType();
     }
 
-    public override object GetValue()
+    public override object GetStatValue()
     {
         return m_Value;
     }
 
-    public override void SetValue(object value)
+    public override void SetStatValue(object value)
     {
         if (float.TryParse(value.ToString(), out float result))
         {
