@@ -22,13 +22,14 @@ public static class InspectorDataManager
 
     public static VisualElement CreateEntry(ScriptableObject _ParentSO, PropertyInfo _Property, InspectorPanel _ParentPanel, Action _InspectorValueChangeCallback)
     {
-
         if (_Property.CanRead && _Property.CanWrite && _Property.IsDefined(typeof(ItemToolkitAccess), false))
         {
             if (ConditionalHideAttribute.ShouldShowProperty(_ParentSO, _Property))
             {
                 VisualElement parent = new VisualElement();
                 parent.style.flexDirection = FlexDirection.Row;
+                parent.style.alignSelf = Align.FlexStart;
+                parent.style.paddingBottom = 10;
                 Label label = new Label($"{_Property.Name}: ");
                 parent.Add(label);
 
@@ -66,6 +67,10 @@ public static class InspectorDataManager
                 else if (_Property.PropertyType.IsSubclassOf(typeof(ScriptableObject)))
                 {
                     List<ScriptableObject> soList = ItemEditorAssetLoader.LoadAssetsByType<ScriptableObject>();
+                    if (soList == null)
+                    {
+                        soList = new List<ScriptableObject>();
+                    }
                     List<string> soNames = new List<string>();
                     for (int i = 0; i < soList.Count; i++)
                     {
@@ -113,6 +118,10 @@ public static class InspectorDataManager
                     if (_Property.PropertyType == typeof(Dictionary<string, SO_Stat>))
                     {
                         Dictionary<string, SO_Stat> dictionary = dict as Dictionary<string, SO_Stat>;
+                        if (dictionary == null)
+                        {
+                            dictionary = new Dictionary<string, SO_Stat>();
+                        }
                         InspectorList<SO_Stat> statList = new InspectorList<SO_Stat>(dictionary, "Stats");
 
                         statList.ItemAddCallback += (newItem) =>
@@ -143,6 +152,10 @@ public static class InspectorDataManager
                     if (_Property.PropertyType == typeof(SO_Item_Effect[]))
                     {
                         SO_Item_Effect[] array = _Property.GetValue(_ParentSO) as SO_Item_Effect[];
+                        if (array == null)
+                        {
+                            array = new SO_Item_Effect[0];
+                        }
                         InspectorList<SO_Item_Effect> effectList = new InspectorList<SO_Item_Effect>(array, "Effects");
 
                         effectList.ItemAddCallback += (newItem) =>
@@ -230,6 +243,10 @@ public static class InspectorDataManager
                 else if (typeof(IProjectile).IsAssignableFrom(_Property.PropertyType))
                 {
                     List<GameObject> projectileList = ItemEditorAssetLoader.LoadAssetsByType<GameObject>().Where(asset => asset.GetComponent<IProjectile>() != null).ToList();
+                    if (projectileList == null)
+                    {
+                        projectileList = new List<GameObject>();
+                    }
                     List<string> projectileNames = new List<string>();
                     for (int i = 0; i < projectileList.Count; i++)
                     {
@@ -266,7 +283,7 @@ public static class InspectorDataManager
                     Debug.LogWarning($"Projectile Class entries could not be found for {_ParentSO} : {_Property.Name}");
                     return null;
                 }
-                else if (m_Typedictionary.ContainsKey(_Property.PropertyType))
+                else if (m_Typedictionary.ContainsKey(_Property.PropertyType) && _Property.Name != "TypeIndex")
                 {
                     TextField field = new TextField();
                     switch (m_Typedictionary[_Property.PropertyType])
@@ -325,6 +342,74 @@ public static class InspectorDataManager
 
                         default:
                             return null;
+                    }
+                }
+                else if (_Property.Name == "TypeIndex")
+                {
+                    parent.Clear();
+                    label = new Label("Type:");
+                    parent.Add(label);
+
+                    PropertyInfo classProp = _ParentSO.GetType().GetProperty("Class");
+
+                    if (classProp == null)
+                    {
+                        Label noTypes = new Label("No types declared in class");
+                        parent.Add(noTypes);
+                        return parent;
+                    }
+                    SO_Item_Class itemClass = classProp.GetValue(_ParentSO) as SO_Item_Class;
+
+                    if (itemClass == null)
+                    {
+                        Label noTypes = new Label("No types declared in class");
+                        parent.Add(noTypes);
+                        return parent;
+                    }
+
+                    PropertyInfo typeProp = itemClass.GetType().GetProperty("Types");
+
+                    if (typeProp == null)
+                    {
+                        Label noTypes = new Label("No types declared in class");
+                        parent.Add(noTypes);
+                        return parent;
+                    }
+
+                    List<SO_Class_Type> typeList = new List<SO_Class_Type>(typeProp.GetValue(itemClass) as SO_Class_Type[]);
+
+                    if (typeList.Count > 0)
+                    {
+                        List<string> soNames = new List<string>();
+                        for (int i = 0; i < typeList.Count; i++)
+                        {
+                            soNames.Add($"{typeList[i].name} ({typeList[i].GetType().Name})");
+                        }
+
+                        int currentEntry = (int)_Property.GetValue(_ParentSO);
+                        string currentEntryName = soNames[currentEntry];
+
+                        DropdownField dropdownField = new DropdownField(soNames, currentEntryName);
+
+                        dropdownField.RegisterValueChangedCallback(c =>
+                        {
+                            _Property.SetValue(
+                                _ParentSO, typeList.FindIndex(so =>
+                                $"{so.name} ({so.GetType().Name})" == c.newValue)
+                            );
+                            _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
+                            _InspectorValueChangeCallback?.Invoke();
+                        });
+
+                        parent.Add(dropdownField);
+
+                        return parent;
+                    }
+                    else
+                    {
+                        Label noTypes = new Label("No types declared in class");
+                        parent.Add(noTypes);
+                        return parent;
                     }
                 }
                 else

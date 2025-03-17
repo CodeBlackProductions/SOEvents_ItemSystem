@@ -15,19 +15,42 @@ public class InspectorList<T> : VisualElement where T : ScriptableObject
 
     public InspectorList(List<T> _SourceList, string _Title)
     {
-        m_Items = _SourceList;
+        if (_SourceList == null)
+        {
+            m_Items = new List<T>();
+        }
+        else
+        {
+            m_Items = _SourceList;
+        }
+
         InstantiateUI(_Title);
     }
 
     public InspectorList(T[] _SourceArray, string _Title)
     {
-        m_Items = _SourceArray.ToList();
+        if (_SourceArray == null)
+        {
+            m_Items = new List<T>();
+        }
+        else
+        {
+            m_Items = _SourceArray.ToList();
+        }
+
         InstantiateUI(_Title);
     }
 
     public InspectorList(Dictionary<string, T> _SourceDictionary, string _Title)
     {
-        m_Items = _SourceDictionary.Values.ToList();
+        if (_SourceDictionary == null)
+        {
+            m_Items = new List<T>();
+        }
+        else
+        {
+            m_Items = _SourceDictionary.Values.ToList();
+        }
 
         InstantiateUI(_Title);
     }

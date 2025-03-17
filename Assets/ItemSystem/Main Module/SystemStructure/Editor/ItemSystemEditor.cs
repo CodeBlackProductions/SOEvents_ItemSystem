@@ -10,7 +10,9 @@ public class ItemSystemEditor : EditorWindow
     private VisualElement m_Root;
     private TabbedMenu m_TabMenu;
     private VisualElement m_TabContent;
+    private VisualElement m_TabNavigationPanel;
     private TreeView m_TabHierarchy;
+    private Button m_AddNewSOButton;
     private InspectorPanel m_InspectorPanel;
     private ETabType m_CurrentTab;
 
@@ -20,7 +22,7 @@ public class ItemSystemEditor : EditorWindow
     public static void ShowWindow()
     {
         ItemSystemEditor window = GetWindow<ItemSystemEditor>("Item System");
-        window.minSize = new Vector2(600, 400);
+        window.minSize = new Vector2(700, 400);
     }
 
     public void CreateGUI()
@@ -29,39 +31,52 @@ public class ItemSystemEditor : EditorWindow
 
         m_TabMenu = new TabbedMenu(new string[] { "Items", "Classes", "Types", "Effects", "Triggers" }, OnTabChanged);
         m_TabContent = new VisualElement();
+        m_TabNavigationPanel = new VisualElement();
         m_TabHierarchy = new TreeView();
+        m_AddNewSOButton = new Button(() => ModuleCreatorWindow.ShowWindow());
         m_InspectorPanel = new InspectorPanel();
 
         m_InspectorValueChangeCallback += RefreshTabHierarchy;
 
         m_TabContent.style.flexDirection = FlexDirection.Row;
 
+        m_TabNavigationPanel.style.flexDirection = FlexDirection.Column;
+        m_TabNavigationPanel.style.flexGrow = 1;
+        m_TabNavigationPanel.style.paddingRight = 50;
+
+        m_AddNewSOButton.style.height = 25;
+        m_AddNewSOButton.style.alignSelf = Align.Center;
+        m_AddNewSOButton.Add(new Label($"Add"));
+
         m_Root.Add(m_TabMenu);
         m_Root.Add(m_TabContent);
 
         ShowTabHierarchy(ETabType.Items);
-
+        m_TabContent.Add(m_TabNavigationPanel);
         m_TabContent.Add(m_InspectorPanel);
 
-        m_TabHierarchy?.CollapseAll();
+        EditorApplication.delayCall += () => m_TabHierarchy?.CollapseAll();
     }
 
     private void OnEnable()
     {
-        m_TabHierarchy?.CollapseAll();
+        EditorApplication.delayCall += () => m_TabHierarchy?.CollapseAll();
     }
 
     private void OnTabChanged(string _TabName)
     {
         m_TabContent.Clear();
         m_CurrentTab = (ETabType)System.Enum.Parse(typeof(ETabType), _TabName);
-        ShowTabHierarchy(m_CurrentTab);
 
+        ShowTabHierarchy(m_CurrentTab);
+        m_TabContent.Add(m_TabNavigationPanel);
         m_TabContent.Add(m_InspectorPanel);
     }
 
     private void ShowTabHierarchy(ETabType _ModuleType)
     {
+        m_TabNavigationPanel.Clear();
+
         m_TabHierarchy.selectionChanged -= OnTreeViewSelectionChanged;
         m_TabHierarchy = new TreeView();
         m_TabHierarchy.selectionChanged += OnTreeViewSelectionChanged;
@@ -69,12 +84,16 @@ public class ItemSystemEditor : EditorWindow
 
         List<TreeViewItemData<string>> treeItems = LoadTabHierarchy(_ModuleType);
         m_TabHierarchy.SetRootItems(treeItems);
-        m_TabContent.Add(m_TabHierarchy);
+
+        m_TabNavigationPanel.Add(m_TabHierarchy);
+
+        m_TabNavigationPanel.Add(m_AddNewSOButton);
     }
 
-    private void RefreshTabHierarchy() 
+    private void RefreshTabHierarchy()
     {
         m_TabContent.Clear();
+        m_TabNavigationPanel.Clear();
 
         m_TabHierarchy.selectionChanged -= OnTreeViewSelectionChanged;
         m_TabHierarchy = new TreeView();
@@ -83,8 +102,11 @@ public class ItemSystemEditor : EditorWindow
 
         List<TreeViewItemData<string>> treeItems = LoadTabHierarchy(m_CurrentTab);
         m_TabHierarchy.SetRootItems(treeItems);
-        m_TabContent.Add(m_TabHierarchy);
+        m_TabNavigationPanel.Add(m_TabHierarchy);
 
+        m_TabNavigationPanel.Add(m_AddNewSOButton);
+
+        m_TabContent.Add(m_TabNavigationPanel);
         m_TabContent.Add(m_InspectorPanel);
     }
 
