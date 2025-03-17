@@ -1,7 +1,6 @@
-using static UnityEngine.Rendering.DebugUI.MessageBox;
 using System.Reflection;
-using UnityEngine.UIElements;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class InspectorPanel : VisualElement
 {
@@ -11,20 +10,20 @@ public class InspectorPanel : VisualElement
         Add(new Label("Select an item to view details"));
     }
 
-    public void Show(ScriptableObject obj)
+    public void Show(ScriptableObject _Obj)
     {
         Clear();
-        if (obj == null)
+        if (_Obj == null)
         {
             Add(new Label("No item selected"));
             return;
         }
 
-        Add(new Label($"Editing: {obj.name}"));
+        Add(new Label($"Editing: {_Obj.name}"));
 
-        foreach (var property in obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
+        foreach (var property in _Obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
         {
-            VisualElement entry = InspectorDataManager.CreateEntry(obj, property, this);
+            VisualElement entry = InspectorDataManager.CreateEntry(_Obj, property, this);
             if (entry != null)
             {
                 Add(entry);

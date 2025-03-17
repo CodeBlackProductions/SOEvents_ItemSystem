@@ -3,18 +3,18 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-public static class UIAssetLoader
+public static class ItemEditorAssetLoader
 {
-    public static T LoadAssetByName<T>(string assetName) where T : Object
+    public static T LoadAssetByName<T>(string _AssetName) where T : Object
     {
-        string[] guids = AssetDatabase.FindAssets(assetName + " t:" + typeof(T).Name);
+        string[] guids = AssetDatabase.FindAssets(_AssetName + " t:" + typeof(T).Name);
         if (guids.Length > 0)
         {
             string path = AssetDatabase.GUIDToAssetPath(guids[0]);
             return AssetDatabase.LoadAssetAtPath<T>(path);
         }
 
-        Debug.LogError($"Asset '{assetName}' of type {typeof(T).Name} not found.");
+        Debug.LogError($"Asset '{_AssetName}' of type {typeof(T).Name} not found.");
         return null;
     }
 

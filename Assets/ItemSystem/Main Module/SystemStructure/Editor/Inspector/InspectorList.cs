@@ -6,45 +6,42 @@ using UnityEngine.UIElements;
 
 public class InspectorList<T> : VisualElement where T : ScriptableObject
 {
-    private VisualElement parentView = new VisualElement();
-    private ListView listView;
-    private List<T> items;
-
-    private T[] originalArray;
-    private Dictionary<string, T> originalDictionary;
+    private VisualElement m_ParentView = new VisualElement();
+    private ListView m_ListView;
+    private List<T> m_Items;
 
     public Action<T> ItemAddCallback;
     public Action<T> ItemRemoveCallback;
 
-    public InspectorList(List<T> sourceList, string title)
+    public InspectorList(List<T> _SourceList, string _Title)
     {
-        items = sourceList;
-        InstantiateUI(title);
+        m_Items = _SourceList;
+        InstantiateUI(_Title);
     }
 
-    public InspectorList(T[] sourceArray, string title)
+    public InspectorList(T[] _SourceArray, string _Title)
     {
-        items = sourceArray.ToList();
-        InstantiateUI(title);
+        m_Items = _SourceArray.ToList();
+        InstantiateUI(_Title);
     }
 
-    public InspectorList(Dictionary<string, T> sourceDictionary, string title)
+    public InspectorList(Dictionary<string, T> _SourceDictionary, string _Title)
     {
-        items = sourceDictionary.Values.ToList();
+        m_Items = _SourceDictionary.Values.ToList();
 
-        InstantiateUI(title);
+        InstantiateUI(_Title);
     }
 
-    private void InstantiateUI(string title)
+    private void InstantiateUI(string _Title)
     {
         // Create title label
-        Label titleLabel = new Label(title) { style = { unityFontStyleAndWeight = FontStyle.Bold } };
-        parentView.Add(titleLabel);
+        Label titleLabel = new Label(_Title) { style = { unityFontStyleAndWeight = FontStyle.Bold } };
+        m_ParentView.Add(titleLabel);
 
         // Create ListView
-        listView = new ListView(items, 20, CreateItem, BindItem);
-        listView.selectionType = SelectionType.Single;
-        listView.style.flexGrow = 1;
+        m_ListView = new ListView(m_Items, 20, CreateItem, BindItem);
+        m_ListView.selectionType = SelectionType.Single;
+        m_ListView.style.flexGrow = 1;
 
         // Buttons
         var buttonContainer = new VisualElement { style = { flexDirection = FlexDirection.Row } };
@@ -54,21 +51,21 @@ public class InspectorList<T> : VisualElement where T : ScriptableObject
 
         buttonContainer.Add(addButton);
         buttonContainer.Add(removeButton);
-        parentView.Add(buttonContainer);
-        parentView.Add(listView);
-        Add(parentView);
+        m_ParentView.Add(buttonContainer);
+        m_ParentView.Add(m_ListView);
+        Add(m_ParentView);
     }
 
     private VisualElement CreateItem() => new Label();
 
-    private void BindItem(VisualElement element, int index)
+    private void BindItem(VisualElement _Element, int _Index)
     {
-        (element as Label).text = items[index] != null ? items[index].name : "Null";
+        (_Element as Label).text = m_Items[_Index] != null ? m_Items[_Index].name : "Null";
     }
 
     private void ChooseNewItem()
     {
-        List<T> soList = UIAssetLoader.LoadAssetsByType<T>();
+        List<T> soList = ItemEditorAssetLoader.LoadAssetsByType<T>();
         List<string> soNames = new List<string>();
         soNames.Add("Choose new entry");
         for (int i = 0; i < soList.Count; i++)
@@ -77,29 +74,29 @@ public class InspectorList<T> : VisualElement where T : ScriptableObject
         }
         DropdownField dropdownField = new DropdownField(soNames, soNames[0]);
         dropdownField.RegisterValueChangedCallback(v => AddItem(v.newValue, dropdownField));
-        parentView.Add(dropdownField);
+        m_ParentView.Add(dropdownField);
     }
 
     private void AddItem(string _Item, DropdownField _SelectionDropdown)
     {
         _SelectionDropdown.RemoveFromHierarchy();
 
-        T newItem = UIAssetLoader.LoadAssetByName<T>(_Item);
-        items.Add(newItem);
+        T newItem = ItemEditorAssetLoader.LoadAssetByName<T>(_Item);
+        m_Items.Add(newItem);
 
         ItemAddCallback?.Invoke(newItem);
 
-        listView.Rebuild();
+        m_ListView.Rebuild();
     }
 
     private void RemoveSelectedItem()
     {
-        if (listView.selectedItem == null) return;
+        if (m_ListView.selectedItem == null) return;
 
-        ItemRemoveCallback?.Invoke((T)listView.selectedItem);
+        ItemRemoveCallback?.Invoke((T)m_ListView.selectedItem);
 
-        items.Remove((T)listView.selectedItem);
+        m_Items.Remove((T)m_ListView.selectedItem);
 
-        listView.Rebuild();
+        m_ListView.Rebuild();
     }
 }

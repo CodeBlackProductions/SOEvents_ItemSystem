@@ -1,45 +1,44 @@
-using System.Linq;
 using System;
+using System.Linq;
 using System.Reflection;
-using UnityEditor;
-using UnityEngine;
 using Unity.VisualScripting;
+using UnityEngine;
 
 /// <summary>
 /// Shows/Hides serialized fields based on a condition bool or enum state.
 /// </summary>
 public class ConditionalHideAttribute : Attribute
 {
-    public string ConditionName { get; private set; }
-    public int[] TargetValues { get; private set; }
+    public string m_ConditionName { get; private set; }
+    public int[] m_TargetValues { get; private set; }
 
-    public ConditionalHideAttribute(string conditionName, params int[] targetValues)
+    public ConditionalHideAttribute(string _ConditionName, params int[] _TargetValues)
     {
-        ConditionName = conditionName;
-        TargetValues = targetValues;
+        m_ConditionName = _ConditionName;
+        m_TargetValues = _TargetValues;
     }
 
-    public static bool ShouldShowProperty(ScriptableObject target, PropertyInfo property)
+    public static bool ShouldShowProperty(ScriptableObject _Target, PropertyInfo _Property)
     {
-        if (target == null || property == null)
+        if (_Target == null || _Property == null)
         {
             Debug.LogWarning("Target or property is null.");
             return true;
         }
 
         // Get the ConditionalHideAttribute
-        var conditional = property.GetCustomAttribute<ConditionalHideAttribute>();
+        var conditional = _Property.GetCustomAttribute<ConditionalHideAttribute>();
         if (conditional == null)
         {
             return true; // No condition, so always show
         }
 
-        PropertyInfo conditionProperty = target.GetType().GetProperty(conditional.ConditionName, BindingFlags.Public | BindingFlags.Instance);
+        PropertyInfo conditionProperty = _Target.GetType().GetProperty(conditional.m_ConditionName, BindingFlags.Public | BindingFlags.Instance);
 
-        object conditionValue = conditionProperty?.GetValue(target);
+        object conditionValue = conditionProperty?.GetValue(_Target);
         if (conditionValue == null)
         {
-            Debug.LogWarning($"Condition property '{conditional.ConditionName}' not found on {target.GetType().Name}");
+            Debug.LogWarning($"Condition property '{conditional.m_ConditionName}' not found on {_Target.GetType().Name}");
             return true;
         }
 
@@ -47,22 +46,22 @@ public class ConditionalHideAttribute : Attribute
         return EvaluateCondition(conditional, conditionValue);
     }
 
-    private static bool EvaluateCondition(ConditionalHideAttribute conditional, object conditionValue)
+    private static bool EvaluateCondition(ConditionalHideAttribute _Conditional, object _ConditionValue)
     {
-        if (conditionValue is bool boolValue)
+        if (_ConditionValue is bool boolValue)
         {
-            return conditional.TargetValues.Contains(boolValue ? 1 : 0);
+            return _Conditional.m_TargetValues.Contains(boolValue ? 1 : 0);
         }
-        if (conditionValue is int intValue)
+        if (_ConditionValue is int intValue)
         {
-            return conditional.TargetValues.Contains(intValue);
+            return _Conditional.m_TargetValues.Contains(intValue);
         }
-        if (conditionValue is Enum enumValue)
+        if (_ConditionValue is Enum enumValue)
         {
-            return conditional.TargetValues.Contains(Convert.ToInt32(enumValue));
+            return _Conditional.m_TargetValues.Contains(Convert.ToInt32(enumValue));
         }
 
-        Debug.LogWarning($"Unsupported condition type: {conditionValue.GetType()} for {conditional.ConditionName}");
+        Debug.LogWarning($"Unsupported condition type: {_ConditionValue.GetType()} for {_Conditional.m_ConditionName}");
         return true;
     }
 }
