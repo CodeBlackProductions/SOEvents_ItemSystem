@@ -1,16 +1,18 @@
+using System;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 public class InspectorPanel : VisualElement
 {
+
     public InspectorPanel()
     {
         style.flexGrow = 1;
         Add(new Label("Select an item to view details"));
     }
 
-    public void Show(ScriptableObject _Obj)
+    public void Show(ScriptableObject _Obj, Action _InspectorValueChangeCallback)
     {
         Clear();
         if (_Obj == null)
@@ -23,7 +25,7 @@ public class InspectorPanel : VisualElement
 
         foreach (var property in _Obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
         {
-            VisualElement entry = InspectorDataManager.CreateEntry(_Obj, property, this);
+            VisualElement entry = InspectorDataManager.CreateEntry(_Obj, property, this, _InspectorValueChangeCallback);
             if (entry != null)
             {
                 Add(entry);

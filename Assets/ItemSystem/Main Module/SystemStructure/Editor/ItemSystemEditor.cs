@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
@@ -11,6 +12,9 @@ public class ItemSystemEditor : EditorWindow
     private VisualElement m_TabContent;
     private TreeView m_TabHierarchy;
     private InspectorPanel m_InspectorPanel;
+    private ETabType m_CurrentTab;
+
+    private Action m_InspectorValueChangeCallback;
 
     [MenuItem("Tools/Item System")]
     public static void ShowWindow()
@@ -27,6 +31,8 @@ public class ItemSystemEditor : EditorWindow
         m_TabContent = new VisualElement();
         m_TabHierarchy = new TreeView();
         m_InspectorPanel = new InspectorPanel();
+
+        m_InspectorValueChangeCallback += RefreshTabHierarchy;
 
         m_TabContent.style.flexDirection = FlexDirection.Row;
 
@@ -48,8 +54,8 @@ public class ItemSystemEditor : EditorWindow
     private void OnTabChanged(string _TabName)
     {
         m_TabContent.Clear();
-
-        ShowTabHierarchy((ETabType)System.Enum.Parse(typeof(ETabType), _TabName));
+        m_CurrentTab = (ETabType)System.Enum.Parse(typeof(ETabType), _TabName);
+        ShowTabHierarchy(m_CurrentTab);
 
         m_TabContent.Add(m_InspectorPanel);
     }
@@ -64,6 +70,22 @@ public class ItemSystemEditor : EditorWindow
         List<TreeViewItemData<string>> treeItems = LoadTabHierarchy(_ModuleType);
         m_TabHierarchy.SetRootItems(treeItems);
         m_TabContent.Add(m_TabHierarchy);
+    }
+
+    private void RefreshTabHierarchy() 
+    {
+        m_TabContent.Clear();
+
+        m_TabHierarchy.selectionChanged -= OnTreeViewSelectionChanged;
+        m_TabHierarchy = new TreeView();
+        m_TabHierarchy.selectionChanged += OnTreeViewSelectionChanged;
+        m_TabHierarchy.style.flexGrow = 1;
+
+        List<TreeViewItemData<string>> treeItems = LoadTabHierarchy(m_CurrentTab);
+        m_TabHierarchy.SetRootItems(treeItems);
+        m_TabContent.Add(m_TabHierarchy);
+
+        m_TabContent.Add(m_InspectorPanel);
     }
 
     private List<TreeViewItemData<string>> LoadTabHierarchy(ETabType _ModuleType)
@@ -232,13 +254,13 @@ public class ItemSystemEditor : EditorWindow
     {
         foreach (var selectedItem in _SelectedItems)
         {
-            ShowInspectorPanel(selectedItem.ToString());
+            ShowInspectorPanel(selectedItem.ToString(), m_InspectorValueChangeCallback);
         }
     }
 
-    private void ShowInspectorPanel(string _ItemSOName)
+    private void ShowInspectorPanel(string _ItemSOName, Action _InspectorValueChangeCallback)
     {
         ScriptableObject so = ItemEditorAssetLoader.LoadAssetByName<ScriptableObject>(_ItemSOName);
-        m_InspectorPanel.Show(so);
+        m_InspectorPanel.Show(so, _InspectorValueChangeCallback);
     }
 }

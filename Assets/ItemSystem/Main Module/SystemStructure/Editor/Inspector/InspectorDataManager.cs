@@ -20,8 +20,9 @@ public static class InspectorDataManager
         { typeof(float), ETypes.Float }
     };
 
-    public static VisualElement CreateEntry(ScriptableObject _ParentSO, PropertyInfo _Property, InspectorPanel _ParentPanel)
+    public static VisualElement CreateEntry(ScriptableObject _ParentSO, PropertyInfo _Property, InspectorPanel _ParentPanel, Action _InspectorValueChangeCallback)
     {
+
         if (_Property.CanRead && _Property.CanWrite && _Property.IsDefined(typeof(ItemToolkitAccess), false))
         {
             if (ConditionalHideAttribute.ShouldShowProperty(_ParentSO, _Property))
@@ -50,7 +51,8 @@ public static class InspectorDataManager
                         dropdownField.RegisterValueChangedCallback(c =>
                         {
                             _Property.SetValue(_ParentSO, Enum.Parse(_Property.PropertyType, c.newValue));
-                            _ParentPanel.Show(_ParentSO);
+                            _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
+                            _InspectorValueChangeCallback?.Invoke();
                         });
 
                         parent.Add(dropdownField);
@@ -92,7 +94,8 @@ public static class InspectorDataManager
                                 $"{so.name} ({so.GetType().Name})" == c.newValue && _Property.PropertyType.IsAssignableFrom(so.GetType())
                                 )
                             );
-                            _ParentPanel.Show(_ParentSO);
+                            _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
+                            _InspectorValueChangeCallback?.Invoke();
                         });
 
                         parent.Add(dropdownField);
@@ -116,14 +119,16 @@ public static class InspectorDataManager
                         {
                             dictionary.Add(newItem.GetStatName(), newItem);
                             _Property.SetValue(_ParentSO, dictionary);
-                            _ParentPanel.Show(_ParentSO);
+                            _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
+                            _InspectorValueChangeCallback?.Invoke();
                         };
 
                         statList.ItemRemoveCallback += (removeItem) =>
                         {
                             dictionary.Remove(removeItem.GetStatName());
                             _Property.SetValue(_ParentSO, dictionary);
-                            _ParentPanel.Show(_ParentSO);
+                            _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
+                            _InspectorValueChangeCallback?.Invoke();
                         };
 
                         parent.Add(statList);
@@ -150,7 +155,8 @@ public static class InspectorDataManager
 
                             _Property.SetValue(_ParentSO, newArray);
 
-                            _ParentPanel.Show(_ParentSO);
+                            _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
+                            _InspectorValueChangeCallback?.Invoke();
                         };
 
                         effectList.ItemRemoveCallback += (newItem) =>
@@ -168,7 +174,8 @@ public static class InspectorDataManager
 
                             _Property.SetValue(_ParentSO, newArray);
 
-                            _ParentPanel.Show(_ParentSO);
+                            _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
+                            _InspectorValueChangeCallback?.Invoke();
                         };
 
                         parent.Add(effectList);
@@ -190,7 +197,8 @@ public static class InspectorDataManager
 
                             _Property.SetValue(_ParentSO, newArray);
 
-                            _ParentPanel.Show(_ParentSO);
+                            _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
+                            _InspectorValueChangeCallback?.Invoke();
                         };
 
                         typeList.ItemRemoveCallback += (newItem) =>
@@ -208,7 +216,8 @@ public static class InspectorDataManager
 
                             _Property.SetValue(_ParentSO, newArray);
 
-                            _ParentPanel.Show(_ParentSO);
+                            _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
+                            _InspectorValueChangeCallback?.Invoke();
                         };
 
                         parent.Add(typeList);
@@ -245,7 +254,8 @@ public static class InspectorDataManager
                                 obj.name == c.newValue && obj.GetComponent<IProjectile>() != null)
                                 .GetComponent<IProjectile>());
 
-                            _ParentPanel.Show(_ParentSO);
+                            _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
+                            _InspectorValueChangeCallback?.Invoke();
                         });
 
                         parent.Add(dropdownField);
@@ -270,6 +280,7 @@ public static class InspectorDataManager
                             field.RegisterValueChangedCallback(t =>
                             {
                                 _Property.SetValue(_ParentSO, t.newValue);
+                                _InspectorValueChangeCallback?.Invoke();
                             });
 
                             return parent;
