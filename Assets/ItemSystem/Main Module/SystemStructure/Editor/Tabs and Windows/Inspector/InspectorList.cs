@@ -88,7 +88,7 @@ public class InspectorList<T> : VisualElement where T : ScriptableObject
 
     private void ChooseNewItem()
     {
-        List<T> soList = ItemEditorAssetLoader.LoadAssetsByType<T>();
+        List<T> soList = ItemEditor_AssetLoader.LoadAssetsByType<T>();
         List<string> soNames = new List<string>();
         soNames.Add("Choose new entry");
         for (int i = 0; i < soList.Count; i++)
@@ -104,7 +104,7 @@ public class InspectorList<T> : VisualElement where T : ScriptableObject
     {
         _SelectionDropdown.RemoveFromHierarchy();
 
-        T newItem = ItemEditorAssetLoader.LoadAssetByName<T>(_Item);
+        T newItem = ItemEditor_AssetLoader.LoadAssetByName<T>(_Item);
         m_Items.Add(newItem);
 
         ItemAddCallback?.Invoke(newItem);

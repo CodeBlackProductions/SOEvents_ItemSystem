@@ -66,7 +66,7 @@ public static class InspectorDataManager
                 }
                 else if (_Property.PropertyType.IsSubclassOf(typeof(ScriptableObject)))
                 {
-                    List<ScriptableObject> soList = ItemEditorAssetLoader.LoadAssetsByType<ScriptableObject>();
+                    List<ScriptableObject> soList = ItemEditor_AssetLoader.LoadAssetsByType<ScriptableObject>();
                     if (soList == null)
                     {
                         soList = new List<ScriptableObject>();
@@ -242,7 +242,7 @@ public static class InspectorDataManager
                 }
                 else if (typeof(IProjectile).IsAssignableFrom(_Property.PropertyType))
                 {
-                    List<GameObject> projectileList = ItemEditorAssetLoader.LoadAssetsByType<GameObject>().Where(asset => asset.GetComponent<IProjectile>() != null).ToList();
+                    List<GameObject> projectileList = ItemEditor_AssetLoader.LoadAssetsByType<GameObject>().Where(asset => asset.GetComponent<IProjectile>() != null).ToList();
                     if (projectileList == null)
                     {
                         projectileList = new List<GameObject>();

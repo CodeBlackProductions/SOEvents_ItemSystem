@@ -1,17 +1,22 @@
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 /// <summary>
 /// Base effect trigger, used to handle <see cref="SO_Item_Effect"/> calls.
 /// Inherit from this when creating new effect triggers.
 /// </summary>
-public abstract class SO_Effect_Trigger : ScriptableObject
+public abstract class SO_Effect_Trigger : ScriptableObject, IItemModule
 {
     [SerializeField] private string m_TriggerName = "NewTrigger";
+    [SerializeField] private GUID m_TriggerGUID;
 
     protected List<SO_Item_Effect> m_Listener = new List<SO_Item_Effect>();
 
     [ItemToolkitAccess] public string TriggerName { get => m_TriggerName; set => m_TriggerName = value; }
+
+    public string ModuleName { get => m_TriggerName; set => m_TriggerName = value; }
+    public GUID ModuleGUID { get => m_TriggerGUID; set => m_TriggerGUID = value; }
 
     public void OnEnable()
     {

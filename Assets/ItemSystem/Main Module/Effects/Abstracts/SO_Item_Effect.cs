@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public enum ETarget
@@ -15,9 +16,10 @@ public enum EAllowedTargets
 /// Base item effect. Contains all necessary elements to add additional effects to items. (e.g. Poison or Stat boosts)
 /// Inherit from this when creating new effects.
 /// </summary>
-public abstract class SO_Item_Effect : ScriptableObject
+public abstract class SO_Item_Effect : ScriptableObject, IItemModule
 {
     [SerializeField] private string m_EffectName = "NewEffect";
+    [SerializeField] private GUID m_EffectGUID;
     [SerializeField] private SO_Effect_Trigger m_Trigger;
     [SerializeField] private ETarget m_EffectTarget;
     [SerializeField] private EAllowedTargets m_AllowedEffectTargets;
@@ -33,6 +35,9 @@ public abstract class SO_Item_Effect : ScriptableObject
     [ItemToolkitAccess] public float TargetRange { get => m_TargetRange; set => m_TargetRange = value; }
 
     [ItemToolkitAccess] public SO_Effect_Trigger Trigger { get => m_Trigger; set => m_Trigger = value; }
+    
+    public string ModuleName { get => m_EffectName; set => m_EffectName = value; }
+    public GUID ModuleGUID { get => m_EffectGUID; set => m_EffectGUID = value; }
 
     private void OnEnable()
     {

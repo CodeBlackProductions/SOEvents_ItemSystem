@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 public enum ERarity
@@ -11,9 +12,10 @@ public enum ERarity
 /// Core class of the entire system. Contains all necessary pieces to create a functioning item.
 /// </summary>
 [CreateAssetMenu(fileName = "New_Item", menuName = "ItemSystem/Item/Item")]
-public class SO_Item : ScriptableObject
+public class SO_Item : ScriptableObject, IItemModule
 {
     [SerializeField] private string m_ItemName = "NewItem";
+    [SerializeField] private GUID m_ItemGUID;
     [SerializeField] private SO_Item_Class m_Class;
     [SerializeField] private ERarity m_Rarity;
     [SerializeField] private SO_Item_Effect[] m_Effects;
@@ -28,6 +30,9 @@ public class SO_Item : ScriptableObject
     [ItemToolkitAccess] public SO_Item_Effect[] Effects { get => m_Effects; set => m_Effects = value; }
     [ItemToolkitAccess] public string ItemName { get => m_ItemName; set => m_ItemName = value; }
     [ItemToolkitAccess] public Dictionary<string, SO_Stat> Stats { get => m_Stats; set => m_Stats = value; }
+
+    public string ModuleName { get => m_ItemName; set => m_ItemName = value; }
+    public GUID ModuleGUID { get => m_ItemGUID; set => m_ItemGUID = value; }
 
     private void OnValidate()
     {

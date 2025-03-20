@@ -95,11 +95,11 @@ public class ModuleCreatorWindow : EditorWindow
         m_SubModuleSelection.RegisterValueChangedCallback((evt) => SetupInspectorPanel(types.Find((t) => t.Name == evt.newValue), _ModuleType));
     }
 
-    private List<Type> GetListOfSubTypes(Type baseType)
+    private List<Type> GetListOfSubTypes(Type _BaseType)
     {
-        return Assembly.GetAssembly(baseType)
+        return Assembly.GetAssembly(_BaseType)
             .GetTypes()
-            .Where(t => t.IsSubclassOf(baseType) && !t.IsAbstract || t == baseType && !t.IsAbstract)
+            .Where(t => t.IsSubclassOf(_BaseType) && !t.IsAbstract || t == _BaseType && !t.IsAbstract)
             .ToList();
     }
 
@@ -108,9 +108,7 @@ public class ModuleCreatorWindow : EditorWindow
         ScriptableObject temporarySOInstance = CreateTemporaryInstance(_SubType);
         m_InspectorPanel.Show(temporarySOInstance, null);
 
-        string assetPath = $"Assets/ItemSystem/SO_Instances/{_ModuleType}/";
-
-        m_FinishButton.clicked += () => FinishSetup(temporarySOInstance, assetPath);
+        m_FinishButton.clicked += () => FinishSetup(temporarySOInstance, _ModuleType);
     }
 
     private ScriptableObject CreateTemporaryInstance(Type _Type)
@@ -127,18 +125,11 @@ public class ModuleCreatorWindow : EditorWindow
         }
     }
 
-    private void FinishSetup(ScriptableObject _TemporarySOInstance, string _AssetPath)
+    private void FinishSetup(ScriptableObject _TemporarySOInstance, string _ModuleType)
     {
         if (_TemporarySOInstance != null)
         {
-            // Erstellen der tatsächlichen Instanz und Speichern in den Assets
-            string path = $"{_AssetPath}{_TemporarySOInstance.GetType().Name}.asset";
-            if (!string.IsNullOrEmpty(path))
-            {
-                AssetDatabase.CreateAsset(_TemporarySOInstance, path);
-                AssetDatabase.SaveAssets();
-                AssetDatabase.Refresh();
-            }
+            ItemEditor_InstanceManager.CreateInstance(_TemporarySOInstance, _ModuleType);
 
             Close();
         }

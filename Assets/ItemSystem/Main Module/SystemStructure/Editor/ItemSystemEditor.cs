@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -10,13 +9,11 @@ public class ItemSystemEditor : EditorWindow
     private VisualElement m_Root;
     private TabbedMenu m_TabMenu;
     private VisualElement m_TabContent;
-    private VisualElement m_TabNavigationPanel;
-    private TreeView m_TabHierarchy;
-    private Button m_AddNewSOButton;
     private InspectorPanel m_InspectorPanel;
     private ETabType m_CurrentTab;
 
     private Action m_InspectorValueChangeCallback;
+    private Action<IEnumerable<System.Object>> m_TreeviewSelectionChangeCallback;
 
     [MenuItem("Tools/Item System")]
     public static void ShowWindow()
@@ -29,38 +26,21 @@ public class ItemSystemEditor : EditorWindow
     {
         m_Root = rootVisualElement;
 
-        m_TabMenu = new TabbedMenu(new string[] { "Items", "Classes", "Types", "Effects", "Triggers" }, OnTabChanged);
+        m_TabMenu = new TabbedMenu(new string[] { "Items", "Classes", "Types", "Effects", "Triggers", "Settings" }, OnTabChanged);
         m_TabContent = new VisualElement();
-        m_TabNavigationPanel = new VisualElement();
-        m_TabHierarchy = new TreeView();
-        m_AddNewSOButton = new Button(() => ModuleCreatorWindow.ShowWindow());
         m_InspectorPanel = new InspectorPanel();
 
-        m_InspectorValueChangeCallback += RefreshTabHierarchy;
+        m_TreeviewSelectionChangeCallback += OnTreeViewSelectionChanged;
 
         m_TabContent.style.flexDirection = FlexDirection.Row;
-
-        m_TabNavigationPanel.style.flexDirection = FlexDirection.Column;
-        m_TabNavigationPanel.style.flexGrow = 1;
-        m_TabNavigationPanel.style.paddingRight = 50;
-
-        m_AddNewSOButton.style.height = 25;
-        m_AddNewSOButton.style.alignSelf = Align.Center;
-        m_AddNewSOButton.Add(new Label($"Add"));
+        m_TabContent.style.flexGrow = 1;
 
         m_Root.Add(m_TabMenu);
-        m_Root.Add(m_TabContent);
 
-        ShowTabHierarchy(ETabType.Items);
-        m_TabContent.Add(m_TabNavigationPanel);
+        LoadTabHierarchy(ETabType.Items);
         m_TabContent.Add(m_InspectorPanel);
 
-        EditorApplication.delayCall += () => m_TabHierarchy?.CollapseAll();
-    }
-
-    private void OnEnable()
-    {
-        EditorApplication.delayCall += () => m_TabHierarchy?.CollapseAll();
+        m_Root.Add(m_TabContent);
     }
 
     private void OnTabChanged(string _TabName)
@@ -68,199 +48,64 @@ public class ItemSystemEditor : EditorWindow
         m_TabContent.Clear();
         m_CurrentTab = (ETabType)System.Enum.Parse(typeof(ETabType), _TabName);
 
-        ShowTabHierarchy(m_CurrentTab);
-        m_TabContent.Add(m_TabNavigationPanel);
-        m_TabContent.Add(m_InspectorPanel);
+        if (m_CurrentTab != ETabType.Settings)
+        {
+            LoadTabHierarchy(m_CurrentTab);
+            m_TabContent.Add(m_InspectorPanel);
+        }
+        else
+        {
+        }
     }
 
-    private void ShowTabHierarchy(ETabType _ModuleType)
+    private void LoadTabHierarchy(ETabType _ModuleType)
     {
-        m_TabNavigationPanel.Clear();
-
-        m_TabHierarchy.selectionChanged -= OnTreeViewSelectionChanged;
-        m_TabHierarchy = new TreeView();
-        m_TabHierarchy.selectionChanged += OnTreeViewSelectionChanged;
-        m_TabHierarchy.style.flexGrow = 1;
-
-        List<TreeViewItemData<string>> treeItems = LoadTabHierarchy(_ModuleType);
-        m_TabHierarchy.SetRootItems(treeItems);
-
-        m_TabNavigationPanel.Add(m_TabHierarchy);
-
-        m_TabNavigationPanel.Add(m_AddNewSOButton);
-    }
-
-    private void RefreshTabHierarchy()
-    {
-        m_TabContent.Clear();
-        m_TabNavigationPanel.Clear();
-
-        m_TabHierarchy.selectionChanged -= OnTreeViewSelectionChanged;
-        m_TabHierarchy = new TreeView();
-        m_TabHierarchy.selectionChanged += OnTreeViewSelectionChanged;
-        m_TabHierarchy.style.flexGrow = 1;
-
-        List<TreeViewItemData<string>> treeItems = LoadTabHierarchy(m_CurrentTab);
-        m_TabHierarchy.SetRootItems(treeItems);
-        m_TabNavigationPanel.Add(m_TabHierarchy);
-
-        m_TabNavigationPanel.Add(m_AddNewSOButton);
-
-        m_TabContent.Add(m_TabNavigationPanel);
-        m_TabContent.Add(m_InspectorPanel);
-    }
-
-    private List<TreeViewItemData<string>> LoadTabHierarchy(ETabType _ModuleType)
-    {
-        List<TreeViewItemData<string>> treeItems = new List<TreeViewItemData<string>>();
-
         switch (_ModuleType)
         {
             case ETabType.Items:
-                treeItems = LoadItems();
+                DynamicItemTreeView<SO_Item> itemsTreeView = new DynamicItemTreeView<SO_Item>(m_TreeviewSelectionChangeCallback, true);
+                m_InspectorValueChangeCallback += itemsTreeView.RefreshTreeView;
+                itemsTreeView.style.flexGrow = 1;
+                m_TabContent.Add(itemsTreeView);
+
                 break;
 
             case ETabType.Classes:
-                treeItems = LoadClasses();
+                DynamicItemTreeView<SO_Item_Class> classTreeView = new DynamicItemTreeView<SO_Item_Class>(m_TreeviewSelectionChangeCallback, true);
+                m_InspectorValueChangeCallback += classTreeView.RefreshTreeView;
+                classTreeView.style.flexGrow = 1;
+                m_TabContent.Add(classTreeView);
+
                 break;
 
             case ETabType.Types:
-                treeItems = LoadTypes();
+                DynamicItemTreeView<SO_Class_Type> typeTreeView = new DynamicItemTreeView<SO_Class_Type>(m_TreeviewSelectionChangeCallback, true);
+                m_InspectorValueChangeCallback += typeTreeView.RefreshTreeView;
+                typeTreeView.style.flexGrow = 1;
+                m_TabContent.Add(typeTreeView);
+
                 break;
 
             case ETabType.Effects:
-                treeItems = LoadEffects();
+                DynamicItemTreeView<SO_Item_Effect> effectTreeView = new DynamicItemTreeView<SO_Item_Effect>(m_TreeviewSelectionChangeCallback, true);
+                m_InspectorValueChangeCallback += effectTreeView.RefreshTreeView;
+                effectTreeView.style.flexGrow = 1;
+                m_TabContent.Add(effectTreeView);
+
                 break;
 
             case ETabType.Triggers:
-                treeItems = LoadTriggers();
+                DynamicItemTreeView<SO_Effect_Trigger> triggerTreeView = new DynamicItemTreeView<SO_Effect_Trigger>(m_TreeviewSelectionChangeCallback, true);
+                m_InspectorValueChangeCallback += triggerTreeView.RefreshTreeView;
+                triggerTreeView.style.flexGrow = 1;
+                m_TabContent.Add(triggerTreeView);
+
                 break;
 
             default:
                 Debug.LogError("Invalid TabType");
                 break;
         }
-
-        return treeItems;
-    }
-
-    private List<TreeViewItemData<string>> LoadItems()
-    {
-        List<TreeViewItemData<string>> treeItems = new List<TreeViewItemData<string>>();
-        int idCounter = 0;
-
-        var items = ItemEditorAssetLoader.LoadAssetsByType<SO_Item>();
-        var classes = ItemEditorAssetLoader.LoadAssetsByType<SO_Item_Class>();
-        var types = ItemEditorAssetLoader.LoadAssetsByType<SO_Class_Type>();
-        var effects = ItemEditorAssetLoader.LoadAssetsByType<SO_Item_Effect>();
-        var triggers = ItemEditorAssetLoader.LoadAssetsByType<SO_Effect_Trigger>();
-
-        foreach (var item in items)
-        {
-            List<TreeViewItemData<string>> itemChildren = new List<TreeViewItemData<string>>();
-
-            foreach (var cls in classes.Where(c => item.Class == c))
-            {
-                List<TreeViewItemData<string>> classChildren = new List<TreeViewItemData<string>>();
-
-                foreach (var type in types.Where(t => cls.Types.Contains(t)))
-                {
-                    classChildren.Add(new TreeViewItemData<string>(idCounter++, type.name));
-                }
-
-                itemChildren.Add(new TreeViewItemData<string>(idCounter++, cls.name, classChildren));
-            }
-
-            foreach (var effect in effects.Where(e => item.Effects.Contains(e)))
-            {
-                List<TreeViewItemData<string>> effectChildren = new List<TreeViewItemData<string>>();
-
-                foreach (var trigger in triggers.Where(t => effect.Trigger == t))
-                {
-                    effectChildren.Add(new TreeViewItemData<string>(idCounter++, trigger.name));
-                }
-
-                itemChildren.Add(new TreeViewItemData<string>(idCounter++, effect.name, effectChildren));
-            }
-
-            treeItems.Add(new TreeViewItemData<string>(idCounter++, item.name, itemChildren));
-        }
-
-        return treeItems;
-    }
-
-    private List<TreeViewItemData<string>> LoadClasses()
-    {
-        List<TreeViewItemData<string>> treeItems = new List<TreeViewItemData<string>>();
-        int idCounter = 0;
-
-        var classes = ItemEditorAssetLoader.LoadAssetsByType<SO_Item_Class>();
-        var types = ItemEditorAssetLoader.LoadAssetsByType<SO_Class_Type>();
-
-        foreach (var cls in classes)
-        {
-            List<TreeViewItemData<string>> classChildren = new List<TreeViewItemData<string>>();
-
-            foreach (var type in types.Where(t => cls.Types.Contains(t)))
-            {
-                classChildren.Add(new TreeViewItemData<string>(idCounter++, type.name));
-            }
-
-            treeItems.Add(new TreeViewItemData<string>(idCounter++, cls.name, classChildren));
-        }
-
-        return treeItems;
-    }
-
-    private List<TreeViewItemData<string>> LoadTypes()
-    {
-        List<TreeViewItemData<string>> treeItems = new List<TreeViewItemData<string>>();
-        int idCounter = 0;
-
-        var types = ItemEditorAssetLoader.LoadAssetsByType<SO_Class_Type>();
-        foreach (var type in types)
-        {
-            treeItems.Add(new TreeViewItemData<string>(idCounter++, type.name));
-        }
-
-        return treeItems;
-    }
-
-    private List<TreeViewItemData<string>> LoadEffects()
-    {
-        List<TreeViewItemData<string>> treeItems = new List<TreeViewItemData<string>>();
-        int idCounter = 0;
-
-        var effects = ItemEditorAssetLoader.LoadAssetsByType<SO_Item_Effect>();
-        var triggers = ItemEditorAssetLoader.LoadAssetsByType<SO_Effect_Trigger>();
-
-        foreach (var effect in effects)
-        {
-            List<TreeViewItemData<string>> effectChildren = new List<TreeViewItemData<string>>();
-
-            foreach (var trigger in triggers.Where(t => effect.Trigger == t))
-            {
-                effectChildren.Add(new TreeViewItemData<string>(idCounter++, trigger.name));
-            }
-
-            treeItems.Add(new TreeViewItemData<string>(idCounter++, effect.name, effectChildren));
-        }
-
-        return treeItems;
-    }
-
-    private List<TreeViewItemData<string>> LoadTriggers()
-    {
-        List<TreeViewItemData<string>> treeItems = new List<TreeViewItemData<string>>();
-        int idCounter = 0;
-
-        var triggers = ItemEditorAssetLoader.LoadAssetsByType<SO_Effect_Trigger>();
-        foreach (var trigger in triggers)
-        {
-            treeItems.Add(new TreeViewItemData<string>(idCounter++, trigger.name));
-        }
-
-        return treeItems;
     }
 
     private enum ETabType
@@ -269,7 +114,8 @@ public class ItemSystemEditor : EditorWindow
         Classes,
         Types,
         Effects,
-        Triggers
+        Triggers,
+        Settings
     }
 
     private void OnTreeViewSelectionChanged(IEnumerable<object> _SelectedItems)
@@ -282,7 +128,7 @@ public class ItemSystemEditor : EditorWindow
 
     private void ShowInspectorPanel(string _ItemSOName, Action _InspectorValueChangeCallback)
     {
-        ScriptableObject so = ItemEditorAssetLoader.LoadAssetByName<ScriptableObject>(_ItemSOName);
+        ScriptableObject so = ItemEditor_AssetLoader.LoadAssetByName<ScriptableObject>(_ItemSOName);
         m_InspectorPanel.Show(so, _InspectorValueChangeCallback);
     }
 }
