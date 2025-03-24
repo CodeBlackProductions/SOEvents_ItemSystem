@@ -122,13 +122,16 @@ public class ItemSystemEditor : EditorWindow
     {
         foreach (var selectedItem in _SelectedItems)
         {
-            ShowInspectorPanel(selectedItem.ToString(), m_InspectorValueChangeCallback);
+            if (selectedItem is TreeViewEntryData data)
+            {
+                ShowInspectorPanel(data.FileName, m_InspectorValueChangeCallback);
+            }
         }
     }
 
-    private void ShowInspectorPanel(string _ItemSOName, Action _InspectorValueChangeCallback)
+    private void ShowInspectorPanel(string _FileName, Action _InspectorValueChangeCallback)
     {
-        ScriptableObject so = ItemEditor_AssetLoader.LoadAssetByName<ScriptableObject>(_ItemSOName);
+        ScriptableObject so = ItemEditor_AssetLoader.LoadAssetByName<ScriptableObject>(_FileName);
         m_InspectorPanel.Show(so, _InspectorValueChangeCallback);
     }
 }

@@ -1,17 +1,21 @@
 using System;
+using UnityEditor;
 using UnityEngine;
-using static UnityEngine.Rendering.DebugUI;
 
 /// <summary>
 /// Base class for user stats of different types.
 /// Inherit from this when creating a new base type of stat. (e.g. <see cref="SO_Stat_Float"/> , <see cref="SO_Stat_String"/>  etc.)
 /// </summary>
 [Serializable]
-public abstract class SO_Stat : ScriptableObject
+public abstract class SO_Stat : ScriptableObject, IItemModule
 {
     [SerializeField] protected string m_StatName = "NewStat";
+    [SerializeField] protected GUID m_StatGUID;
 
-    public abstract string GetStatName();
+    [ItemToolkitAccess] public string StatName { get => m_StatName; set => m_StatName = value; }
+
+    public string ModuleName { get => m_StatName; set => m_StatName = value; }
+    public GUID ModuleGUID { get => m_StatGUID; set => m_StatGUID = value; }
 
     public abstract Type GetStatType();
 

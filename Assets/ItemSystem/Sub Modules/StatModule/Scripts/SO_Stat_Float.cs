@@ -8,11 +8,6 @@ public class SO_Stat_Float : SO_Stat
 {
     [SerializeField] private float m_Value = 0;
 
-    public override string GetStatName()
-    {
-        return m_StatName;
-    }
-
     public override Type GetStatType()
     {
         return m_Value.GetType();

@@ -30,9 +30,9 @@ public abstract class SO_Item_Class : ScriptableObject, IItemModule
             m_Stats.Clear();
             foreach (SO_Stat stat in m_ClassStats)
             {
-                if (stat != null && !m_Stats.ContainsKey(stat.GetStatName()))
+                if (stat != null && !m_Stats.ContainsKey(stat.StatName))
                 {
-                    m_Stats.Add(stat.GetStatName(), stat);
+                    m_Stats.Add(stat.StatName, stat);
                 }
             }
         }

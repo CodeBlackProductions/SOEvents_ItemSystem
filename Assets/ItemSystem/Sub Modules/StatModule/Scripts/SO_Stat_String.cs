@@ -7,11 +7,6 @@ public class SO_Stat_String : SO_Stat
 {
     [SerializeField] private string m_Value = "NewStat";
 
-    public override string GetStatName()
-    {
-        return m_StatName;
-    }
-
     public override Type GetStatType()
     {
         return m_Value.GetType();

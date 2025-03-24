@@ -57,16 +57,13 @@ public class InspectorList<T> : VisualElement where T : ScriptableObject
 
     private void InstantiateUI(string _Title)
     {
-        // Create title label
         Label titleLabel = new Label(_Title) { style = { unityFontStyleAndWeight = FontStyle.Bold } };
         m_ParentView.Add(titleLabel);
 
-        // Create ListView
         m_ListView = new ListView(m_Items, 20, CreateItem, BindItem);
         m_ListView.selectionType = SelectionType.Single;
         m_ListView.style.flexGrow = 1;
 
-        // Buttons
         var buttonContainer = new VisualElement { style = { flexDirection = FlexDirection.Row } };
 
         Button addButton = new Button(() => ChooseNewItem()) { text = "Add" };
@@ -83,7 +80,7 @@ public class InspectorList<T> : VisualElement where T : ScriptableObject
 
     private void BindItem(VisualElement _Element, int _Index)
     {
-        (_Element as Label).text = m_Items[_Index] != null ? m_Items[_Index].name : "Null";
+        (_Element as Label).text = m_Items[_Index] != null ? (m_Items[_Index] as IItemModule).ModuleName : "Null";
     }
 
     private void ChooseNewItem()
@@ -93,7 +90,7 @@ public class InspectorList<T> : VisualElement where T : ScriptableObject
         soNames.Add("Choose new entry");
         for (int i = 0; i < soList.Count; i++)
         {
-            soNames.Add(soList[i].name);
+            soNames.Add((soList[i] as IItemModule).ModuleName);
         }
         DropdownField dropdownField = new DropdownField(soNames, soNames[0]);
         dropdownField.RegisterValueChangedCallback(v => AddItem(v.newValue, dropdownField));
@@ -104,12 +101,16 @@ public class InspectorList<T> : VisualElement where T : ScriptableObject
     {
         _SelectionDropdown.RemoveFromHierarchy();
 
-        T newItem = ItemEditor_AssetLoader.LoadAssetByName<T>(_Item);
-        m_Items.Add(newItem);
+        T newItem = ItemEditor_AssetLoader.LoadAssetsByType<T>().FirstOrDefault(so => (so as IItemModule).ModuleName == _Item);
 
-        ItemAddCallback?.Invoke(newItem);
+        if (newItem != null)
+        {
+            m_Items.Add(newItem);
 
-        m_ListView.Rebuild();
+            ItemAddCallback?.Invoke(newItem);
+
+            m_ListView.Rebuild();
+        }
     }
 
     private void RemoveSelectedItem()

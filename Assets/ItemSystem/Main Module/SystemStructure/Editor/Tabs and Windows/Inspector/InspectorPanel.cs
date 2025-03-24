@@ -21,7 +21,7 @@ public class InspectorPanel : VisualElement
             return;
         }
 
-        Add(new Label($"Editing: {_Obj.name}"));
+        Add(new Label($"Editing: {(_Obj as IItemModule).ModuleName}"));
 
         foreach (var property in _Obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
         {

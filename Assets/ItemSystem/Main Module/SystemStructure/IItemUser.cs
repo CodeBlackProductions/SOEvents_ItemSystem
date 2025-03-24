@@ -44,7 +44,7 @@ public interface IItemUser
         {
             for (int i = 0; i < Stats.Count; i++)
             {
-                UserStats.Add(Stats[i].GetStatName(), new Runtime_Stat(Stats[i].GetStatValue(), Stats[i].GetStatType()));
+                UserStats.Add(Stats[i].StatName, new Runtime_Stat(Stats[i].GetStatValue(), Stats[i].GetStatType()));
             }
         }
     }

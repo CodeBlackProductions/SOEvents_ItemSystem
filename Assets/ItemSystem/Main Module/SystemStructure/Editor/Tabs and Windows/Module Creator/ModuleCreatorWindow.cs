@@ -16,11 +16,13 @@ public class ModuleCreatorWindow : EditorWindow
     private Button m_FinishButton;
 
     private Action<string> OnModuleChanged;
+    private Action OnClose;
 
-    public static void ShowWindow()
+    public static void ShowWindow(Action _OnWindowClosedCallback)
     {
         ModuleCreatorWindow window = GetWindow<ModuleCreatorWindow>("Module Creator");
         window.minSize = new Vector2(700, 400);
+        window.OnClose += _OnWindowClosedCallback;
     }
 
     private void CreateGUI()
@@ -105,6 +107,7 @@ public class ModuleCreatorWindow : EditorWindow
 
     private void SetupInspectorPanel(Type _SubType, string _ModuleType)
     {
+        if (_SubType == null) { return; }
         ScriptableObject temporarySOInstance = CreateTemporaryInstance(_SubType);
         m_InspectorPanel.Show(temporarySOInstance, null);
 
@@ -131,6 +134,7 @@ public class ModuleCreatorWindow : EditorWindow
         {
             ItemEditor_InstanceManager.CreateInstance(_TemporarySOInstance, _ModuleType);
 
+            OnClose?.Invoke();
             Close();
         }
     }

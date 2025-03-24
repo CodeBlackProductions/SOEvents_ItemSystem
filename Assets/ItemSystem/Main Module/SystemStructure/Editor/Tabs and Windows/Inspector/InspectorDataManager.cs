@@ -126,7 +126,7 @@ public static class InspectorDataManager
 
                         statList.ItemAddCallback += (newItem) =>
                         {
-                            dictionary.Add(newItem.GetStatName(), newItem);
+                            dictionary.Add(newItem.StatName, newItem);
                             _Property.SetValue(_ParentSO, dictionary);
                             _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
                             _InspectorValueChangeCallback?.Invoke();
@@ -134,7 +134,7 @@ public static class InspectorDataManager
 
                         statList.ItemRemoveCallback += (removeItem) =>
                         {
-                            dictionary.Remove(removeItem.GetStatName());
+                            dictionary.Remove(removeItem.StatName);
                             _Property.SetValue(_ParentSO, dictionary);
                             _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
                             _InspectorValueChangeCallback?.Invoke();
@@ -299,6 +299,10 @@ public static class InspectorDataManager
                                 _Property.SetValue(_ParentSO, t.newValue);
                                 _InspectorValueChangeCallback?.Invoke();
                             });
+                            
+                            field.RegisterCallback<FocusOutEvent>(t =>
+                            _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback)
+                            );
 
                             return parent;
 
@@ -319,6 +323,10 @@ public static class InspectorDataManager
                                 }
                             });
 
+                            field.RegisterCallback<FocusOutEvent>(t =>
+                           _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback)
+                           );
+
                             return parent;
 
                         case ETypes.Float:
@@ -337,6 +345,10 @@ public static class InspectorDataManager
                                     Debug.LogWarning("Invalid input");
                                 }
                             });
+
+                            field.RegisterCallback<FocusOutEvent>(t =>
+                           _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback)
+                           );
 
                             return parent;
 
