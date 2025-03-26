@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -30,7 +29,7 @@ public class ModuleCreatorWindow : EditorWindow
         m_Root = rootVisualElement;
 
         m_ModuleSelection = new DropdownField("Module type");
-        m_ModuleSelection.choices = new List<string> { "Select Module", "Items", "Classes", "Types", "Effects", "Trigger" };
+        m_ModuleSelection.choices = new List<string> { "Select Module", "Items", "Classes", "Types", "Effects", "Trigger", "ItemSlots", "ItemPools", "Stats" };
         m_ModuleSelection.RegisterValueChangedCallback((evt) => OnModuleChanged?.Invoke(evt.newValue));
         m_ModuleSelection.value = "Select Module";
 
@@ -83,6 +82,16 @@ public class ModuleCreatorWindow : EditorWindow
 
             case "Trigger":
                 types = GetListOfSubTypes(typeof(SO_Effect_Trigger));
+                break;
+
+            case "ItemSlots":
+                types = GetListOfSubTypes(typeof(SO_ItemSlot));
+                break;
+
+            case "ItemPools":
+                throw new NotImplementedException();
+            case "Stats":
+                types = GetListOfSubTypes(typeof(SO_Stat));
                 break;
 
             default:

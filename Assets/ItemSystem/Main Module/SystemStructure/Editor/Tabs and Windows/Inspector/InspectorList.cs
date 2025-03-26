@@ -71,8 +71,8 @@ public class InspectorList<T> : VisualElement where T : ScriptableObject
 
         buttonContainer.Add(addButton);
         buttonContainer.Add(removeButton);
-        m_ParentView.Add(buttonContainer);
         m_ParentView.Add(m_ListView);
+        m_ParentView.Add(buttonContainer);
         Add(m_ParentView);
     }
 

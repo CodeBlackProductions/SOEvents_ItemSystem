@@ -21,7 +21,6 @@ public class UnitController : MonoBehaviour, IItemUser
     private IItemUser m_TestTargetUser;
 
     private List<SO_Item> m_Items = new List<SO_Item>();
-    private float timer = 1f;
 
     public List<SO_Item> Items { get => m_Items; set => m_Items = value; }
     public List<SO_Stat> Stats { get => m_unitStats; set => m_unitStats = value; }

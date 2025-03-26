@@ -237,6 +237,47 @@ public static class InspectorDataManager
                         return parent;
                     }
 
+                    if (_Property.PropertyType == typeof(SO_Item_Class[]))
+                    {
+                        SO_Item_Class[] array = _Property.GetValue(_ParentSO) as SO_Item_Class[];
+                        InspectorList<SO_Item_Class> typeList = new InspectorList<SO_Item_Class>(_Property.GetValue(_ParentSO) as SO_Item_Class[], "Classes");
+
+                        typeList.ItemAddCallback += (newItem) =>
+                        {
+                            SO_Item_Class[] newArray = new SO_Item_Class[array.Length + 1];
+                            Array.Copy(array, newArray, array.Length);
+                            newArray[newArray.Length - 1] = newItem;
+
+                            array = newArray;
+
+                            _Property.SetValue(_ParentSO, newArray);
+
+                            _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
+                            _InspectorValueChangeCallback?.Invoke();
+                        };
+
+                        typeList.ItemRemoveCallback += (newItem) =>
+                        {
+                            SO_Item_Class[] newArray = new SO_Item_Class[array.Length - 1];
+                            int index = Array.IndexOf(array, newItem);
+
+                            if (index >= 0)
+                            {
+                                Array.Copy(array, 0, newArray, 0, index);
+                                Array.Copy(array, index + 1, newArray, index, array.Length - index - 1);
+                            }
+
+                            array = newArray;
+
+                            _Property.SetValue(_ParentSO, newArray);
+
+                            _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
+                            _InspectorValueChangeCallback?.Invoke();
+                        };
+
+                        parent.Add(typeList);
+                        return parent;
+                    }
                     Debug.LogWarning($"Could not generate InspectorList for Array {_ParentSO} : {_Property.Name}");
                     return null;
                 }
@@ -290,7 +331,11 @@ public static class InspectorDataManager
                     {
                         case ETypes.String:
 
-                            field.maxLength = 20;
+                            if (!(_ParentSO.GetType() == typeof(SO_EditorSettings)))
+                            {
+                                field.maxLength = 20;
+                            }
+
                             field.value = _Property.GetValue(_ParentSO)?.ToString() ?? string.Empty;
                             parent.Add(field);
 
@@ -299,7 +344,7 @@ public static class InspectorDataManager
                                 _Property.SetValue(_ParentSO, t.newValue);
                                 _InspectorValueChangeCallback?.Invoke();
                             });
-                            
+
                             field.RegisterCallback<FocusOutEvent>(t =>
                             _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback)
                             );

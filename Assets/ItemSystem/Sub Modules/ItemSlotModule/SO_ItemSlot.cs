@@ -10,7 +10,6 @@ public enum EAllowedConditions
 /// <summary>
 /// Optional item slots for usage in an inventory system.
 /// </summary>
-[CreateAssetMenu(fileName = "New_ItemSlot", menuName = "ItemSystem/ItemSlot")]
 public class SO_ItemSlot : ScriptableObject, IItemModule
 {
     private string m_SlotName = "NewSlot";

@@ -15,4 +15,4 @@ MonoBehaviour:
   m_ClassName: Weapon_Class
   m_Types:
   - {fileID: 11400000, guid: 1ac4dd0cffd980942bdd8f5fc3bb75c4, type: 2}
-  - {fileID: 11400000, guid: 745b43294e374964fb869df164313360, type: 2}
+  m_ClassStats: []

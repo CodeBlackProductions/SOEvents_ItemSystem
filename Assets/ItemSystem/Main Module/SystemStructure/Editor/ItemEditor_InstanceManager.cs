@@ -22,7 +22,9 @@ public static class ItemEditor_InstanceManager
                 return;
             }
 
-            string assetPath = $"Assets/ItemSystem/SO_Instances/{_ModuleType}/";
+            SO_EditorSettings settings = ItemEditor_AssetLoader.LoadAssetByName<SO_EditorSettings>("EditorSettings");
+
+            string assetPath = $"{settings.InstancesPath}/{_ModuleType}/";
             string path = $"{assetPath}{fileName}.asset";
             if (!string.IsNullOrEmpty(path))
             {

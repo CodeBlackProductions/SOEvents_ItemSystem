@@ -1,12 +1,12 @@
 using System;
 using UnityEngine;
-using static UnityEngine.Rendering.DebugUI;
 
-[CreateAssetMenu(fileName = "NewStat", menuName = "StatSystem/Stat/Stat_Float")]
 [Serializable]
-public class SO_Stat_Float : SO_Stat
+public class SO_Stat_Integer : SO_Stat
 {
-    [SerializeField] private float m_Value = 0;
+    [SerializeField] private int m_Value = 0;
+
+    [ItemToolkitAccess] public int StatValue { get => m_Value; set => m_Value = value; }
 
     public override Type GetStatType()
     {
@@ -20,7 +20,7 @@ public class SO_Stat_Float : SO_Stat
 
     public override void SetStatValue(object value)
     {
-        if (float.TryParse(value.ToString(), out float result))
+        if (int.TryParse(value.ToString(), out int result))
         {
             m_Value = result;
         }

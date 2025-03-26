@@ -1,11 +1,12 @@
 using System;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewStat", menuName = "StatSystem/Stat/Stat_String")]
 [Serializable]
 public class SO_Stat_String : SO_Stat
 {
     [SerializeField] private string m_Value = "NewStat";
+
+    [ItemToolkitAccess] public string StatValue { get => m_Value; set => m_Value = value; }
 
     public override Type GetStatType()
     {

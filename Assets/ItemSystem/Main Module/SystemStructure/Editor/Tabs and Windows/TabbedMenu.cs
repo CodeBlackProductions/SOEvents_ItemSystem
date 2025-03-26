@@ -7,7 +7,7 @@ public class TabbedMenu : VisualElement
         var tabContainer = new VisualElement { style = { flexDirection = FlexDirection.Row } };
         foreach (var tabName in _TabNames)
         {
-            var tabButton = new Button(() => _OnTabChanged(tabName)) { text = tabName };
+            var tabButton = new Button(() => _OnTabChanged?.Invoke(tabName)) { text = tabName };
             tabButton.style.flexGrow = 1;
             tabContainer.Add(tabButton);
         }
