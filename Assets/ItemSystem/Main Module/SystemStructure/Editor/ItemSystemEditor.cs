@@ -29,7 +29,7 @@ public class ItemSystemEditor : EditorWindow
     {
         m_Root = rootVisualElement;
 
-        m_MainTabMenu = new TabbedMenu(new string[] { "ItemModules", "ItemContainers", "StatsModules", "Settings" }, OnMainTabChanged);
+        m_MainTabMenu = new TabbedMenu(new string[] { "ItemModules", "ItemContainers", "StatsModules", "FileManager", "Settings" }, OnMainTabChanged);
         m_MainTabContent = new VisualElement();
 
         m_MainTabContent.style.flexDirection = FlexDirection.Column;
@@ -107,6 +107,7 @@ public class ItemSystemEditor : EditorWindow
 
             case EMainTabType.StatsModules:
 
+                m_MainTabContent.Clear();
                 m_SubTabContent = new VisualElement();
                 m_SubTabInspectorPanel = new InspectorPanel();
 
@@ -119,6 +120,14 @@ public class ItemSystemEditor : EditorWindow
                 m_SubTabContent.Add(m_SubTabInspectorPanel);
 
                 m_MainTabContent.Add(m_SubTabContent);
+                break;
+
+            case EMainTabType.FileManager:
+                m_MainTabContent.Clear();
+                m_SubTabInspectorPanel = new InspectorPanel();
+                ShowInspectorPanel("FileManagerData", m_InspectorValueChangeCallback);
+
+                m_MainTabContent.Add(m_SubTabInspectorPanel);
                 break;
 
             default:
@@ -224,6 +233,7 @@ public class ItemSystemEditor : EditorWindow
         Settings,
         ItemModules,
         ItemContainers,
-        StatsModules
+        StatsModules,
+        FileManager
     }
 }

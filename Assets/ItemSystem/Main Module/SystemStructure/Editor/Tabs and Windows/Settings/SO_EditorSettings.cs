@@ -1,12 +1,15 @@
+using System.Runtime.InteropServices;
 using UnityEditor;
 using UnityEngine;
 
 public class SO_EditorSettings : ScriptableObject, IItemModule
 {
     [SerializeField] private string m_InstancesPath = "Assets/ItemSystem/Module_Instances";
+    [SerializeField] private string m_FilePath = Application.dataPath + "/ItemSystem/Modules";
     [SerializeField] private GUID m_GUID;
 
     [ItemToolkitAccess] public string InstancesPath { get => m_InstancesPath; set => m_InstancesPath = value; }
+    [ItemToolkitAccess] public string FilePath { get => m_FilePath; set => m_FilePath = value; }
 
 
 

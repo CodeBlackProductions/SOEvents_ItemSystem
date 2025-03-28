@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -123,7 +122,7 @@ public static class InspectorDataManager
                         {
                             dictionary = new Dictionary<string, SO_Stat>();
                         }
-                        InspectorList<SO_Stat> statList = new InspectorList<SO_Stat>(dictionary, "Stats");
+                        InspectorList<SO_Stat> statList = new InspectorList<SO_Stat>(dictionary, "Stats", true);
 
                         statList.ItemAddCallback += (newItem) =>
                         {
@@ -152,7 +151,7 @@ public static class InspectorDataManager
                 {
                     if (_Property.PropertyType == typeof(SO_Item_Effect[]))
                     {
-                        InspectorList<SO_Item_Effect> effectList = ConvertArrayToInspectorList<SO_Item_Effect>(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback);
+                        InspectorList<SO_Item_Effect> effectList = ConvertArrayToInspectorList<SO_Item_Effect>(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, "Effects", true);
 
                         parent.Add(effectList);
                         return parent;
@@ -160,7 +159,7 @@ public static class InspectorDataManager
 
                     if (_Property.PropertyType == typeof(SO_Class_Type[]))
                     {
-                        InspectorList<SO_Class_Type> typeList = ConvertArrayToInspectorList<SO_Class_Type>(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback);
+                        InspectorList<SO_Class_Type> typeList = ConvertArrayToInspectorList<SO_Class_Type>(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, "Types", true);
 
                         parent.Add(typeList);
                         return parent;
@@ -168,9 +167,45 @@ public static class InspectorDataManager
 
                     if (_Property.PropertyType == typeof(SO_Item_Class[]))
                     {
-                        InspectorList<SO_Item_Class> classList = ConvertArrayToInspectorList<SO_Item_Class>(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback);
+                        InspectorList<SO_Item_Class> classList = ConvertArrayToInspectorList<SO_Item_Class>(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, "Classes", true);
 
                         parent.Add(classList);
+                        return parent;
+                    }
+
+                    if (_Property.PropertyType == typeof(ScriptableObject[]))
+                    {
+                        InspectorList<ScriptableObject> moduleList = ConvertArrayToInspectorList<ScriptableObject>(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, "Modules", false);
+
+                        moduleList.ItemSelectCallback += (selectedItem) =>
+                        {
+                            if (_ParentSO is SO_FileManager)
+                            {
+                                _ParentPanel.Children().Where(child => child is Button).ToList().ForEach(child => child.RemoveFromHierarchy());
+
+                                Button button;
+                                if (_Property.Name == "LoadedModules")
+                                {
+                                    button = new Button(() =>
+                                    {
+                                        ItemEditor_FileManager.SaveModuleToFile(selectedItem);
+                                    });
+                                    button.text = $"Save {(selectedItem as IItemModule).ModuleName} to JSON";
+                                }
+                                else
+                                {
+                                    button = new Button(() =>
+                                    {
+                                        ItemEditor_FileManager.LoadModuleFromFile(selectedItem);
+                                    });
+                                    button.text = $"Load {(selectedItem as IItemModule).ModuleName} into Assetfolder";
+                                }
+
+                                _ParentPanel.Add(button);
+                            }
+                        };
+
+                        parent.Add(moduleList);
                         return parent;
                     }
 
@@ -379,14 +414,14 @@ public static class InspectorDataManager
         }
     }
 
-    private static InspectorList<T> ConvertArrayToInspectorList<T>(ScriptableObject _ParentSO, PropertyInfo _Property, InspectorPanel _ParentPanel, Action _InspectorValueChangeCallback) where T : ScriptableObject
+    private static InspectorList<T> ConvertArrayToInspectorList<T>(ScriptableObject _ParentSO, PropertyInfo _Property, InspectorPanel _ParentPanel, Action _InspectorValueChangeCallback, string _Title, bool _ShowAddAndRemove) where T : ScriptableObject
     {
         T[] array = _Property.GetValue(_ParentSO) as T[];
         if (array == null)
         {
             array = new T[0];
         }
-        InspectorList<T> effectList = new InspectorList<T>(array, "Effects");
+        InspectorList<T> effectList = new InspectorList<T>(array, _Title, _ShowAddAndRemove);
 
         effectList.ItemAddCallback += (newItem) =>
         {

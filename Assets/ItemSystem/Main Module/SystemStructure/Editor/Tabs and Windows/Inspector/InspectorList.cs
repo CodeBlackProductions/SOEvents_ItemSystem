@@ -12,8 +12,9 @@ public class InspectorList<T> : VisualElement where T : ScriptableObject
 
     public Action<T> ItemAddCallback;
     public Action<T> ItemRemoveCallback;
+    public Action<T> ItemSelectCallback;
 
-    public InspectorList(List<T> _SourceList, string _Title)
+    public InspectorList(List<T> _SourceList, string _Title, bool _ShowAddAndRemove)
     {
         if (_SourceList == null)
         {
@@ -24,10 +25,10 @@ public class InspectorList<T> : VisualElement where T : ScriptableObject
             m_Items = _SourceList;
         }
 
-        InstantiateUI(_Title);
+        InstantiateUI(_Title, _ShowAddAndRemove);
     }
 
-    public InspectorList(T[] _SourceArray, string _Title)
+    public InspectorList(T[] _SourceArray, string _Title, bool _ShowAddAndRemove)
     {
         if (_SourceArray == null)
         {
@@ -38,10 +39,10 @@ public class InspectorList<T> : VisualElement where T : ScriptableObject
             m_Items = _SourceArray.ToList();
         }
 
-        InstantiateUI(_Title);
+        InstantiateUI(_Title, _ShowAddAndRemove);
     }
 
-    public InspectorList(Dictionary<string, T> _SourceDictionary, string _Title)
+    public InspectorList(Dictionary<string, T> _SourceDictionary, string _Title, bool _ShowAddAndRemove)
     {
         if (_SourceDictionary == null)
         {
@@ -52,10 +53,10 @@ public class InspectorList<T> : VisualElement where T : ScriptableObject
             m_Items = _SourceDictionary.Values.ToList();
         }
 
-        InstantiateUI(_Title);
+        InstantiateUI(_Title, _ShowAddAndRemove);
     }
 
-    private void InstantiateUI(string _Title)
+    private void InstantiateUI(string _Title, bool _ShowAddAndRemove)
     {
         Label titleLabel = new Label(_Title) { style = { unityFontStyleAndWeight = FontStyle.Bold } };
         m_ParentView.Add(titleLabel);
@@ -63,6 +64,8 @@ public class InspectorList<T> : VisualElement where T : ScriptableObject
         m_ListView = new ListView(m_Items, 20, CreateItem, BindItem);
         m_ListView.selectionType = SelectionType.Single;
         m_ListView.style.flexGrow = 1;
+
+        m_ListView.selectionChanged += (s) => ItemSelectCallback?.Invoke((T)m_ListView.selectedItem);
 
         var buttonContainer = new VisualElement { style = { flexDirection = FlexDirection.Row } };
 
@@ -72,7 +75,11 @@ public class InspectorList<T> : VisualElement where T : ScriptableObject
         buttonContainer.Add(addButton);
         buttonContainer.Add(removeButton);
         m_ParentView.Add(m_ListView);
-        m_ParentView.Add(buttonContainer);
+
+        if (_ShowAddAndRemove)
+        {
+            m_ParentView.Add(buttonContainer);
+        }
         Add(m_ParentView);
     }
 
