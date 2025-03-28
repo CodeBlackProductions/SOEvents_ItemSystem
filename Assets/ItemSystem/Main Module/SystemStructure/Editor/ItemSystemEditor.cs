@@ -131,59 +131,47 @@ public class ItemSystemEditor : EditorWindow
         switch (_ModuleType)
         {
             case ESubTabType.Items:
-                DynamicItemTreeView<SO_Item> itemsTreeView = new DynamicItemTreeView<SO_Item>(m_TreeviewSelectionChangeCallback, true);
-                m_InspectorValueChangeCallback += itemsTreeView.RefreshTreeView;
-                itemsTreeView.style.flexGrow = 1;
-                m_SubTabContent.Add(itemsTreeView);
+
+                CreateTreeview<SO_Item>();
 
                 break;
 
             case ESubTabType.Classes:
-                DynamicItemTreeView<SO_Item_Class> classTreeView = new DynamicItemTreeView<SO_Item_Class>(m_TreeviewSelectionChangeCallback, true);
-                m_InspectorValueChangeCallback += classTreeView.RefreshTreeView;
-                classTreeView.style.flexGrow = 1;
-                m_SubTabContent.Add(classTreeView);
+
+                CreateTreeview<SO_Item_Class>();
 
                 break;
 
             case ESubTabType.Types:
-                DynamicItemTreeView<SO_Class_Type> typeTreeView = new DynamicItemTreeView<SO_Class_Type>(m_TreeviewSelectionChangeCallback, true);
-                m_InspectorValueChangeCallback += typeTreeView.RefreshTreeView;
-                typeTreeView.style.flexGrow = 1;
-                m_SubTabContent.Add(typeTreeView);
+
+                CreateTreeview<SO_Class_Type>();
 
                 break;
 
             case ESubTabType.Effects:
-                DynamicItemTreeView<SO_Item_Effect> effectTreeView = new DynamicItemTreeView<SO_Item_Effect>(m_TreeviewSelectionChangeCallback, true);
-                m_InspectorValueChangeCallback += effectTreeView.RefreshTreeView;
-                effectTreeView.style.flexGrow = 1;
-                m_SubTabContent.Add(effectTreeView);
+
+                CreateTreeview<SO_Item_Effect>();
 
                 break;
 
             case ESubTabType.Triggers:
-                DynamicItemTreeView<SO_Effect_Trigger> triggerTreeView = new DynamicItemTreeView<SO_Effect_Trigger>(m_TreeviewSelectionChangeCallback, true);
-                m_InspectorValueChangeCallback += triggerTreeView.RefreshTreeView;
-                triggerTreeView.style.flexGrow = 1;
-                m_SubTabContent.Add(triggerTreeView);
+
+                CreateTreeview<SO_Effect_Trigger>();
 
                 break;
 
             case ESubTabType.ItemSlots:
-                DynamicItemTreeView<SO_ItemSlot> slotTreeView = new DynamicItemTreeView<SO_ItemSlot>(m_TreeviewSelectionChangeCallback, true);
-                m_InspectorValueChangeCallback += slotTreeView.RefreshTreeView;
-                slotTreeView.style.flexGrow = 1;
-                m_SubTabContent.Add(slotTreeView);
+
+                CreateTreeview<SO_ItemSlot>();
+
                 break;
 
             case ESubTabType.ItemPools:
                 throw new NotImplementedException();
             case ESubTabType.Stats:
-                DynamicItemTreeView<SO_Stat> statTreeView = new DynamicItemTreeView<SO_Stat>(m_TreeviewSelectionChangeCallback, true);
-                m_InspectorValueChangeCallback += statTreeView.RefreshTreeView;
-                statTreeView.style.flexGrow = 1;
-                m_SubTabContent.Add(statTreeView);
+
+                CreateTreeview<SO_Stat>();
+
                 break;
 
             default:
@@ -192,6 +180,14 @@ public class ItemSystemEditor : EditorWindow
         }
 
         m_SubTabContent.Add(m_SubTabInspectorPanel);
+    }
+
+    private void CreateTreeview<T>() where T : ScriptableObject
+    {
+        DynamicItemTreeView<T> treeView = new DynamicItemTreeView<T>(m_TreeviewSelectionChangeCallback, true);
+        m_InspectorValueChangeCallback += treeView.RefreshTreeView;
+        treeView.style.flexGrow = 1;
+        m_SubTabContent.Add(treeView);
     }
 
     private void OnTreeViewSelectionChanged(IEnumerable<object> _SelectedItems)

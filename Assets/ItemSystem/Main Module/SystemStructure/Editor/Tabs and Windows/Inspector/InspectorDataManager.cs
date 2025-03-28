@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -151,45 +152,7 @@ public static class InspectorDataManager
                 {
                     if (_Property.PropertyType == typeof(SO_Item_Effect[]))
                     {
-                        SO_Item_Effect[] array = _Property.GetValue(_ParentSO) as SO_Item_Effect[];
-                        if (array == null)
-                        {
-                            array = new SO_Item_Effect[0];
-                        }
-                        InspectorList<SO_Item_Effect> effectList = new InspectorList<SO_Item_Effect>(array, "Effects");
-
-                        effectList.ItemAddCallback += (newItem) =>
-                        {
-                            SO_Item_Effect[] newArray = new SO_Item_Effect[array.Length + 1];
-                            Array.Copy(array, newArray, array.Length);
-                            newArray[newArray.Length - 1] = newItem;
-
-                            array = newArray;
-
-                            _Property.SetValue(_ParentSO, newArray);
-
-                            _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
-                            _InspectorValueChangeCallback?.Invoke();
-                        };
-
-                        effectList.ItemRemoveCallback += (newItem) =>
-                        {
-                            SO_Item_Effect[] newArray = new SO_Item_Effect[array.Length - 1];
-                            int index = Array.IndexOf(array, newItem);
-
-                            if (index >= 0)
-                            {
-                                Array.Copy(array, 0, newArray, 0, index);
-                                Array.Copy(array, index + 1, newArray, index, array.Length - index - 1);
-                            }
-
-                            array = newArray;
-
-                            _Property.SetValue(_ParentSO, newArray);
-
-                            _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
-                            _InspectorValueChangeCallback?.Invoke();
-                        };
+                        InspectorList<SO_Item_Effect> effectList = ConvertArrayToInspectorList<SO_Item_Effect>(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback);
 
                         parent.Add(effectList);
                         return parent;
@@ -197,41 +160,7 @@ public static class InspectorDataManager
 
                     if (_Property.PropertyType == typeof(SO_Class_Type[]))
                     {
-                        SO_Class_Type[] array = _Property.GetValue(_ParentSO) as SO_Class_Type[];
-                        InspectorList<SO_Class_Type> typeList = new InspectorList<SO_Class_Type>(_Property.GetValue(_ParentSO) as SO_Class_Type[], "Types");
-
-                        typeList.ItemAddCallback += (newItem) =>
-                        {
-                            SO_Class_Type[] newArray = new SO_Class_Type[array.Length + 1];
-                            Array.Copy(array, newArray, array.Length);
-                            newArray[newArray.Length - 1] = newItem;
-
-                            array = newArray;
-
-                            _Property.SetValue(_ParentSO, newArray);
-
-                            _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
-                            _InspectorValueChangeCallback?.Invoke();
-                        };
-
-                        typeList.ItemRemoveCallback += (newItem) =>
-                        {
-                            SO_Class_Type[] newArray = new SO_Class_Type[array.Length - 1];
-                            int index = Array.IndexOf(array, newItem);
-
-                            if (index >= 0)
-                            {
-                                Array.Copy(array, 0, newArray, 0, index);
-                                Array.Copy(array, index + 1, newArray, index, array.Length - index - 1);
-                            }
-
-                            array = newArray;
-
-                            _Property.SetValue(_ParentSO, newArray);
-
-                            _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
-                            _InspectorValueChangeCallback?.Invoke();
-                        };
+                        InspectorList<SO_Class_Type> typeList = ConvertArrayToInspectorList<SO_Class_Type>(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback);
 
                         parent.Add(typeList);
                         return parent;
@@ -239,45 +168,12 @@ public static class InspectorDataManager
 
                     if (_Property.PropertyType == typeof(SO_Item_Class[]))
                     {
-                        SO_Item_Class[] array = _Property.GetValue(_ParentSO) as SO_Item_Class[];
-                        InspectorList<SO_Item_Class> typeList = new InspectorList<SO_Item_Class>(_Property.GetValue(_ParentSO) as SO_Item_Class[], "Classes");
+                        InspectorList<SO_Item_Class> classList = ConvertArrayToInspectorList<SO_Item_Class>(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback);
 
-                        typeList.ItemAddCallback += (newItem) =>
-                        {
-                            SO_Item_Class[] newArray = new SO_Item_Class[array.Length + 1];
-                            Array.Copy(array, newArray, array.Length);
-                            newArray[newArray.Length - 1] = newItem;
-
-                            array = newArray;
-
-                            _Property.SetValue(_ParentSO, newArray);
-
-                            _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
-                            _InspectorValueChangeCallback?.Invoke();
-                        };
-
-                        typeList.ItemRemoveCallback += (newItem) =>
-                        {
-                            SO_Item_Class[] newArray = new SO_Item_Class[array.Length - 1];
-                            int index = Array.IndexOf(array, newItem);
-
-                            if (index >= 0)
-                            {
-                                Array.Copy(array, 0, newArray, 0, index);
-                                Array.Copy(array, index + 1, newArray, index, array.Length - index - 1);
-                            }
-
-                            array = newArray;
-
-                            _Property.SetValue(_ParentSO, newArray);
-
-                            _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
-                            _InspectorValueChangeCallback?.Invoke();
-                        };
-
-                        parent.Add(typeList);
+                        parent.Add(classList);
                         return parent;
                     }
+
                     Debug.LogWarning($"Could not generate InspectorList for Array {_ParentSO} : {_Property.Name}");
                     return null;
                 }
@@ -481,5 +377,50 @@ public static class InspectorDataManager
         {
             return null;
         }
+    }
+
+    private static InspectorList<T> ConvertArrayToInspectorList<T>(ScriptableObject _ParentSO, PropertyInfo _Property, InspectorPanel _ParentPanel, Action _InspectorValueChangeCallback) where T : ScriptableObject
+    {
+        T[] array = _Property.GetValue(_ParentSO) as T[];
+        if (array == null)
+        {
+            array = new T[0];
+        }
+        InspectorList<T> effectList = new InspectorList<T>(array, "Effects");
+
+        effectList.ItemAddCallback += (newItem) =>
+        {
+            T[] newArray = new T[array.Length + 1];
+            Array.Copy(array, newArray, array.Length);
+            newArray[newArray.Length - 1] = newItem;
+
+            array = newArray;
+
+            _Property.SetValue(_ParentSO, newArray);
+
+            _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
+            _InspectorValueChangeCallback?.Invoke();
+        };
+
+        effectList.ItemRemoveCallback += (newItem) =>
+        {
+            T[] newArray = new T[array.Length - 1];
+            int index = Array.IndexOf(array, newItem);
+
+            if (index >= 0)
+            {
+                Array.Copy(array, 0, newArray, 0, index);
+                Array.Copy(array, index + 1, newArray, index, array.Length - index - 1);
+            }
+
+            array = newArray;
+
+            _Property.SetValue(_ParentSO, newArray);
+
+            _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
+            _InspectorValueChangeCallback?.Invoke();
+        };
+
+        return effectList;
     }
 }
