@@ -12,7 +12,7 @@ public class InspectorPanel : VisualElement
         Add(new Label("Select an item to view details"));
     }
 
-    public void Show(ScriptableObject _Obj, Action _InspectorValueChangeCallback)
+    public void Show(ScriptableObject _Obj, Action<bool> _InspectorValueChangeCallback)
     {
         Clear();
         if (_Obj == null)

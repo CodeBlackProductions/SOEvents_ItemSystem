@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecfa51211d3208b48bbc8dfb0bde37a9, type: 3}
+  m_Name: SO_Effect_Stack_15d4afe50b058cd47be6e0f41ea7573d
+  m_EditorClassIdentifier: 
+  m_EffectName: Effect_Stack
+  m_Trigger: {fileID: 11400000, guid: bfa27ea0916b27a40a9da7f9629a9ca8, type: 2}
+  m_EffectTarget: 0
+  m_AllowedEffectTargets: 2
+  m_TargetRange: 0
+  m_Interval: 1
+  m_ChanceToAddStacks: 1
+  m_StacksAddedPerHit: 1
+  m_MaxStacks: 10
+  m_StacksConsumedPerInterval: 1

@@ -15,9 +15,9 @@ public class ModuleCreatorWindow : EditorWindow
     private Button m_FinishButton;
 
     private Action<string> OnModuleChanged;
-    private Action OnClose;
+    private Action<bool> OnClose;
 
-    public static void ShowWindow(Action _OnWindowClosedCallback)
+    public static void ShowWindow(Action<bool> _OnWindowClosedCallback)
     {
         ModuleCreatorWindow window = GetWindow<ModuleCreatorWindow>("Module Creator");
         window.minSize = new Vector2(700, 400);
@@ -61,37 +61,45 @@ public class ModuleCreatorWindow : EditorWindow
         }
 
         List<Type> types = new List<Type>();
+        Type panelType;
 
         switch (_ModuleType)
         {
             case "Items":
                 types = GetListOfSubTypes(typeof(SO_Item));
+                panelType = typeof(SO_Item);
                 break;
 
             case "Classes":
                 types = GetListOfSubTypes(typeof(SO_Item_Class));
+                panelType = typeof(SO_Item_Class);
                 break;
 
             case "Types":
                 types = GetListOfSubTypes(typeof(SO_Class_Type));
+                panelType = typeof(SO_Class_Type);
                 break;
 
             case "Effects":
                 types = GetListOfSubTypes(typeof(SO_Item_Effect));
+                panelType = typeof(SO_Item_Effect);
                 break;
 
             case "Trigger":
                 types = GetListOfSubTypes(typeof(SO_Effect_Trigger));
+                panelType = typeof(SO_Effect_Trigger);
                 break;
 
             case "ItemSlots":
                 types = GetListOfSubTypes(typeof(SO_ItemSlot));
+                panelType = typeof(SO_ItemSlot);
                 break;
 
             case "ItemPools":
                 throw new NotImplementedException();
             case "Stats":
                 types = GetListOfSubTypes(typeof(SO_Stat));
+                panelType = typeof(SO_Stat);
                 break;
 
             default:
@@ -103,7 +111,7 @@ public class ModuleCreatorWindow : EditorWindow
         m_SubModuleSelection.choices.Insert(0, "Select Sub-Module");
         m_SubModuleSelection.value = "Select Sub-Module";
 
-        m_SubModuleSelection.RegisterValueChangedCallback((evt) => SetupInspectorPanel(types.Find((t) => t.Name == evt.newValue), _ModuleType));
+        m_SubModuleSelection.RegisterValueChangedCallback((evt) => SetupInspectorPanel(types.Find((t) => t.Name == evt.newValue), panelType));
     }
 
     private List<Type> GetListOfSubTypes(Type _BaseType)
@@ -114,13 +122,13 @@ public class ModuleCreatorWindow : EditorWindow
             .ToList();
     }
 
-    private void SetupInspectorPanel(Type _SubType, string _ModuleType)
+    private void SetupInspectorPanel(Type _SubType, Type _ModuleType)
     {
         if (_SubType == null) { return; }
         ScriptableObject temporarySOInstance = CreateTemporaryInstance(_SubType);
         m_InspectorPanel.Show(temporarySOInstance, null);
 
-        m_FinishButton.clicked += () => FinishSetup(temporarySOInstance, _ModuleType);
+        m_FinishButton.clicked += () => FinishSetup(temporarySOInstance, _SubType);
     }
 
     private ScriptableObject CreateTemporaryInstance(Type _Type)
@@ -128,6 +136,7 @@ public class ModuleCreatorWindow : EditorWindow
         if (_Type != null && typeof(ScriptableObject).IsAssignableFrom(_Type))
         {
             ScriptableObject temporarySOInstance = ScriptableObject.CreateInstance(_Type);
+            (temporarySOInstance as IItemModule).ModuleGUID = GUID.Generate();
             return temporarySOInstance;
         }
         else
@@ -137,13 +146,13 @@ public class ModuleCreatorWindow : EditorWindow
         }
     }
 
-    private void FinishSetup(ScriptableObject _TemporarySOInstance, string _ModuleType)
+    private void FinishSetup(ScriptableObject _TemporarySOInstance, Type _ModuleType)
     {
         if (_TemporarySOInstance != null)
         {
             ItemEditor_InstanceManager.CreateInstance(_TemporarySOInstance, _ModuleType);
 
-            OnClose?.Invoke();
+            OnClose?.Invoke(true);
             Close();
         }
     }

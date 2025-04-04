@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
@@ -7,14 +9,23 @@ public static class ItemEditor_InstanceManager
 {
     private static Dictionary<string, GUID> m_ModuleRegistry = new Dictionary<string, GUID>();
 
-    public static void CreateInstance<T>(T _TemporarySOInstance, string _ModuleType) where T : ScriptableObject
+    public static void CreateInstance<T>(T _TemporarySOInstance, Type _ModuleType) where T : ScriptableObject
     {
         if (_TemporarySOInstance.IsConvertibleTo<IItemModule>(true))
         {
             string fileName = _TemporarySOInstance.GetType().Name;
-            GUID instanceGUID = GUID.Generate();
-            (_TemporarySOInstance as IItemModule).ModuleGUID = instanceGUID;
-            fileName += $"_{instanceGUID}";
+
+            GUID instanceGUID;
+            if ((_TemporarySOInstance as IItemModule).ModuleGUID == null)
+            {
+                instanceGUID = GUID.Generate();
+                (_TemporarySOInstance as IItemModule).ModuleGUID = instanceGUID;
+            }
+            else 
+            {
+                instanceGUID = (_TemporarySOInstance as IItemModule).ModuleGUID;
+            }
+                fileName += $"_{instanceGUID}";
 
             if (m_ModuleRegistry.ContainsKey(fileName))
             {
@@ -24,10 +35,19 @@ public static class ItemEditor_InstanceManager
 
             SO_EditorSettings settings = ItemEditor_AssetLoader.LoadAssetByName<SO_EditorSettings>("EditorSettings");
 
-            string assetPath = $"{settings.InstancesPath}/{_ModuleType}/";
-            string path = $"{assetPath}{fileName}.asset";
+            string assetPath = $"{settings.InstancesPath}/{_ModuleType.Name}";
+            string path = $"{assetPath}/{fileName}.asset";
             if (!string.IsNullOrEmpty(path))
             {
+                if (!Directory.Exists(assetPath))
+                {
+                    Directory.CreateDirectory(assetPath);
+                }
+                if (File.Exists(path))
+                {
+                    Debug.LogWarning($"Asset with the name {fileName} at {assetPath} already exists.");
+                    return;
+                }
                 AssetDatabase.CreateAsset(_TemporarySOInstance, path);
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
@@ -52,13 +72,12 @@ public static class ItemEditor_InstanceManager
                 m_ModuleRegistry.Remove(fileName);
             }
             string path = AssetDatabase.GetAssetPath(_Instance);
-           
+
             UpdateReferences(_Instance);
-            
+
             AssetDatabase.DeleteAsset(path);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-
         }
     }
 
