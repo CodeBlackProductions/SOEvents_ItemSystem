@@ -32,4 +32,27 @@ public static class ItemEditor_AssetLoader
         MethodInfo generic = method.MakeGenericMethod(_Type);
         return (IEnumerable<ScriptableObject>)generic.Invoke(null, null);
     }
+
+    public static IEnumerable<System.Type> LoadAllBaseTypes()
+    {
+        IEnumerable<System.Type> moduleTypes = System.AppDomain.CurrentDomain.GetAssemblies()
+       .SelectMany(assembly => assembly.GetTypes())
+       .Where(type =>
+             (
+               typeof(ScriptableObject).IsAssignableFrom(type)
+               && typeof(IItemModule).IsAssignableFrom(type)
+               && type.BaseType == typeof(ScriptableObject)
+               && type.IsAbstract
+             ) || type == typeof(SO_Item)
+       );
+
+        return moduleTypes;
+    }
+
+    public static IEnumerable<System.Type> GetSubTypes(System.Type _BaseType)
+    {
+        return Assembly.GetAssembly(_BaseType)
+            .GetTypes()
+            .Where(t => t.IsSubclassOf(_BaseType) && !t.IsAbstract || t == _BaseType && !t.IsAbstract);
+    }
 }

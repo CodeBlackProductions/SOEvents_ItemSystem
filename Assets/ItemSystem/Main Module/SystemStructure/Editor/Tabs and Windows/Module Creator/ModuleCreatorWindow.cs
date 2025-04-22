@@ -14,11 +14,22 @@ public class ModuleCreatorWindow : EditorWindow
     private InspectorPanel m_InspectorPanel;
     private Button m_FinishButton;
 
-    private Action<string> OnModuleChanged;
+    private static Dictionary<string, Type> m_ModuleTypeRegistry = new Dictionary<string, Type>();
+    private static Type m_SelectedModuleType;
+
     private Action<bool> OnClose;
 
     public static void ShowWindow(Action<bool> _OnWindowClosedCallback)
     {
+        ModuleCreatorWindow window = GetWindow<ModuleCreatorWindow>("Module Creator");
+        window.minSize = new Vector2(700, 400);
+        window.OnClose += _OnWindowClosedCallback;
+    }
+
+    public static void ShowWindow(Action<bool> _OnWindowClosedCallback, Type _SelectedType)
+    {
+        m_SelectedModuleType = _SelectedType;
+
         ModuleCreatorWindow window = GetWindow<ModuleCreatorWindow>("Module Creator");
         window.minSize = new Vector2(700, 400);
         window.OnClose += _OnWindowClosedCallback;
@@ -29,97 +40,77 @@ public class ModuleCreatorWindow : EditorWindow
         m_Root = rootVisualElement;
 
         m_ModuleSelection = new DropdownField("Module type");
-        m_ModuleSelection.choices = new List<string> { "Select Module", "Items", "Classes", "Types", "Effects", "Trigger", "ItemSlots", "ItemPools", "Stats" };
-        m_ModuleSelection.RegisterValueChangedCallback((evt) => OnModuleChanged?.Invoke(evt.newValue));
-        m_ModuleSelection.value = "Select Module";
 
-        OnModuleChanged += SetupSubTypeSelection;
+        IEnumerable<Type> moduleTypes = ItemEditor_AssetLoader.LoadAllBaseTypes();
+
+        foreach (var type in moduleTypes)
+        {
+            if (m_ModuleTypeRegistry.TryAdd(type.Name, type))
+            {
+                m_ModuleSelection?.choices?.Add(type.Name);
+            }
+        }
+
+        m_ModuleSelection?.RegisterValueChangedCallback((evt) =>
+        {
+            Type type = m_ModuleTypeRegistry[evt.newValue];
+
+            if (type == null)
+            {
+                m_SubModuleSelection?.choices?.Clear();
+                m_SubModuleSelection?.choices?.Add("No submodules found!");
+                m_SubModuleSelection.value = "No submodules found!";
+                return;
+            }
+
+            MethodInfo method = typeof(ModuleCreatorWindow).GetMethod("SetupSubTypeSelection", BindingFlags.NonPublic | BindingFlags.Instance);
+            MethodInfo generic = method.MakeGenericMethod(type);
+            generic.Invoke(this, null);
+        });
 
         m_SubModuleSelection = new DropdownField("Sub-Module type");
-        m_SubModuleSelection.choices.Add("Select Main-Module first!");
+        m_SubModuleSelection?.choices?.Add("Select Main-Module first!");
         m_SubModuleSelection.value = "Select Main-Module first!";
+
+        if (m_SelectedModuleType != null)
+        {
+            m_ModuleSelection.value = m_SelectedModuleType.Name;
+            MethodInfo method = typeof(ModuleCreatorWindow).GetMethod("SetupSubTypeSelection", BindingFlags.NonPublic | BindingFlags.Instance);
+            MethodInfo generic = method.MakeGenericMethod(m_SelectedModuleType);
+            generic.Invoke(this, null);
+        }
+        else
+        {
+            m_ModuleSelection.value = "Select Module";
+        }
 
         m_InspectorPanel = new InspectorPanel();
 
         m_FinishButton = new Button(() => this.Close());
-        m_FinishButton.Add(new Label("Finish"));
+        m_FinishButton?.Add(new Label("Finish"));
 
-        m_Root.Add(m_ModuleSelection);
-        m_Root.Add(m_SubModuleSelection);
-        m_Root.Add(m_InspectorPanel);
-        m_Root.Add(m_FinishButton);
+        m_Root?.Add(m_ModuleSelection);
+        m_Root?.Add(m_SubModuleSelection);
+        m_Root?.Add(m_InspectorPanel);
+        m_Root?.Add(m_FinishButton);
     }
 
-    private void SetupSubTypeSelection(string _ModuleType)
+    private void SetupSubTypeSelection<T>()
     {
-        m_InspectorPanel.Clear();
-        m_SubModuleSelection.choices.Clear();
-
-        if (_ModuleType == "Select Module")
-        {
-            return;
-        }
+        m_InspectorPanel?.Clear();
+        m_SubModuleSelection?.choices?.Clear();
 
         List<Type> types = new List<Type>();
         Type panelType;
 
-        switch (_ModuleType)
-        {
-            case "Items":
-                types = GetListOfSubTypes(typeof(SO_Item));
-                panelType = typeof(SO_Item);
-                break;
-
-            case "Classes":
-                types = GetListOfSubTypes(typeof(SO_Item_Class));
-                panelType = typeof(SO_Item_Class);
-                break;
-
-            case "Types":
-                types = GetListOfSubTypes(typeof(SO_Class_Type));
-                panelType = typeof(SO_Class_Type);
-                break;
-
-            case "Effects":
-                types = GetListOfSubTypes(typeof(SO_Item_Effect));
-                panelType = typeof(SO_Item_Effect);
-                break;
-
-            case "Trigger":
-                types = GetListOfSubTypes(typeof(SO_Effect_Trigger));
-                panelType = typeof(SO_Effect_Trigger);
-                break;
-
-            case "ItemSlots":
-                types = GetListOfSubTypes(typeof(SO_ItemSlot));
-                panelType = typeof(SO_ItemSlot);
-                break;
-
-            case "ItemPools":
-                throw new NotImplementedException();
-            case "Stats":
-                types = GetListOfSubTypes(typeof(SO_Stat));
-                panelType = typeof(SO_Stat);
-                break;
-
-            default:
-                Debug.LogError("Invalid ModuleType");
-                return;
-        }
+        types = ItemEditor_AssetLoader.GetSubTypes(typeof(T)).ToList();
+        panelType = typeof(T);
 
         m_SubModuleSelection.choices = types.Select(t => t.Name).ToList();
-        m_SubModuleSelection.choices.Insert(0, "Select Sub-Module");
+        m_SubModuleSelection?.choices?.Insert(0, "Select Sub-Module");
         m_SubModuleSelection.value = "Select Sub-Module";
 
-        m_SubModuleSelection.RegisterValueChangedCallback((evt) => SetupInspectorPanel(types.Find((t) => t.Name == evt.newValue), panelType));
-    }
-
-    private List<Type> GetListOfSubTypes(Type _BaseType)
-    {
-        return Assembly.GetAssembly(_BaseType)
-            .GetTypes()
-            .Where(t => t.IsSubclassOf(_BaseType) && !t.IsAbstract || t == _BaseType && !t.IsAbstract)
-            .ToList();
+        m_SubModuleSelection?.RegisterValueChangedCallback((evt) => SetupInspectorPanel(types.Find((t) => t.Name == evt.newValue), panelType));
     }
 
     private void SetupInspectorPanel(Type _SubType, Type _ModuleType)

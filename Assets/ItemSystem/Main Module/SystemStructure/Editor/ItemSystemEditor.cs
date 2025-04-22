@@ -99,6 +99,7 @@ public class ItemSystemEditor : EditorWindow
 
                 LoadSubTabHierarchy<SO_Item>(true, true, true, false);
                 m_SubTabContent.Add(m_SubTabInspectorPanel);
+                OnSubTabChanged(typeof(SO_Item),true,true,true,false);
 
                 m_MainTabContent.Add(m_SubTabContent);
                 break;

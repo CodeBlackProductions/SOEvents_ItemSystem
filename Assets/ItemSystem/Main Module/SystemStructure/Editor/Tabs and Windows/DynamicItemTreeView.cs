@@ -34,7 +34,7 @@ public class DynamicItemTreeView<T> : VisualElement where T : ScriptableObject
             m_ButtonPanel.style.alignSelf = Align.Center;
             m_ButtonPanel.style.flexGrow = 0;
 
-            m_BTN_AddNewSO = new Button(() => ModuleCreatorWindow.ShowWindow(RefreshTreeView))
+            m_BTN_AddNewSO = new Button(() => ModuleCreatorWindow.ShowWindow(RefreshTreeView, typeof(T)))
             {
                 text = "Add",
                 style =

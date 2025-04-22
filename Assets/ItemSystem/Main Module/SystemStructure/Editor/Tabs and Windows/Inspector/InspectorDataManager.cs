@@ -76,13 +76,19 @@ public static class InspectorDataManager
                     {
                         if (soList[i].GetType().IsSubclassOf(_Property.PropertyType))
                         {
-                            soNames.Add($"{soList[i].name} ({soList[i].GetType().Name})");
+                            soNames.Add($"{(soList[i] as IItemModule).ModuleName} ({soList[i].GetType().Name})");
                         }
                     }
 
                     if (soNames.Count > 0)
                     {
-                        string currentEntry = _Property.GetValue(_ParentSO)?.ToString();
+                        var propertyVal = _Property.GetValue(_ParentSO);
+                        string currentEntry = null;
+
+                        if (propertyVal != null)
+                        {
+                            currentEntry = $"{(_Property.GetValue(_ParentSO) as IItemModule).ModuleName} ({_Property.GetValue(_ParentSO).GetType().Name})";
+                        }
 
                         if (currentEntry == null)
                         {
@@ -335,7 +341,7 @@ public static class InspectorDataManager
                         List<string> soNames = new List<string>();
                         for (int i = 0; i < typeList.Count; i++)
                         {
-                            soNames.Add($"{typeList[i].name} ({typeList[i].GetType().Name})");
+                            soNames.Add($"{(typeList[i] as IItemModule).ModuleName} ({typeList[i].GetType().Name})");
                         }
 
                         int currentEntry = (int)_Property.GetValue(_ParentSO);
