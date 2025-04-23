@@ -4,130 +4,133 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class InspectorList<T> : VisualElement where T : ScriptableObject
+namespace ItemSystem.Editor
 {
-    private VisualElement m_ParentView = new VisualElement();
-    private ListView m_ListView;
-    private List<T> m_Items;
-
-    public Action<T> ItemAddCallback;
-    public Action<T> ItemRemoveCallback;
-    public Action<T> ItemSelectCallback;
-
-    public InspectorList(List<T> _SourceList, string _Title, bool _ShowAddAndRemove)
+    public class InspectorList<T> : VisualElement where T : ScriptableObject
     {
-        if (_SourceList == null)
-        {
-            m_Items = new List<T>();
-        }
-        else
-        {
-            m_Items = _SourceList;
-        }
+        private VisualElement m_ParentView = new VisualElement();
+        private ListView m_ListView;
+        private List<T> m_Items;
 
-        InstantiateUI(_Title, _ShowAddAndRemove);
-    }
+        public Action<T> ItemAddCallback;
+        public Action<T> ItemRemoveCallback;
+        public Action<T> ItemSelectCallback;
 
-    public InspectorList(T[] _SourceArray, string _Title, bool _ShowAddAndRemove)
-    {
-        if (_SourceArray == null)
+        public InspectorList(List<T> _SourceList, string _Title, bool _ShowAddAndRemove)
         {
-            m_Items = new List<T>();
-        }
-        else
-        {
-            m_Items = _SourceArray.ToList();
-        }
+            if (_SourceList == null)
+            {
+                m_Items = new List<T>();
+            }
+            else
+            {
+                m_Items = _SourceList;
+            }
 
-        InstantiateUI(_Title, _ShowAddAndRemove);
-    }
-
-    public InspectorList(Dictionary<string, T> _SourceDictionary, string _Title, bool _ShowAddAndRemove)
-    {
-        if (_SourceDictionary == null)
-        {
-            m_Items = new List<T>();
-        }
-        else
-        {
-            m_Items = _SourceDictionary.Values.ToList();
+            InstantiateUI(_Title, _ShowAddAndRemove);
         }
 
-        InstantiateUI(_Title, _ShowAddAndRemove);
-    }
-
-    private void InstantiateUI(string _Title, bool _ShowAddAndRemove)
-    {
-        Label titleLabel = new Label(_Title) { style = { unityFontStyleAndWeight = FontStyle.Bold } };
-        m_ParentView.Add(titleLabel);
-
-        m_ListView = new ListView(m_Items, 20, CreateItem, BindItem);
-        m_ListView.selectionType = SelectionType.Single;
-        m_ListView.style.flexGrow = 1;
-
-        m_ListView.selectionChanged += (s) => ItemSelectCallback?.Invoke((T)m_ListView.selectedItem);
-
-        var buttonContainer = new VisualElement { style = { flexDirection = FlexDirection.Row } };
-
-        Button addButton = new Button(() => ChooseNewItem()) { text = "Add" };
-        Button removeButton = new Button(() => RemoveSelectedItem()) { text = "Remove" };
-
-        buttonContainer.Add(addButton);
-        buttonContainer.Add(removeButton);
-        m_ParentView.Add(m_ListView);
-
-        if (_ShowAddAndRemove)
+        public InspectorList(T[] _SourceArray, string _Title, bool _ShowAddAndRemove)
         {
-            m_ParentView.Add(buttonContainer);
+            if (_SourceArray == null)
+            {
+                m_Items = new List<T>();
+            }
+            else
+            {
+                m_Items = _SourceArray.ToList();
+            }
+
+            InstantiateUI(_Title, _ShowAddAndRemove);
         }
-        Add(m_ParentView);
-    }
 
-    private VisualElement CreateItem() => new Label();
-
-    private void BindItem(VisualElement _Element, int _Index)
-    {
-        (_Element as Label).text = m_Items[_Index] != null ? (m_Items[_Index] as IItemModule).ModuleName : "Null";
-    }
-
-    private void ChooseNewItem()
-    {
-        List<T> soList = ItemEditor_AssetLoader.LoadAssetsByType<T>();
-        List<string> soNames = new List<string>();
-        soNames.Add("Choose new entry");
-        for (int i = 0; i < soList.Count; i++)
+        public InspectorList(Dictionary<string, T> _SourceDictionary, string _Title, bool _ShowAddAndRemove)
         {
-            soNames.Add((soList[i] as IItemModule).ModuleName);
+            if (_SourceDictionary == null)
+            {
+                m_Items = new List<T>();
+            }
+            else
+            {
+                m_Items = _SourceDictionary.Values.ToList();
+            }
+
+            InstantiateUI(_Title, _ShowAddAndRemove);
         }
-        DropdownField dropdownField = new DropdownField(soNames, soNames[0]);
-        dropdownField.RegisterValueChangedCallback(v => AddItem(v.newValue, dropdownField));
-        m_ParentView.Add(dropdownField);
-    }
 
-    private void AddItem(string _Item, DropdownField _SelectionDropdown)
-    {
-        _SelectionDropdown.RemoveFromHierarchy();
-
-        T newItem = ItemEditor_AssetLoader.LoadAssetsByType<T>().FirstOrDefault(so => (so as IItemModule).ModuleName == _Item);
-
-        if (newItem != null)
+        private void InstantiateUI(string _Title, bool _ShowAddAndRemove)
         {
-            m_Items.Add(newItem);
+            Label titleLabel = new Label(_Title) { style = { unityFontStyleAndWeight = FontStyle.Bold } };
+            m_ParentView.Add(titleLabel);
 
-            ItemAddCallback?.Invoke(newItem);
+            m_ListView = new ListView(m_Items, 20, CreateItem, BindItem);
+            m_ListView.selectionType = SelectionType.Single;
+            m_ListView.style.flexGrow = 1;
+
+            m_ListView.selectionChanged += (s) => ItemSelectCallback?.Invoke((T)m_ListView.selectedItem);
+
+            var buttonContainer = new VisualElement { style = { flexDirection = FlexDirection.Row } };
+
+            Button addButton = new Button(() => ChooseNewItem()) { text = "Add" };
+            Button removeButton = new Button(() => RemoveSelectedItem()) { text = "Remove" };
+
+            buttonContainer.Add(addButton);
+            buttonContainer.Add(removeButton);
+            m_ParentView.Add(m_ListView);
+
+            if (_ShowAddAndRemove)
+            {
+                m_ParentView.Add(buttonContainer);
+            }
+            Add(m_ParentView);
+        }
+
+        private VisualElement CreateItem() => new Label();
+
+        private void BindItem(VisualElement _Element, int _Index)
+        {
+            (_Element as Label).text = m_Items[_Index] != null ? (m_Items[_Index] as IItemModule).ModuleName : "Null";
+        }
+
+        private void ChooseNewItem()
+        {
+            List<T> soList = ItemEditor_AssetLoader.LoadAssetsByType<T>();
+            List<string> soNames = new List<string>();
+            soNames.Add("Choose new entry");
+            for (int i = 0; i < soList.Count; i++)
+            {
+                soNames.Add((soList[i] as IItemModule).ModuleName);
+            }
+            DropdownField dropdownField = new DropdownField(soNames, soNames[0]);
+            dropdownField.RegisterValueChangedCallback(v => AddItem(v.newValue, dropdownField));
+            m_ParentView.Add(dropdownField);
+        }
+
+        private void AddItem(string _Item, DropdownField _SelectionDropdown)
+        {
+            _SelectionDropdown.RemoveFromHierarchy();
+
+            T newItem = ItemEditor_AssetLoader.LoadAssetsByType<T>().FirstOrDefault(so => (so as IItemModule).ModuleName == _Item);
+
+            if (newItem != null)
+            {
+                m_Items.Add(newItem);
+
+                ItemAddCallback?.Invoke(newItem);
+
+                m_ListView.Rebuild();
+            }
+        }
+
+        private void RemoveSelectedItem()
+        {
+            if (m_ListView.selectedItem == null) return;
+
+            ItemRemoveCallback?.Invoke((T)m_ListView.selectedItem);
+
+            m_Items.Remove((T)m_ListView.selectedItem);
 
             m_ListView.Rebuild();
         }
-    }
-
-    private void RemoveSelectedItem()
-    {
-        if (m_ListView.selectedItem == null) return;
-
-        ItemRemoveCallback?.Invoke((T)m_ListView.selectedItem);
-
-        m_Items.Remove((T)m_ListView.selectedItem);
-
-        m_ListView.Rebuild();
     }
 }

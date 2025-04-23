@@ -1,6 +1,8 @@
 using System;
 
-public class ItemToolkitAccess : Attribute
+namespace ItemSystem.Editor
 {
-  
+    public class ItemToolkitAccess : Attribute
+    {
+    }
 }

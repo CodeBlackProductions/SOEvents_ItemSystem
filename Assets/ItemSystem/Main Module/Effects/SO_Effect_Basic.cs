@@ -1,6 +1,5 @@
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
-
+using ItemSystem.MainModule;
 
 public class SO_Effect_Basic : SO_Item_Effect
 {

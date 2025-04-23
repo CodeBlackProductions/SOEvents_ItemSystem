@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ItemSystem.MainModule;
 
 /// <summary>
 /// This trigger adds and manages stacks for <see cref="So_Item_StackEffect"/>.

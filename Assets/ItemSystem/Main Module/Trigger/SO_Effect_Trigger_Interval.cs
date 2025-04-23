@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ItemSystem.Editor;
+using ItemSystem.MainModule;
 
 /// <summary>
 /// This trigger calls each registered <see cref="SO_Item_Effect"/> in fixed intervals.

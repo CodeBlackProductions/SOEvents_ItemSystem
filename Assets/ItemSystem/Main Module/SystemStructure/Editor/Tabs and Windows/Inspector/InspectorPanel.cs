@@ -3,32 +3,34 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class InspectorPanel : VisualElement
+namespace ItemSystem.Editor
 {
-
-    public InspectorPanel()
+    public class InspectorPanel : VisualElement
     {
-        style.flexGrow = 1;
-        Add(new Label("Select an item to view details"));
-    }
-
-    public void Show(ScriptableObject _Obj, Action<bool> _InspectorValueChangeCallback)
-    {
-        Clear();
-        if (_Obj == null)
+        public InspectorPanel()
         {
-            Add(new Label("No item selected"));
-            return;
+            style.flexGrow = 1;
+            Add(new Label("Select an item to view details"));
         }
 
-        Add(new Label($"Editing: {(_Obj as IItemModule).ModuleName}"));
-
-        foreach (var property in _Obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
+        public void Show(ScriptableObject _Obj, Action<bool> _InspectorValueChangeCallback)
         {
-            VisualElement entry = InspectorDataManager.CreateEntry(_Obj, property, this, _InspectorValueChangeCallback);
-            if (entry != null)
+            Clear();
+            if (_Obj == null)
             {
-                Add(entry);
+                Add(new Label("No item selected"));
+                return;
+            }
+
+            Add(new Label($"Editing: {(_Obj as IItemModule).ModuleName}"));
+
+            foreach (var property in _Obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            {
+                VisualElement entry = InspectorDataManager.CreateEntry(_Obj, property, this, _InspectorValueChangeCallback);
+                if (entry != null)
+                {
+                    Add(entry);
+                }
             }
         }
     }

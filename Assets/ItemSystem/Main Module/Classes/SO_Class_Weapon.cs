@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using ItemSystem.MainModule;
 
 public class Class_Weapon : SO_Item_Class
 {

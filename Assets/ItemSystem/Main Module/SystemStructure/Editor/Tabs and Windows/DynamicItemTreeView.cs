@@ -4,198 +4,201 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class DynamicItemTreeView<T> : VisualElement where T : ScriptableObject
+namespace ItemSystem.Editor
 {
-    private int m_IDCounter = 0;
-    private UnityEngine.UIElements.TreeView m_TreeView;
-    private VisualElement m_ButtonPanel;
-    private Button m_BTN_AddNewSO;
-    private Button m_BTN_RemoveSelectedModule;
-
-    public DynamicItemTreeView(Action<IEnumerable<System.Object>, bool> _OnSelectionChangedCallback, bool _ShowAddAndRemove, bool _LoadSubTypes, bool _ShowSaveToFile)
+    public class DynamicItemTreeView<T> : VisualElement where T : ScriptableObject
     {
-        m_TreeView = new UnityEngine.UIElements.TreeView();
-        m_TreeView.selectionChanged += (s) => _OnSelectionChangedCallback?.Invoke(s, _ShowSaveToFile);
-        LoadHierarchy(_LoadSubTypes);
+        private int m_IDCounter = 0;
+        private UnityEngine.UIElements.TreeView m_TreeView;
+        private VisualElement m_ButtonPanel;
+        private Button m_BTN_AddNewSO;
+        private Button m_BTN_RemoveSelectedModule;
 
-        m_TreeView.style.flexGrow = 1;
-        m_TreeView.style.alignSelf = Align.Stretch;
-
-        this.style.flexDirection = FlexDirection.Column;
-        this.style.flexGrow = 1;
-        this.style.paddingRight = 50;
-
-        hierarchy.Add(m_TreeView);
-
-        if (_ShowAddAndRemove)
+        public DynamicItemTreeView(Action<IEnumerable<System.Object>, bool, bool> _OnSelectionChangedCallback, bool _ShowAddAndRemove, bool _LoadSubTypes, bool _ShowInspectorPanel, bool _ShowSaveToFile)
         {
-            m_ButtonPanel = new VisualElement();
-            m_ButtonPanel.style.flexDirection = FlexDirection.Row;
-            m_ButtonPanel.style.alignSelf = Align.Center;
-            m_ButtonPanel.style.flexGrow = 0;
+            m_TreeView = new UnityEngine.UIElements.TreeView();
+            m_TreeView.selectionChanged += (s) => _OnSelectionChangedCallback?.Invoke(s, _ShowInspectorPanel, _ShowSaveToFile);
+            LoadHierarchy(_LoadSubTypes);
 
-            m_BTN_AddNewSO = new Button(() => ModuleCreatorWindow.ShowWindow(RefreshTreeView, typeof(T)))
+            m_TreeView.style.flexGrow = 1;
+            m_TreeView.style.alignSelf = Align.Stretch;
+
+            this.style.flexDirection = FlexDirection.Column;
+            this.style.flexGrow = 1;
+            this.style.paddingRight = 50;
+
+            hierarchy.Add(m_TreeView);
+
+            if (_ShowAddAndRemove)
             {
-                text = "Add",
-                style =
+                m_ButtonPanel = new VisualElement();
+                m_ButtonPanel.style.flexDirection = FlexDirection.Row;
+                m_ButtonPanel.style.alignSelf = Align.Center;
+                m_ButtonPanel.style.flexGrow = 0;
+
+                m_BTN_AddNewSO = new Button(() => ModuleCreatorWindow.ShowWindow(RefreshTreeView, typeof(T)))
+                {
+                    text = "Add",
+                    style =
                 {
                     height = 25,
                     alignSelf = Align.Center
                 }
-            };
+                };
 
-            m_ButtonPanel.Add(m_BTN_AddNewSO);
+                m_ButtonPanel.Add(m_BTN_AddNewSO);
 
-            m_BTN_RemoveSelectedModule = new Button(() => RemoveSelectedModule(_LoadSubTypes))
-            {
-                text = "Remove",
-                style =
+                m_BTN_RemoveSelectedModule = new Button(() => RemoveSelectedModule(_LoadSubTypes))
+                {
+                    text = "Remove",
+                    style =
                 {
                     height = 25,
                     alignSelf = Align.Center
                 }
-            };
+                };
 
-            m_ButtonPanel.Add(m_BTN_RemoveSelectedModule);
+                m_ButtonPanel.Add(m_BTN_RemoveSelectedModule);
 
-            hierarchy.Add(m_ButtonPanel);
-        }
-    }
-
-    public DynamicItemTreeView(List<ScriptableObject> _Items, Action<IEnumerable<System.Object>> _OnSelectionChangedCallback)
-    {
-        m_TreeView = new UnityEngine.UIElements.TreeView();
-        m_TreeView.selectionChanged += (s) => _OnSelectionChangedCallback?.Invoke(s);
-       
-        List<TreeViewItemData<TreeViewEntryData>> treeItems = new List<TreeViewItemData<TreeViewEntryData>>();
-
-        foreach (var item in _Items)
-        {
-            if (item is IItemModule && (item as IItemModule).ModuleName != "EditorSettings")
-            {
-                List<TreeViewItemData<TreeViewEntryData>> itemChildren = new List<TreeViewItemData<TreeViewEntryData>>();
-                string fileName = item.name;
-                string itemName = (item as IItemModule).ModuleName;
-                treeItems.Add(new TreeViewItemData<TreeViewEntryData>(GetNextId(), new TreeViewEntryData(itemName, fileName), itemChildren));
+                hierarchy.Add(m_ButtonPanel);
             }
         }
 
-        m_TreeView.SetRootItems(treeItems);
-        m_TreeView.Rebuild();
-
-        m_TreeView.style.flexGrow = 1;
-        m_TreeView.style.alignSelf = Align.Stretch;
-
-        this.style.flexDirection = FlexDirection.Column;
-        this.style.flexGrow = 1;
-        this.style.paddingRight = 50;
-
-        hierarchy.Add(m_TreeView);
-    }
-
-    public void RefreshTreeView(bool _LoadSubTypes)
-    {
-        m_IDCounter = 0;
-        LoadHierarchy(_LoadSubTypes);
-    }
-
-    private void LoadHierarchy(bool _LoadSubTypes)
-    {
-        List<TreeViewItemData<TreeViewEntryData>> treeItems = LoadModules(typeof(T), _LoadSubTypes);
-        m_TreeView.SetRootItems(treeItems);
-        m_TreeView.Rebuild();
-    }
-
-    private List<TreeViewItemData<TreeViewEntryData>> LoadModules(Type _BaseType, bool _LoadSubtypes)
-    {
-        List<TreeViewItemData<TreeViewEntryData>> treeItems = new List<TreeViewItemData<TreeViewEntryData>>();
-
-        var items = ItemEditor_AssetLoader.LoadAssetsByTypeReference(_BaseType);
-        foreach (var item in items)
+        public DynamicItemTreeView(List<ScriptableObject> _Items, Action<IEnumerable<System.Object>> _OnSelectionChangedCallback)
         {
-            if (item is IItemModule && (item as IItemModule).ModuleName != "EditorSettings")
+            m_TreeView = new UnityEngine.UIElements.TreeView();
+            m_TreeView.selectionChanged += (s) => _OnSelectionChangedCallback?.Invoke(s);
+
+            List<TreeViewItemData<TreeViewEntryData>> treeItems = new List<TreeViewItemData<TreeViewEntryData>>();
+
+            foreach (var item in _Items)
             {
-                List<TreeViewItemData<TreeViewEntryData>> itemChildren = _LoadSubtypes ? LoadSubModules(item) : new List<TreeViewItemData<TreeViewEntryData>>();
-
-                string fileName = item.name;
-                string itemName = (item as IItemModule).ModuleName;
-                treeItems.Add(new TreeViewItemData<TreeViewEntryData>(GetNextId(), new TreeViewEntryData(itemName, fileName), itemChildren));
-            }
-        }
-
-        return treeItems;
-    }
-
-    private List<TreeViewItemData<TreeViewEntryData>> LoadSubModules(ScriptableObject _Item)
-    {
-        List<TreeViewItemData<TreeViewEntryData>> itemChildren = new List<TreeViewItemData<TreeViewEntryData>>();
-
-        var properties = _Item.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
-        foreach (var property in properties)
-        {
-            if (typeof(ScriptableObject).IsAssignableFrom(property.PropertyType))
-            {
-                var subItem = property.GetValue(_Item) as ScriptableObject;
-                if (subItem != null)
+                if (item is IItemModule && (item as IItemModule).ModuleName != "EditorSettings")
                 {
-                    string fileName = subItem.name;
-                    string itemName = (subItem as IItemModule).ModuleName;
-                    itemChildren.Add(new TreeViewItemData<TreeViewEntryData>(GetNextId(), new TreeViewEntryData(itemName, fileName), LoadSubModules(subItem)));
+                    List<TreeViewItemData<TreeViewEntryData>> itemChildren = new List<TreeViewItemData<TreeViewEntryData>>();
+                    string fileName = item.name;
+                    string itemName = (item as IItemModule).ModuleName;
+                    treeItems.Add(new TreeViewItemData<TreeViewEntryData>(GetNextId(), new TreeViewEntryData(itemName, fileName), itemChildren));
                 }
             }
-            else if (typeof(IEnumerable<ScriptableObject>).IsAssignableFrom(property.PropertyType))
+
+            m_TreeView.SetRootItems(treeItems);
+            m_TreeView.Rebuild();
+
+            m_TreeView.style.flexGrow = 1;
+            m_TreeView.style.alignSelf = Align.Stretch;
+
+            this.style.flexDirection = FlexDirection.Column;
+            this.style.flexGrow = 1;
+            this.style.paddingRight = 50;
+
+            hierarchy.Add(m_TreeView);
+        }
+
+        public void RefreshTreeView(bool _LoadSubTypes)
+        {
+            m_IDCounter = 0;
+            LoadHierarchy(_LoadSubTypes);
+        }
+
+        private void LoadHierarchy(bool _LoadSubTypes)
+        {
+            List<TreeViewItemData<TreeViewEntryData>> treeItems = LoadModules(typeof(T), _LoadSubTypes);
+            m_TreeView.SetRootItems(treeItems);
+            m_TreeView.Rebuild();
+        }
+
+        private List<TreeViewItemData<TreeViewEntryData>> LoadModules(Type _BaseType, bool _LoadSubtypes)
+        {
+            List<TreeViewItemData<TreeViewEntryData>> treeItems = new List<TreeViewItemData<TreeViewEntryData>>();
+
+            var items = ItemEditor_AssetLoader.LoadAssetsByTypeReference(_BaseType);
+            foreach (var item in items)
             {
-                var subItems = property.GetValue(_Item) as IEnumerable<ScriptableObject>;
-                if (subItems != null)
+                if (item is IItemModule && (item as IItemModule).ModuleName != "EditorSettings")
                 {
-                    foreach (var subItem in subItems)
+                    List<TreeViewItemData<TreeViewEntryData>> itemChildren = _LoadSubtypes ? LoadSubModules(item) : new List<TreeViewItemData<TreeViewEntryData>>();
+
+                    string fileName = item.name;
+                    string itemName = (item as IItemModule).ModuleName;
+                    treeItems.Add(new TreeViewItemData<TreeViewEntryData>(GetNextId(), new TreeViewEntryData(itemName, fileName), itemChildren));
+                }
+            }
+
+            return treeItems;
+        }
+
+        private List<TreeViewItemData<TreeViewEntryData>> LoadSubModules(ScriptableObject _Item)
+        {
+            List<TreeViewItemData<TreeViewEntryData>> itemChildren = new List<TreeViewItemData<TreeViewEntryData>>();
+
+            var properties = _Item.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            foreach (var property in properties)
+            {
+                if (typeof(ScriptableObject).IsAssignableFrom(property.PropertyType))
+                {
+                    var subItem = property.GetValue(_Item) as ScriptableObject;
+                    if (subItem != null)
                     {
-                        if (subItem != null)
+                        string fileName = subItem.name;
+                        string itemName = (subItem as IItemModule).ModuleName;
+                        itemChildren.Add(new TreeViewItemData<TreeViewEntryData>(GetNextId(), new TreeViewEntryData(itemName, fileName), LoadSubModules(subItem)));
+                    }
+                }
+                else if (typeof(IEnumerable<ScriptableObject>).IsAssignableFrom(property.PropertyType))
+                {
+                    var subItems = property.GetValue(_Item) as IEnumerable<ScriptableObject>;
+                    if (subItems != null)
+                    {
+                        foreach (var subItem in subItems)
                         {
-                            string fileName = subItem.name;
-                            string itemName = (subItem as IItemModule).ModuleName;
-                            itemChildren.Add(new TreeViewItemData<TreeViewEntryData>(GetNextId(), new TreeViewEntryData(itemName, fileName), LoadSubModules(subItem)));
+                            if (subItem != null)
+                            {
+                                string fileName = subItem.name;
+                                string itemName = (subItem as IItemModule).ModuleName;
+                                itemChildren.Add(new TreeViewItemData<TreeViewEntryData>(GetNextId(), new TreeViewEntryData(itemName, fileName), LoadSubModules(subItem)));
+                            }
                         }
                     }
                 }
             }
+
+            return itemChildren;
         }
 
-        return itemChildren;
-    }
-
-    private int GetNextId()
-    {
-        return m_IDCounter++;
-    }
-
-    private void RemoveSelectedModule(bool _LoadSubTypes)
-    {
-        object selection = m_TreeView.selectedItem;
-
-        if (selection != null)
+        private int GetNextId()
         {
-            ScriptableObject deleteFile = ItemEditor_AssetLoader.LoadAssetByName<ScriptableObject>((selection as TreeViewEntryData).FileName);
-            ItemEditor_InstanceManager.RemoveInstance(deleteFile);
+            return m_IDCounter++;
         }
 
-        RefreshTreeView(_LoadSubTypes);
+        private void RemoveSelectedModule(bool _LoadSubTypes)
+        {
+            object selection = m_TreeView.selectedItem;
+
+            if (selection != null)
+            {
+                ScriptableObject deleteFile = ItemEditor_AssetLoader.LoadAssetByName<ScriptableObject>((selection as TreeViewEntryData).FileName);
+                ItemEditor_InstanceManager.RemoveInstance(deleteFile);
+            }
+
+            RefreshTreeView(_LoadSubTypes);
+        }
     }
-}
 
-public class TreeViewEntryData
-{
-    public string DisplayName { get; }
-    public string FileName { get; }
-
-    public TreeViewEntryData(string _DisplayName, string _FileName)
+    public class TreeViewEntryData
     {
-        DisplayName = _DisplayName;
-        FileName = _FileName;
-    }
+        public string DisplayName { get; }
+        public string FileName { get; }
 
-    public override string ToString()
-    {
-        return DisplayName;
+        public TreeViewEntryData(string _DisplayName, string _FileName)
+        {
+            DisplayName = _DisplayName;
+            FileName = _FileName;
+        }
+
+        public override string ToString()
+        {
+            return DisplayName;
+        }
     }
 }

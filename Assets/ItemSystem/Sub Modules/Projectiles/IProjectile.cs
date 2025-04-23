@@ -1,7 +1,11 @@
+using ItemSystem.Editor;
 using UnityEngine;
 
-public interface IProjectile
+namespace ItemSystem.SubModules
 {
-    [ItemToolkitAccess] public string Name { get;}
-    [ItemToolkitAccess] public GameObject Prefab { get;}
+    public interface IProjectile
+    {
+        [ItemToolkitAccess] public string Name { get; }
+        [ItemToolkitAccess] public GameObject Prefab { get; }
+    }
 }

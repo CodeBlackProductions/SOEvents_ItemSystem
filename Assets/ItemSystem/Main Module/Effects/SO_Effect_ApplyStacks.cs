@@ -1,15 +1,19 @@
 using UnityEngine;
+using ItemSystem.Editor;
+using ItemSystem.MainModule;
 
-
-public class SO_Effect_ApplyStacks : SO_Item_Effect
+namespace ItemSystem
 {
-    [SerializeField] private So_Item_StackEffect m_StackEffect;
-
-    [ItemToolkitAccess] public So_Item_StackEffect StackEffect { get => m_StackEffect; set => m_StackEffect = value; }
-
-    protected override void ItemEffect(IItemUser _Source, IItemUser _Target)
+    public class SO_Effect_ApplyStacks : SO_Item_Effect
     {
-        Debug.Log(EffectName + " just applied stacks!");
-        m_StackEffect.Trigger.Invoke(_Source, _Target);
+        [SerializeField] private So_Item_StackEffect m_StackEffect;
+
+        [ItemToolkitAccess] public So_Item_StackEffect StackEffect { get => m_StackEffect; set => m_StackEffect = value; }
+
+        protected override void ItemEffect(IItemUser _Source, IItemUser _Target)
+        {
+            Debug.Log(EffectName + " just applied stacks!");
+            m_StackEffect.Trigger.Invoke(_Source, _Target);
+        }
     }
 }

@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using ItemSystem.MainModule;
+using ItemSystem.SubModules;
 
 /// <summary>
 /// This is just an example implementation of the item System.

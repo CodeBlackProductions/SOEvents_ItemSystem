@@ -1,3 +1,6 @@
+using ItemSystem.Editor;
+using ItemSystem.MainModule;
+using ItemSystem.SubModules;
 using UnityEngine;
 
 public enum EHands

@@ -6,145 +6,157 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class ModuleCreatorWindow : EditorWindow
+namespace ItemSystem.Editor
 {
-    private VisualElement m_Root;
-    private DropdownField m_ModuleSelection;
-    private DropdownField m_SubModuleSelection;
-    private InspectorPanel m_InspectorPanel;
-    private Button m_FinishButton;
-
-    private static Dictionary<string, Type> m_ModuleTypeRegistry = new Dictionary<string, Type>();
-    private static Type m_SelectedModuleType;
-
-    private Action<bool> OnClose;
-
-    public static void ShowWindow(Action<bool> _OnWindowClosedCallback)
+    public class ModuleCreatorWindow : EditorWindow
     {
-        ModuleCreatorWindow window = GetWindow<ModuleCreatorWindow>("Module Creator");
-        window.minSize = new Vector2(700, 400);
-        window.OnClose += _OnWindowClosedCallback;
-    }
+        private VisualElement m_Root;
+        private DropdownField m_ModuleSelection;
+        private DropdownField m_SubModuleSelection;
+        private InspectorPanel m_InspectorPanel;
+        private Button m_FinishButton;
 
-    public static void ShowWindow(Action<bool> _OnWindowClosedCallback, Type _SelectedType)
-    {
-        m_SelectedModuleType = _SelectedType;
+        private static Dictionary<string, Type> m_ModuleTypeRegistry = new Dictionary<string, Type>();
+        private static Type m_SelectedModuleType;
 
-        ModuleCreatorWindow window = GetWindow<ModuleCreatorWindow>("Module Creator");
-        window.minSize = new Vector2(700, 400);
-        window.OnClose += _OnWindowClosedCallback;
-    }
+        private Action<bool> OnClose;
 
-    private void CreateGUI()
-    {
-        m_Root = rootVisualElement;
-
-        m_ModuleSelection = new DropdownField("Module type");
-
-        IEnumerable<Type> moduleTypes = ItemEditor_AssetLoader.LoadAllBaseTypes();
-
-        foreach (var type in moduleTypes)
+        public static void ShowWindow(Action<bool> _OnWindowClosedCallback)
         {
-            if (m_ModuleTypeRegistry.TryAdd(type.Name, type))
+            m_SelectedModuleType = null;
+
+            ModuleCreatorWindow window = GetWindow<ModuleCreatorWindow>("Module Creator");
+            window.minSize = new Vector2(700, 400);
+            window.OnClose += _OnWindowClosedCallback;
+        }
+
+        public static void ShowWindow(Action<bool> _OnWindowClosedCallback, Type _SelectedType)
+        {
+            m_SelectedModuleType = _SelectedType;
+
+            ModuleCreatorWindow window = GetWindow<ModuleCreatorWindow>("Module Creator");
+            window.minSize = new Vector2(700, 400);
+            window.OnClose += _OnWindowClosedCallback;
+        }
+
+        private void CreateGUI()
+        {
+            m_Root = rootVisualElement;
+
+            m_ModuleTypeRegistry.Clear();
+
+            m_ModuleSelection = new DropdownField("Module type");
+
+            IEnumerable<Type> moduleTypes = ItemEditor_AssetLoader.LoadAllBaseTypes();
+
+            foreach (var type in moduleTypes)
             {
-                m_ModuleSelection?.choices?.Add(type.Name);
+                if (m_ModuleTypeRegistry.TryAdd(GetModuleNameSubstring(type.Name), type))
+                {
+                    m_ModuleSelection?.choices?.Add(GetModuleNameSubstring(type.Name));
+                }
+            }
+
+            m_ModuleSelection?.RegisterValueChangedCallback((evt) =>
+            {
+                Type type = m_ModuleTypeRegistry[evt.newValue];
+
+                if (type == null)
+                {
+                    m_SubModuleSelection?.choices?.Clear();
+                    m_SubModuleSelection?.choices?.Add("No submodules found!");
+                    m_SubModuleSelection.value = "No submodules found!";
+                    return;
+                }
+
+                MethodInfo method = typeof(ModuleCreatorWindow).GetMethod("SetupSubTypeSelection", BindingFlags.NonPublic | BindingFlags.Instance);
+                MethodInfo generic = method.MakeGenericMethod(type);
+                generic.Invoke(this, null);
+            });
+
+            m_SubModuleSelection = new DropdownField("Sub-Module type");
+            m_SubModuleSelection?.choices?.Add("Select Main-Module first!");
+            m_SubModuleSelection.value = "Select Main-Module first!";
+
+            if (m_SelectedModuleType != null)
+            {
+                m_ModuleSelection.value = GetModuleNameSubstring(m_SelectedModuleType.Name);
+                MethodInfo method = typeof(ModuleCreatorWindow).GetMethod("SetupSubTypeSelection", BindingFlags.NonPublic | BindingFlags.Instance);
+                MethodInfo generic = method.MakeGenericMethod(m_SelectedModuleType);
+                generic.Invoke(this, null);
+            }
+            else
+            {
+                m_ModuleSelection.value = "Select Module";
+            }
+
+            m_InspectorPanel = new InspectorPanel();
+
+            m_FinishButton = new Button(() => this.Close());
+            m_FinishButton?.Add(new Label("Finish"));
+
+            m_Root?.Add(m_ModuleSelection);
+            m_Root?.Add(m_SubModuleSelection);
+            m_Root?.Add(m_InspectorPanel);
+            m_Root?.Add(m_FinishButton);
+        }
+
+        private string GetModuleNameSubstring(string _ModuleName)
+        {
+            return _ModuleName.Substring(_ModuleName.LastIndexOf("_") + 1);
+        }
+
+        private void SetupSubTypeSelection<T>()
+        {
+            m_InspectorPanel?.Clear();
+            m_SubModuleSelection?.choices?.Clear();
+
+            List<Type> types = new List<Type>();
+            Type panelType;
+
+            types = ItemEditor_AssetLoader.LoadDerivedTypes(typeof(T)).ToList();
+            panelType = typeof(T);
+
+            m_SubModuleSelection.choices = types.Select(t => GetModuleNameSubstring(t.Name)).ToList();
+            m_SubModuleSelection?.choices?.Insert(0, "Select Sub-Module");
+            m_SubModuleSelection.value = "Select Sub-Module";
+
+            m_SubModuleSelection?.RegisterValueChangedCallback((evt) => SetupInspectorPanel(types.Find((t) => GetModuleNameSubstring(t.Name) == evt.newValue), panelType));
+        }
+
+        private void SetupInspectorPanel(Type _SubType, Type _ModuleType)
+        {
+            if (_SubType == null) { return; }
+            ScriptableObject temporarySOInstance = CreateTemporaryInstance(_SubType);
+            m_InspectorPanel.Show(temporarySOInstance, null);
+
+            m_FinishButton.clicked += () => FinishSetup(temporarySOInstance, _SubType);
+        }
+
+        private ScriptableObject CreateTemporaryInstance(Type _Type)
+        {
+            if (_Type != null && typeof(ScriptableObject).IsAssignableFrom(_Type))
+            {
+                ScriptableObject temporarySOInstance = ScriptableObject.CreateInstance(_Type);
+                (temporarySOInstance as IItemModule).ModuleGUID = GUID.Generate();
+                return temporarySOInstance;
+            }
+            else
+            {
+                Debug.LogError($"Could not create instance of type {_Type.Name}");
+                return null;
             }
         }
 
-        m_ModuleSelection?.RegisterValueChangedCallback((evt) =>
+        private void FinishSetup(ScriptableObject _TemporarySOInstance, Type _ModuleType)
         {
-            Type type = m_ModuleTypeRegistry[evt.newValue];
-
-            if (type == null)
+            if (_TemporarySOInstance != null)
             {
-                m_SubModuleSelection?.choices?.Clear();
-                m_SubModuleSelection?.choices?.Add("No submodules found!");
-                m_SubModuleSelection.value = "No submodules found!";
-                return;
+                ItemEditor_InstanceManager.CreateInstance(_TemporarySOInstance, _ModuleType);
+
+                OnClose?.Invoke(true);
+                Close();
             }
-
-            MethodInfo method = typeof(ModuleCreatorWindow).GetMethod("SetupSubTypeSelection", BindingFlags.NonPublic | BindingFlags.Instance);
-            MethodInfo generic = method.MakeGenericMethod(type);
-            generic.Invoke(this, null);
-        });
-
-        m_SubModuleSelection = new DropdownField("Sub-Module type");
-        m_SubModuleSelection?.choices?.Add("Select Main-Module first!");
-        m_SubModuleSelection.value = "Select Main-Module first!";
-
-        if (m_SelectedModuleType != null)
-        {
-            m_ModuleSelection.value = m_SelectedModuleType.Name;
-            MethodInfo method = typeof(ModuleCreatorWindow).GetMethod("SetupSubTypeSelection", BindingFlags.NonPublic | BindingFlags.Instance);
-            MethodInfo generic = method.MakeGenericMethod(m_SelectedModuleType);
-            generic.Invoke(this, null);
-        }
-        else
-        {
-            m_ModuleSelection.value = "Select Module";
-        }
-
-        m_InspectorPanel = new InspectorPanel();
-
-        m_FinishButton = new Button(() => this.Close());
-        m_FinishButton?.Add(new Label("Finish"));
-
-        m_Root?.Add(m_ModuleSelection);
-        m_Root?.Add(m_SubModuleSelection);
-        m_Root?.Add(m_InspectorPanel);
-        m_Root?.Add(m_FinishButton);
-    }
-
-    private void SetupSubTypeSelection<T>()
-    {
-        m_InspectorPanel?.Clear();
-        m_SubModuleSelection?.choices?.Clear();
-
-        List<Type> types = new List<Type>();
-        Type panelType;
-
-        types = ItemEditor_AssetLoader.GetSubTypes(typeof(T)).ToList();
-        panelType = typeof(T);
-
-        m_SubModuleSelection.choices = types.Select(t => t.Name).ToList();
-        m_SubModuleSelection?.choices?.Insert(0, "Select Sub-Module");
-        m_SubModuleSelection.value = "Select Sub-Module";
-
-        m_SubModuleSelection?.RegisterValueChangedCallback((evt) => SetupInspectorPanel(types.Find((t) => t.Name == evt.newValue), panelType));
-    }
-
-    private void SetupInspectorPanel(Type _SubType, Type _ModuleType)
-    {
-        if (_SubType == null) { return; }
-        ScriptableObject temporarySOInstance = CreateTemporaryInstance(_SubType);
-        m_InspectorPanel.Show(temporarySOInstance, null);
-
-        m_FinishButton.clicked += () => FinishSetup(temporarySOInstance, _SubType);
-    }
-
-    private ScriptableObject CreateTemporaryInstance(Type _Type)
-    {
-        if (_Type != null && typeof(ScriptableObject).IsAssignableFrom(_Type))
-        {
-            ScriptableObject temporarySOInstance = ScriptableObject.CreateInstance(_Type);
-            (temporarySOInstance as IItemModule).ModuleGUID = GUID.Generate();
-            return temporarySOInstance;
-        }
-        else
-        {
-            Debug.LogError($"Could not create instance of type {_Type.Name}");
-            return null;
-        }
-    }
-
-    private void FinishSetup(ScriptableObject _TemporarySOInstance, Type _ModuleType)
-    {
-        if (_TemporarySOInstance != null)
-        {
-            ItemEditor_InstanceManager.CreateInstance(_TemporarySOInstance, _ModuleType);
-
-            OnClose?.Invoke(true);
-            Close();
         }
     }
 }

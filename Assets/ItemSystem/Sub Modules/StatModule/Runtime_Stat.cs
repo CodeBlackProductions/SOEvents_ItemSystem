@@ -1,28 +1,31 @@
 using System;
 using Unity.VisualScripting;
 
-public class Runtime_Stat
+namespace ItemSystem.SubModules
 {
-    private object m_Value;
-    private Type m_Type;
-
-    public Runtime_Stat(object _Value, Type _Type)
+    public class Runtime_Stat
     {
-        m_Value = _Value;
-        m_Type = _Type;
-    }
+        private object m_Value;
+        private Type m_Type;
 
-    public object Value
-    {
-        get => m_Value.ConvertTo(m_Type);
-        set
+        public Runtime_Stat(object _Value, Type _Type)
         {
-            if (m_Type == value.GetType())
+            m_Value = _Value;
+            m_Type = _Type;
+        }
+
+        public object Value
+        {
+            get => m_Value.ConvertTo(m_Type);
+            set
             {
-                m_Value = value;
+                if (m_Type == value.GetType())
+                {
+                    m_Value = value;
+                }
             }
         }
-    }
 
-    public Type Type { get => m_Type; set => m_Type = value; }
+        public Type Type { get => m_Type; set => m_Type = value; }
+    }
 }

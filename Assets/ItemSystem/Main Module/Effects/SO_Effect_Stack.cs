@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
+using ItemSystem.MainModule;
 
 public class SO_Effect_Stack : So_Item_StackEffect
 {
