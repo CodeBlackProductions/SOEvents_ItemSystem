@@ -168,7 +168,7 @@ namespace ItemSystem.Editor
                 {
                     _Property.SetValue(
                         _ParentSO, soList.Find(so =>
-                        $"{so.name} ({so.GetType().Name})" == c.newValue && _Property.PropertyType.IsAssignableFrom(so.GetType())
+                        $"{(so as IItemModule).ModuleName} ({so.GetType().Name})" == c.newValue && _Property.PropertyType.IsAssignableFrom(so.GetType())
                         )
                     );
                     _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
@@ -449,7 +449,7 @@ namespace ItemSystem.Editor
                 {
                     _Property.SetValue(
                         _ParentSO, typeList.FindIndex(so =>
-                        $"{so.name} ({so.GetType().Name})" == c.newValue)
+                        $"{(so as IItemModule).ModuleName} ({so.GetType().Name})" == c.newValue)
                     );
                     _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
                     _InspectorValueChangeCallback?.Invoke(true);
