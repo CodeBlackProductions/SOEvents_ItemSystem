@@ -6,6 +6,9 @@ using UnityEngine.UIElements;
 
 namespace ItemSystem.Editor
 {
+    /// <summary>
+    /// Tab for managing item containers, such as inventory slots and loot pools.
+    /// </summary>
     public class ItemContainerTab : TabBase
     {
         public ItemContainerTab(Action<bool> _InspectorValueChangeCallback, Action<IEnumerable<System.Object>, bool, bool> _TreeviewSelectionChangeCallback)
@@ -48,6 +51,7 @@ namespace ItemSystem.Editor
 
             m_Root.Add(m_SubTabMenu);
 
+            LoadFilterPanel();
             LoadSubTabHierarchy<SO_ItemSlot>(true, true, true, false);
             OnSubTabChanged(typeof(SO_ItemSlot), true, true, true, false);
 

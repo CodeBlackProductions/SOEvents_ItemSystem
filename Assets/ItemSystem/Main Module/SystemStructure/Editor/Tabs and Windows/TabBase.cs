@@ -1,3 +1,4 @@
+using ItemSystem.MainModule;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,10 +7,14 @@ using UnityEngine.UIElements;
 
 namespace ItemSystem.Editor
 {
+    /// <summary>
+    /// Base class for all tabs in the Item System editor.
+    /// </summary>
     public abstract class TabBase : VisualElement
     {
         protected VisualElement m_Root;
         protected TabbedMenu m_SubTabMenu;
+        protected FilterPanel m_FilterPanel;
         protected VisualElement m_SubTabContent;
         protected InspectorPanel m_SubTabInspectorPanel;
 
@@ -24,6 +29,14 @@ namespace ItemSystem.Editor
         protected abstract void OnSubTabChanged(Type _ModuleType, bool _ShowAddAndRemove, bool _LoadSubTypes, bool _ShowInspectorPanel, bool _LoadLocalFiles);
 
         protected abstract void LoadHierarchy();
+
+        protected void LoadFilterPanel()
+        {
+            //TODO: Tie Filter Panel to the treeview!
+            m_FilterPanel = new FilterPanel();
+
+            m_Root.Add(m_FilterPanel);
+        }
 
         protected void LoadSubTabHierarchy<T>(bool _ShowAddAndRemove, bool _ShowInspectorPanel, bool _LoadSubtypes, bool _LoadLocalFiles) where T : ScriptableObject
         {
@@ -49,6 +62,12 @@ namespace ItemSystem.Editor
             m_InspectorValueChangeCallback += treeView.RefreshTreeView;
             treeView.style.flexGrow = 1;
             m_SubTabContent.Add(treeView);
+
+            var divider = new VisualElement();
+            divider.style.width = 2;
+            divider.style.backgroundColor = new StyleColor(Color.grey);
+            divider.style.marginRight = 5;
+            m_SubTabContent.Add(divider);
         }
 
         protected void CreateTreeview<T>(List<ScriptableObject> _Items, bool _SaveToFile) where T : ScriptableObject

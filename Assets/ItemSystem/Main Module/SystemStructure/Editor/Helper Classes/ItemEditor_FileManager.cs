@@ -1,3 +1,4 @@
+using ItemSystem.MainModule;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,6 +8,9 @@ using UnityEngine;
 
 namespace ItemSystem.Editor
 {
+    /// <summary>
+    /// Handles the loading and saving of modules to and from JSON files.
+    /// </summary>
     public static class ItemEditor_FileManager
     {
         public static void SaveModuleToFile(ScriptableObject _Module)

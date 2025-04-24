@@ -1,3 +1,4 @@
+using ItemSystem.MainModule;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -6,6 +7,10 @@ using UnityEngine.UIElements;
 
 namespace ItemSystem.Editor
 {
+    /// <summary>
+    /// Custom tree view for displaying and managing ScriptableObject instances.
+    /// </summary>
+    /// <typeparam name="T">Type of scriptableObjects, that should be added to the treeview.</typeparam>
     public class DynamicItemTreeView<T> : VisualElement where T : ScriptableObject
     {
         private int m_IDCounter = 0;
@@ -18,6 +23,7 @@ namespace ItemSystem.Editor
         {
             m_TreeView = new UnityEngine.UIElements.TreeView();
             m_TreeView.selectionChanged += (s) => _OnSelectionChangedCallback?.Invoke(s, _ShowInspectorPanel, _ShowSaveToFile);
+
             LoadHierarchy(_LoadSubTypes);
 
             m_TreeView.style.flexGrow = 1;

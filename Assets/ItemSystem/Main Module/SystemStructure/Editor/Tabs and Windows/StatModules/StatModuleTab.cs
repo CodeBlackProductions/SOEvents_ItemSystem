@@ -6,6 +6,9 @@ using UnityEngine.UIElements;
 
 namespace ItemSystem.Editor
 {
+    /// <summary>
+    /// Tab for displaying and managing stat modules in the Item System editor.
+    /// </summary>
     public class StatModuleTab : TabBase
     {
         public StatModuleTab(Action<bool> _InspectorValueChangeCallback, Action<IEnumerable<System.Object>, bool, bool> _TreeviewSelectionChangeCallback)

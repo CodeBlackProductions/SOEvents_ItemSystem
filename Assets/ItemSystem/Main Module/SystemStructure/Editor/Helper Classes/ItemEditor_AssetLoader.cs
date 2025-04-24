@@ -7,6 +7,9 @@ using UnityEngine;
 
 namespace ItemSystem.Editor
 {
+    /// <summary>
+    /// Class to load assets from the project. This is used to load all modules and their types.
+    /// </summary>
     public static class ItemEditor_AssetLoader
     {
         public static T LoadAssetByName<T>(string _AssetName) where T : Object

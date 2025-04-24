@@ -1,4 +1,5 @@
 using ItemSystem.Editor;
+using ItemSystem.MainModule;
 using System;
 using UnityEditor;
 using UnityEngine;

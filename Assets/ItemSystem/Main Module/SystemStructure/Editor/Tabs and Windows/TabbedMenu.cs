@@ -4,6 +4,9 @@ using UnityEngine.UIElements;
 
 namespace ItemSystem.Editor
 {
+    /// <summary>
+    /// UI element that allows for the creation of a menu structure with multiple tabs.
+    /// </summary>
     public class TabbedMenu : VisualElement
     {
         public TabbedMenu(KeyValuePair<string, Type>[] _Tabs, System.Action<Type, bool, bool, bool, bool> _OnTabChanged, bool _ShowAddAndRemove, bool _LoadSubTypes, bool _ShowInspectorPanel, bool _LoadLocalFiles)

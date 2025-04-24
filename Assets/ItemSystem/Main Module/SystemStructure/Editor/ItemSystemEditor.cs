@@ -6,6 +6,9 @@ using UnityEngine.UIElements;
 
 namespace ItemSystem.Editor
 {
+    /// <summary>
+    /// Main editor window for the Item System.
+    /// </summary>
     public class ItemSystemEditor : EditorWindow
     {
         private VisualElement m_Root;

@@ -1,3 +1,4 @@
+using ItemSystem.MainModule;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,9 @@ using UnityEngine.UIElements;
 
 namespace ItemSystem.Editor
 {
+    /// <summary>
+    /// Window for creating new item module instances.
+    /// </summary>
     public class ModuleCreatorWindow : EditorWindow
     {
         private VisualElement m_Root;

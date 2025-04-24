@@ -1,11 +1,17 @@
+using ItemSystem.MainModule;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace ItemSystem.Editor
 {
+    /// <summary>
+    /// Custom list view for displaying and managing a list of ScriptableObject items.
+    /// </summary>
+    /// <typeparam name="T">Type of scriptable object allowed.</typeparam>
     public class InspectorList<T> : VisualElement where T : ScriptableObject
     {
         private VisualElement m_ParentView = new VisualElement();
@@ -99,6 +105,10 @@ namespace ItemSystem.Editor
             soNames.Add("Choose new entry");
             for (int i = 0; i < soList.Count; i++)
             {
+                if (soList[i] is not IItemModule || (soList[i] as IItemModule).ModuleName == "EditorSettings" || soList[i].GetType().IsAbstract)
+                {
+                    continue;
+                }
                 soNames.Add((soList[i] as IItemModule).ModuleName);
             }
             DropdownField dropdownField = new DropdownField(soNames, soNames[0]);

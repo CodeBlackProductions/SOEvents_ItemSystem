@@ -6,6 +6,9 @@ using UnityEngine.UIElements;
 
 namespace ItemSystem.Editor
 {
+    /// <summary>
+    /// Tab for managing and editing item modules in the Item System editor.
+    /// </summary>
     public class ItemModuleTab : TabBase
     {
         public ItemModuleTab(Action<bool> _InspectorValueChangeCallback, Action<IEnumerable<System.Object>, bool, bool> _TreeviewSelectionChangeCallback)
@@ -46,6 +49,7 @@ namespace ItemSystem.Editor
 
             m_Root.Add(m_SubTabMenu);
 
+            LoadFilterPanel();
             LoadSubTabHierarchy<SO_Item>(true, true, true, false);
             OnSubTabChanged(typeof(SO_Item), true, true, true, false);
 

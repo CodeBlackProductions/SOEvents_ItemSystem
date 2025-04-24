@@ -1,9 +1,12 @@
-using System.Runtime.InteropServices;
+using ItemSystem.MainModule;
 using UnityEditor;
 using UnityEngine;
 
 namespace ItemSystem.Editor
 {
+    /// <summary>
+    /// Scriptable Object that stores the editor settings for the Item System.
+    /// </summary>
     public class SO_EditorSettings : ScriptableObject, IItemModule
     {
         [SerializeField] private string m_InstancesPath = "Assets/ItemSystem/Module_Instances";

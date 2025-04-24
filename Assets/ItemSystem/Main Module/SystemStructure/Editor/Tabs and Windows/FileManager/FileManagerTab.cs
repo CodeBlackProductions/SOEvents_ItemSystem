@@ -7,6 +7,9 @@ using UnityEngine.UIElements;
 
 namespace ItemSystem.Editor
 {
+    /// <summary>
+    /// Tab in the Item System editor that allows users to Load from or write to JSON files.
+    /// </summary>
     public class FileManagerTab : TabBase
     {
         public FileManagerTab(Action<bool> _InspectorValueChangeCallback, Action<IEnumerable<System.Object>, bool, bool> _TreeviewSelectionChangeCallback, Action<IEnumerable<System.Object>> _LocalFileTreeviewSelectionChangeCallback)
@@ -26,7 +29,7 @@ namespace ItemSystem.Editor
             m_SubTabContent.Clear();
             MethodInfo method = typeof(FileManagerTab).GetMethod("LoadSubTabHierarchy", BindingFlags.NonPublic | BindingFlags.Instance);
             MethodInfo generic = method.MakeGenericMethod(_ModuleType);
-            generic.Invoke(this, new object[] { _ShowAddAndRemove, _ShowInspectorPanel, _LoadSubTypes, _LoadLocalFiles });
+            generic.Invoke(this, new object[] { _ShowAddAndRemove, _ShowInspectorPanel,_LoadSubTypes, _LoadLocalFiles });
         }
 
         protected override void LoadHierarchy()
@@ -50,6 +53,7 @@ namespace ItemSystem.Editor
 
             m_Root.Add(m_SubTabMenu);
 
+            LoadFilterPanel();
             LoadSubTabHierarchy<SO_Item>(false, false, false, true);
             OnSubTabChanged(typeof(SO_Item), false, false, false, true);
 

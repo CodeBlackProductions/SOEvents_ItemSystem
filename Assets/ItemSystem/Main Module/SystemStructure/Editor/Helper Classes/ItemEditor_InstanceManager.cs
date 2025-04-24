@@ -1,3 +1,4 @@
+using ItemSystem.MainModule;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,6 +8,9 @@ using UnityEngine;
 
 namespace ItemSystem.Editor
 {
+    /// <summary>
+    /// Handles the creation and removal of instances of ScriptableObjects that implement the IItemModule interface.
+    /// </summary>
     public static class ItemEditor_InstanceManager
     {
         private static Dictionary<string, GUID> m_ModuleRegistry = new Dictionary<string, GUID>();

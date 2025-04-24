@@ -4,6 +4,9 @@ using UnityEngine.UIElements;
 
 namespace ItemSystem.Editor
 {
+    /// <summary>
+    /// Tab for displaying and editing settings of the Item System editor.
+    /// </summary>
     public class SettingsTab : TabBase
     {
         public SettingsTab(Action<bool> _InspectorValueChangeCallback)

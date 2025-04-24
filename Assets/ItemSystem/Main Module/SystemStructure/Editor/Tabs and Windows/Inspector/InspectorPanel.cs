@@ -1,3 +1,4 @@
+using ItemSystem.MainModule;
 using System;
 using System.Reflection;
 using UnityEngine;
@@ -5,6 +6,9 @@ using UnityEngine.UIElements;
 
 namespace ItemSystem.Editor
 {
+    /// <summary>
+    /// Inspector panel for displaying and editing item module properties.
+    /// </summary>
     public class InspectorPanel : VisualElement
     {
         public InspectorPanel()
