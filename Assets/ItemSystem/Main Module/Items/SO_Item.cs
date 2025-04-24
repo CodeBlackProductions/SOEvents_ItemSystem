@@ -42,6 +42,8 @@ namespace ItemSystem.MainModule
             if (m_Class != null)
             {
                 m_SlotType = m_Class.ClassName;
+                EditorUtility.SetDirty(this);
+                AssetDatabase.SaveAssets();
             }
         }
     }

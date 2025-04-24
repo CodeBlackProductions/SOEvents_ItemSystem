@@ -5,7 +5,7 @@ namespace ItemSystem.SubModules
 {
     public interface IProjectile
     {
-        [ItemToolkitAccess] public string Name { get; }
-        [ItemToolkitAccess] public GameObject Prefab { get; }
+        [ItemToolkitAccess] public string ProjectileName { get; }
+        [ItemToolkitAccess] public GameObject ProjectilePrefab { get; }
     }
 }

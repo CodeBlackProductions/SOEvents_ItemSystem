@@ -18,5 +18,7 @@ MonoBehaviour:
   m_Type: 0
   m_Range: 0
   m_MinRange: 0
+  m_Projectile: {fileID: 2900508419396136528, guid: 096d4ed837b8b71468c0af90d21b6c3e,
+    type: 3}
   m_Damage: 10
   m_AtkCooldown: 0.5

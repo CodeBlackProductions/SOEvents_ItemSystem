@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -60,7 +61,7 @@ namespace ItemSystem.Editor
                     {
                         return CreateUIforArray(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, uiParent);
                     }
-                    else if (typeof(IProjectile).IsAssignableFrom(_Property.PropertyType))
+                    else if (typeof(GameObject).IsAssignableFrom(_Property.PropertyType))
                     {
                         return CreateUIforProjectiles(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, uiParent);
                     }
@@ -112,6 +113,8 @@ namespace ItemSystem.Editor
                 dropdownField.RegisterValueChangedCallback(c =>
                 {
                     _Property.SetValue(_ParentSO, Enum.Parse(_Property.PropertyType, c.newValue));
+                    EditorUtility.SetDirty(_ParentSO);
+                    AssetDatabase.SaveAssets();
                     _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
                     _InspectorValueChangeCallback?.Invoke(true);
                 });
@@ -171,6 +174,8 @@ namespace ItemSystem.Editor
                         $"{(so as IItemModule).ModuleName} ({so.GetType().Name})" == c.newValue && _Property.PropertyType.IsAssignableFrom(so.GetType())
                         )
                     );
+                    EditorUtility.SetDirty(_ParentSO);
+                    AssetDatabase.SaveAssets();
                     _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
                     _InspectorValueChangeCallback?.Invoke(true);
                 });
@@ -206,6 +211,8 @@ namespace ItemSystem.Editor
                 {
                     dictionary.Add(newItem.StatName, newItem);
                     _Property.SetValue(_ParentSO, dictionary);
+                    EditorUtility.SetDirty(_ParentSO);
+                    AssetDatabase.SaveAssets();
                     _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
                     _InspectorValueChangeCallback?.Invoke(true);
                 };
@@ -214,6 +221,8 @@ namespace ItemSystem.Editor
                 {
                     dictionary.Remove(removeItem.StatName);
                     _Property.SetValue(_ParentSO, dictionary);
+                    EditorUtility.SetDirty(_ParentSO);
+                    AssetDatabase.SaveAssets();
                     _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
                     _InspectorValueChangeCallback?.Invoke(true);
                 };
@@ -276,12 +285,12 @@ namespace ItemSystem.Editor
             List<string> projectileNames = new List<string>();
             for (int i = 0; i < projectileList.Count; i++)
             {
-                projectileNames.Add(projectileList[i].name);
+                projectileNames.Add(projectileList[i].GetComponent<IProjectile>()?.ProjectileName);
             }
 
             if (projectileNames.Count > 0)
             {
-                string currentEntry = (_Property.GetValue(_ParentSO) as IProjectile)?.Name;
+                string currentEntry = (_Property.GetValue(_ParentSO) as GameObject)?.GetComponent<IProjectile>().ProjectileName;
 
                 if (currentEntry == null || !projectileNames.Contains(currentEntry))
                 {
@@ -294,8 +303,10 @@ namespace ItemSystem.Editor
                 dropdownField.RegisterValueChangedCallback(c =>
                 {
                     _Property.SetValue(_ParentSO, projectileList.Find(obj =>
-                        obj.name == c.newValue && obj.GetComponent<IProjectile>() != null)
-                        .GetComponent<IProjectile>());
+                        obj.GetComponent<IProjectile>() != null && obj.GetComponent<IProjectile>()?.ProjectileName == c.newValue));
+
+                    EditorUtility.SetDirty(_ParentSO);
+                    AssetDatabase.SaveAssets();
 
                     _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
                     _InspectorValueChangeCallback?.Invoke(true);
@@ -333,6 +344,8 @@ namespace ItemSystem.Editor
                     field.RegisterValueChangedCallback(t =>
                     {
                         _Property.SetValue(_ParentSO, t.newValue);
+                        EditorUtility.SetDirty(_ParentSO);
+                        AssetDatabase.SaveAssets();
                         _InspectorValueChangeCallback?.Invoke(true);
                     });
 
@@ -352,6 +365,8 @@ namespace ItemSystem.Editor
                         if (int.TryParse(t.newValue, out int result))
                         {
                             _Property.SetValue(_ParentSO, result);
+                            EditorUtility.SetDirty(_ParentSO);
+                            AssetDatabase.SaveAssets();
                         }
                         else
                         {
@@ -375,6 +390,8 @@ namespace ItemSystem.Editor
                         if (float.TryParse(t.newValue, out float result))
                         {
                             _Property.SetValue(_ParentSO, result);
+                            EditorUtility.SetDirty(_ParentSO);
+                            AssetDatabase.SaveAssets();
                         }
                         else
                         {
@@ -451,6 +468,8 @@ namespace ItemSystem.Editor
                         _ParentSO, typeList.FindIndex(so =>
                         $"{(so as IItemModule).ModuleName} ({so.GetType().Name})" == c.newValue)
                     );
+                    EditorUtility.SetDirty(_ParentSO);
+                    AssetDatabase.SaveAssets();
                     _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
                     _InspectorValueChangeCallback?.Invoke(true);
                 });
@@ -480,9 +499,9 @@ namespace ItemSystem.Editor
             {
                 array = new T[0];
             }
-            InspectorList<T> effectList = new InspectorList<T>(array, _Title, _ShowAddAndRemove);
+            InspectorList<T> list = new InspectorList<T>(array, _Title, _ShowAddAndRemove);
 
-            effectList.ItemAddCallback += (newItem) =>
+            list.ItemAddCallback += (newItem) =>
             {
                 T[] newArray = new T[array.Length + 1];
                 Array.Copy(array, newArray, array.Length);
@@ -492,11 +511,14 @@ namespace ItemSystem.Editor
 
                 _Property.SetValue(_ParentSO, newArray);
 
+                EditorUtility.SetDirty(_ParentSO);
+                AssetDatabase.SaveAssets();
+
                 _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
                 _InspectorValueChangeCallback?.Invoke(true);
             };
 
-            effectList.ItemRemoveCallback += (newItem) =>
+            list.ItemRemoveCallback += (newItem) =>
             {
                 T[] newArray = new T[array.Length - 1];
                 int index = Array.IndexOf(array, newItem);
@@ -511,11 +533,14 @@ namespace ItemSystem.Editor
 
                 _Property.SetValue(_ParentSO, newArray);
 
+                EditorUtility.SetDirty(_ParentSO);
+                AssetDatabase.SaveAssets();
+
                 _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
                 _InspectorValueChangeCallback?.Invoke(true);
             };
 
-            return effectList;
+            return list;
         }
 
         #endregion InternalMethods

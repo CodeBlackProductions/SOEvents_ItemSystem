@@ -38,6 +38,8 @@ namespace ItemSystem.MainModule
                         m_Stats.Add(stat.StatName, stat);
                     }
                 }
+                EditorUtility.SetDirty(this);
+                AssetDatabase.SaveAssets();
             }
         }
     }

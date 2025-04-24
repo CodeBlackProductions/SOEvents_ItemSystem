@@ -19,7 +19,7 @@ public class Type_Weapon : SO_Class_Type
     [SerializeField] private EType m_Type;
     [SerializeField] private float m_Range;
     [SerializeField] private float m_MinRange;
-    [SerializeField] private IProjectile m_Projectile;
+    [SerializeField] private GameObject m_Projectile;
     [SerializeField] private float m_Damage;
     [SerializeField] private float m_AtkCooldown;
 
@@ -33,7 +33,7 @@ public class Type_Weapon : SO_Class_Type
     [ItemToolkitAccess] public float MinRange { get => m_MinRange; set => m_MinRange = value; }
 
     [ConditionalHide(nameof(Type), 1)]
-    [ItemToolkitAccess] public IProjectile Projectile { get => m_Projectile; set => m_Projectile = value; }
+    [ItemToolkitAccess] public GameObject Projectile { get => m_Projectile; set => m_Projectile = value; }
 
     [ItemToolkitAccess] public float Damage { get => m_Damage; set => m_Damage = value; }
     [ItemToolkitAccess] public float AtkCooldown { get => m_AtkCooldown; set => m_AtkCooldown = value; }
