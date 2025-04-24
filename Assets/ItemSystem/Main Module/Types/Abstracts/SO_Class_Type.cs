@@ -19,7 +19,19 @@ namespace ItemSystem.MainModule
         private Dictionary<string, SO_Stat> m_Stats = new Dictionary<string, SO_Stat>();
 
         [ItemToolkitAccess] public string TypeName { get => m_TypeName; set => m_TypeName = value; }
-        [ItemToolkitAccess] public Dictionary<string, SO_Stat> Stats { get => m_Stats; set => m_Stats = value; }
+        [ItemToolkitAccess]
+        public Dictionary<string, SO_Stat> Stats
+        {
+            get => m_Stats; set
+            {
+                m_TypeStats.Clear();
+                foreach (var stat in value)
+                {
+                    m_TypeStats.Add(stat.Value);
+                }
+                m_Stats = value;
+            }
+        }
 
         public string ModuleName { get => m_TypeName; set => m_TypeName = value; }
         public GUID ModuleGUID { get => m_TypeGUID; set => m_TypeGUID = value; }
