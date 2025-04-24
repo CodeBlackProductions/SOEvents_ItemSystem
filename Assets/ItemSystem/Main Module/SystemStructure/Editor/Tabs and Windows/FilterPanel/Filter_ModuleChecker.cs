@@ -1,8 +1,10 @@
+using ItemSystem.MainModule;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace ItemSystem.Editor
 {
@@ -33,21 +35,36 @@ namespace ItemSystem.Editor
 
             if (targetObject == obj as ScriptableObject) return true;
 
-            foreach (var prop in obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            var properties = obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            foreach (var property in properties)
             {
-                if (!prop.CanRead) continue;
-                try
+                if (!property.CanRead) continue;
+
+                if (typeof(ScriptableObject).IsAssignableFrom(property.PropertyType))
                 {
-                    var value = prop.GetValue(obj); if (value == null) continue;
-                    if (targetObject == value as ScriptableObject) return true;
-                    if (!(value is string) && !value.GetType().IsPrimitive)
+                    var subItem = property.GetValue(obj) as ScriptableObject;
+                    if (subItem != null)
                     {
-                        if (ContainsObjectRecursive(value, targetObject, visited)) return true;
+                        if (targetObject == subItem) return true;
+
+                        if (ContainsObjectRecursive(subItem, targetObject, visited)) return true;
                     }
                 }
-                catch
+                else if (typeof(IEnumerable<ScriptableObject>).IsAssignableFrom(property.PropertyType))
                 {
-                    continue;
+                    var subItems = property.GetValue(obj) as IEnumerable<ScriptableObject>;
+                    if (subItems != null)
+                    {
+                        foreach (var subItem in subItems)
+                        {
+                            if (subItem != null)
+                            {
+                                if (targetObject == subItem) return true;
+
+                                if (ContainsObjectRecursive(subItem, targetObject, visited)) return true;
+                            }
+                        }
+                    }
                 }
             }
             return false;

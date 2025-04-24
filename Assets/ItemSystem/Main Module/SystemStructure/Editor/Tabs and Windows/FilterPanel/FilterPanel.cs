@@ -24,6 +24,8 @@ namespace ItemSystem.Editor
         private Func<object, bool> containsAll;
         private Func<object, bool> containsAny;
 
+        public Action<Func<object, bool>, List<ScriptableObject>> OnFilterChangedCallback;
+
         public FilterPanel()
         {
             m_Root = new VisualElement();
@@ -112,6 +114,7 @@ namespace ItemSystem.Editor
         private void OnFilterOptionsChanged(Func<object, bool> _Filter)
         {
             m_Filter = _Filter;
+            OnFilterChangedCallback?.Invoke(m_Filter,m_ModulesToCheck);
         }
 
         private void OnFilterObjectsChanged(ScriptableObject _Object, bool _Additive)
@@ -126,6 +129,8 @@ namespace ItemSystem.Editor
             {
                 m_ModulesToCheck.Remove(_Object);
             }
+
+            OnFilterChangedCallback?.Invoke(m_Filter, m_ModulesToCheck);
         }
     }
 }

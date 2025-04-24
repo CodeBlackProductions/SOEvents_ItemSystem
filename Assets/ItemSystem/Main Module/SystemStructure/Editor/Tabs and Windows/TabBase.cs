@@ -32,7 +32,6 @@ namespace ItemSystem.Editor
 
         protected void LoadFilterPanel()
         {
-            //TODO: Tie Filter Panel to the treeview!
             m_FilterPanel = new FilterPanel();
 
             m_Root.Add(m_FilterPanel);
@@ -60,6 +59,11 @@ namespace ItemSystem.Editor
         {
             DynamicItemTreeView<T> treeView = new DynamicItemTreeView<T>(m_TreeviewSelectionChangeCallback, _ShowAddAndRemove, _LoadSubTypes, _ShowInspectorPanel, _ShowSaveToFile);
             m_InspectorValueChangeCallback += treeView.RefreshTreeView;
+            if (m_FilterPanel != null)
+            {
+                m_FilterPanel.OnFilterChangedCallback += treeView.SetTreeviewFilter;
+            }
+
             treeView.style.flexGrow = 1;
             m_SubTabContent.Add(treeView);
 

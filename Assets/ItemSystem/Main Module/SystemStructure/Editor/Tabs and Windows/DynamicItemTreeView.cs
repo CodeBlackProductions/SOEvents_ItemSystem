@@ -1,6 +1,7 @@
 using ItemSystem.MainModule;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -19,10 +20,16 @@ namespace ItemSystem.Editor
         private Button m_BTN_AddNewSO;
         private Button m_BTN_RemoveSelectedModule;
 
+        private Func<object, bool> m_Filter = null;
+        private List<ScriptableObject> m_FilterObjects = new List<ScriptableObject>();
+        private bool m_LoadSubTypes = false;
+
         public DynamicItemTreeView(Action<IEnumerable<System.Object>, bool, bool> _OnSelectionChangedCallback, bool _ShowAddAndRemove, bool _LoadSubTypes, bool _ShowInspectorPanel, bool _ShowSaveToFile)
         {
             m_TreeView = new UnityEngine.UIElements.TreeView();
             m_TreeView.selectionChanged += (s) => _OnSelectionChangedCallback?.Invoke(s, _ShowInspectorPanel, _ShowSaveToFile);
+
+            m_LoadSubTypes = _LoadSubTypes;
 
             LoadHierarchy(_LoadSubTypes);
 
@@ -107,6 +114,14 @@ namespace ItemSystem.Editor
             LoadHierarchy(_LoadSubTypes);
         }
 
+        public void SetTreeviewFilter(Func<object, bool> _Filter, List<ScriptableObject> _FilterObjects)
+        {
+            m_Filter = _Filter;
+            m_FilterObjects = _FilterObjects;
+
+            RefreshTreeView(m_LoadSubTypes);
+        }
+
         private void LoadHierarchy(bool _LoadSubTypes)
         {
             List<TreeViewItemData<TreeViewEntryData>> treeItems = LoadModules(typeof(T), _LoadSubTypes);
@@ -124,6 +139,11 @@ namespace ItemSystem.Editor
                 if (item is IItemModule && (item as IItemModule).ModuleName != "EditorSettings")
                 {
                     List<TreeViewItemData<TreeViewEntryData>> itemChildren = _LoadSubtypes ? LoadSubModules(item) : new List<TreeViewItemData<TreeViewEntryData>>();
+
+                    if (m_Filter != null && !m_Filter(item) && m_FilterObjects.Count > 0)
+                    {
+                        continue;
+                    }
 
                     string fileName = item.name;
                     string itemName = (item as IItemModule).ModuleName;
