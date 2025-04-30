@@ -15,8 +15,8 @@ public class UnitController : MonoBehaviour, IItemUser
 
     [SerializeField] private List<SO_Stat> m_unitStats;
     [SerializeField] private SO_ItemSlot m_TestSlot;
-    [SerializeField] private SO_Item m_TestItem;
-    [SerializeField] private SO_Item m_WrongTestItem;
+    [SerializeField] private SO_Item m_TestItem1;
+    [SerializeField] private SO_Item m_TestItem2;
     [SerializeField] private GameObject m_TestTarget;
     [SerializeField] private int m_Team = 0;
 
@@ -43,8 +43,8 @@ public class UnitController : MonoBehaviour, IItemUser
 
         if (m_TestSlot != null)
         {
-            m_TestSlot.StoredItem = m_TestItem;
-            m_TestSlot.StoredItem = m_WrongTestItem;
+            m_TestSlot.StoredItem = m_TestItem1;
+            m_TestSlot.StoredItem = m_TestItem2;
 
             Items.Add(m_TestSlot.StoredItem);
         }
@@ -75,9 +75,5 @@ public class UnitController : MonoBehaviour, IItemUser
         {
             ItemEventHandler.Instance.InvokeEvent<SO_Effect_Trigger_OnHit>(this, m_TestTargetUser);
         }
-    }
-
-    private void Update()
-    {
     }
 }

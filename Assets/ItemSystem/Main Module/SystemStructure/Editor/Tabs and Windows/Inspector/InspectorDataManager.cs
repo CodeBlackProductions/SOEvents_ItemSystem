@@ -266,6 +266,14 @@ namespace ItemSystem.Editor
                 return _UIParent;
             }
 
+            if (_Property.PropertyType == typeof(SO_Tag[]))
+            {
+                InspectorList<SO_Tag> classList = ConvertArrayToInspectorList<SO_Tag>(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, "Tags", true);
+
+                _UIParent.Add(classList);
+                return _UIParent;
+            }
+
             Debug.LogWarning($"Could not generate InspectorList for Array {_ParentSO} : {_Property.Name}");
             return null;
         }

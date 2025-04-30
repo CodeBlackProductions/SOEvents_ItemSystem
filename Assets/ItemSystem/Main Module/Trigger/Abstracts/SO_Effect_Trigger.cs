@@ -1,4 +1,5 @@
 using ItemSystem.Editor;
+using ItemSystem.SubModules;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -13,10 +14,12 @@ namespace ItemSystem.MainModule
     {
         [SerializeField] private string m_TriggerName = "NewTrigger";
         [SerializeField] private GUID m_TriggerGUID;
+        [SerializeField] private SO_Tag[] m_Tags;
 
         protected List<SO_Item_Effect> m_Listener = new List<SO_Item_Effect>();
 
         [ItemToolkitAccess] public string TriggerName { get => m_TriggerName; set => m_TriggerName = value; }
+        [ItemToolkitAccess] public SO_Tag[] Tags { get => m_Tags; set => m_Tags = value; }
 
         public string ModuleName { get => m_TriggerName; set => m_TriggerName = value; }
         public GUID ModuleGUID { get => m_TriggerGUID; set => m_TriggerGUID = value; }

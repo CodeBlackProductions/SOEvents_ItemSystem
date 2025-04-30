@@ -31,7 +31,7 @@ namespace ItemSystem.Editor
         {
             m_Root = rootVisualElement;
 
-            m_MainTabMenu = new TabbedMenu(new string[] { "ItemModules", "ItemContainers", "StatsModules", "FileManager", "Settings" }, OnMainTabChanged);
+            m_MainTabMenu = new TabbedMenu(new string[] { "ItemModules", "ItemContainers", "StatsModules", "FileManager", "Tags", "Settings" }, OnMainTabChanged);
             m_MainTabContent = new VisualElement();
 
             m_MainTabContent.style.flexDirection = FlexDirection.Column;
@@ -82,7 +82,10 @@ namespace ItemSystem.Editor
                     m_MainTabContent?.Clear();
                     m_MainTabContent.Add(new FileManagerTab(m_InspectorValueChangeCallback, m_TreeviewSelectionChangeCallback, m_LocalFileTreeviewSelectionChangeCallback));
                     break;
-
+                case EMainTabType.Tags:
+                    m_MainTabContent?.Clear();
+                    m_MainTabContent.Add(new TagManagerTab(m_InspectorValueChangeCallback, m_TreeviewSelectionChangeCallback));
+                    break;
                 default:
                     break;
             }
@@ -94,6 +97,7 @@ namespace ItemSystem.Editor
             ItemModules,
             ItemContainers,
             StatsModules,
+            Tags,
             FileManager
         }
     }

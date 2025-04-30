@@ -1,8 +1,6 @@
 using ItemSystem.SubModules;
-using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
-using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 
 namespace ItemSystem.MainModule
@@ -48,18 +46,7 @@ namespace ItemSystem.MainModule
                     {
                         foreach (var stat in Items[i].Stats)
                         {
-                            if (!UserStats.ContainsKey(Stats[i].TargetUserStat))
-                            {
-                                UserStats.Add(Stats[i].TargetUserStat, new Runtime_Stat(Stats[i].GetStatValue(), Stats[i].GetStatType()));
-                            }
-                            else if (Stats[i].GetStatType().IsNumeric() && UserStats.ContainsKey(Stats[i].TargetUserStat))
-                            {
-                                UserStats[Stats[i].TargetUserStat].Value = (double.Parse(UserStats[Stats[i].TargetUserStat].Value.ToString()) + double.Parse(Stats[i].GetStatValue().ToString()));
-                            }
-                            else
-                            {
-                                Debug.Log($"{Stats[i].TargetUserStat} was already present.");
-                            }
+                            RegisterStat(stat.Value);
                         }
                     }
 
@@ -67,18 +54,7 @@ namespace ItemSystem.MainModule
                     {
                         foreach (var stat in Items[i].Class.Stats)
                         {
-                            if (!UserStats.ContainsKey(Stats[i].TargetUserStat))
-                            {
-                                UserStats.Add(Stats[i].TargetUserStat, new Runtime_Stat(Stats[i].GetStatValue(), Stats[i].GetStatType()));
-                            }
-                            else if (Stats[i].GetStatType().IsNumeric() && UserStats.ContainsKey(Stats[i].TargetUserStat))
-                            {
-                                UserStats[Stats[i].TargetUserStat].Value = (double.Parse(UserStats[Stats[i].TargetUserStat].Value.ToString()) + double.Parse(Stats[i].GetStatValue().ToString()));
-                            }
-                            else
-                            {
-                                Debug.Log($"{Stats[i].TargetUserStat} was already present.");
-                            }
+                            RegisterStat(stat.Value);
                         }
                     }
 
@@ -86,18 +62,7 @@ namespace ItemSystem.MainModule
                     {
                         foreach (var stat in Items[i].Class.Types[Items[i].TypeIndex].Stats)
                         {
-                            if (!UserStats.ContainsKey(Stats[i].TargetUserStat))
-                            {
-                                UserStats.Add(Stats[i].TargetUserStat, new Runtime_Stat(Stats[i].GetStatValue(), Stats[i].GetStatType()));
-                            }
-                            else if (Stats[i].GetStatType().IsNumeric() && UserStats.ContainsKey(Stats[i].TargetUserStat))
-                            {
-                                UserStats[Stats[i].TargetUserStat].Value = (double.Parse(UserStats[Stats[i].TargetUserStat].Value.ToString()) + double.Parse(Stats[i].GetStatValue().ToString()));
-                            }
-                            else
-                            {
-                                Debug.Log($"{Stats[i].TargetUserStat} was already present.");
-                            }
+                            RegisterStat(stat.Value);
                         }
                     }
                 }
@@ -107,19 +72,24 @@ namespace ItemSystem.MainModule
             {
                 for (int i = 0; i < Stats.Count; i++)
                 {
-                    if (!UserStats.ContainsKey(Stats[i].TargetUserStat))
-                    {
-                        UserStats.Add(Stats[i].TargetUserStat, new Runtime_Stat(Stats[i].GetStatValue(), Stats[i].GetStatType()));
-                    }
-                    else if (Stats[i].GetStatType().IsNumeric() && UserStats.ContainsKey(Stats[i].TargetUserStat)) 
-                    {
-                        UserStats[Stats[i].TargetUserStat].Value = (double.Parse(UserStats[Stats[i].TargetUserStat].Value.ToString()) + double.Parse(Stats[i].GetStatValue().ToString()));
-                    }
-                    else
-                    {
-                        Debug.Log($"{Stats[i].TargetUserStat} was already present.");
-                    }
+                    RegisterStat(Stats[i]);
                 }
+            }
+        }
+
+        private void RegisterStat(SO_Stat _Stat)
+        {
+            if (!UserStats.ContainsKey(_Stat.TargetUserStat))
+            {
+                UserStats.Add(_Stat.TargetUserStat, new Runtime_Stat(_Stat.GetStatValue(), _Stat.GetStatType()));
+            }
+            else if (_Stat.GetStatType().IsNumeric() && UserStats.ContainsKey(_Stat.TargetUserStat))
+            {
+                UserStats[_Stat.TargetUserStat].Value = (double.Parse(UserStats[_Stat.TargetUserStat].Value.ToString()) + double.Parse(_Stat.GetStatValue().ToString()));
+            }
+            else
+            {
+                Debug.Log($"{_Stat.TargetUserStat} was already present.");
             }
         }
     }

@@ -1,4 +1,5 @@
 using ItemSystem.Editor;
+using ItemSystem.SubModules;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -27,6 +28,7 @@ namespace ItemSystem.MainModule
         [SerializeField] private ETarget m_EffectTarget;
         [SerializeField] private EAllowedTargets m_AllowedEffectTargets;
         [SerializeField] private float m_TargetRange = 0;
+        [SerializeField] private SO_Tag[] m_Tags;
 
         [ItemToolkitAccess] public string EffectName { get => m_EffectName; set => m_EffectName = value; }
         [ItemToolkitAccess] public ETarget EffectTarget { get => m_EffectTarget; set => m_EffectTarget = value; }
@@ -38,6 +40,7 @@ namespace ItemSystem.MainModule
         [ItemToolkitAccess] public float TargetRange { get => m_TargetRange; set => m_TargetRange = value; }
 
         [ItemToolkitAccess] public SO_Effect_Trigger Trigger { get => m_Trigger; set => m_Trigger = value; }
+        [ItemToolkitAccess] public SO_Tag[] Tags { get => m_Tags; set => m_Tags = value; }
 
         public string ModuleName { get => m_EffectName; set => m_EffectName = value; }
         public GUID ModuleGUID { get => m_EffectGUID; set => m_EffectGUID = value; }
