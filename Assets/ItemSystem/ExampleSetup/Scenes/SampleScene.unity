@@ -123,6 +123,60 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &48335350
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 48335352}
+  - component: {fileID: 48335351}
+  m_Layer: 0
+  m_Name: TestUnit
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &48335351
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 48335350}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62e71c3a6dabb7042a0b363883e1f6af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_unitStats:
+  - {fileID: 11400000, guid: 15eda8ca333740c4a9dc4ac95cf050b7, type: 2}
+  - {fileID: 11400000, guid: b832e6da41a7d254fa43de00329ec612, type: 2}
+  - {fileID: 11400000, guid: c6c5ff2088dda084ebd51bc5f39a86b7, type: 2}
+  - {fileID: 11400000, guid: 9710fd439be214247b38b036a32a8f15, type: 2}
+  m_TestSlot: {fileID: 11400000, guid: 52a0c8b13f893b343aeb3451867d1521, type: 2}
+  m_TestItem: {fileID: 11400000, guid: cc7ccd3bd65b9b847b7ad001d2316230, type: 2}
+  m_WrongTestItem: {fileID: 11400000, guid: d4d1169eaeacb0140bf129fdb2a7b995, type: 2}
+  m_TestTarget: {fileID: 605677189}
+  m_Team: 0
+--- !u!4 &48335352
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 48335350}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 9.50354, y: 6.649051, z: 10.521844}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -378,6 +432,56 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 1
+--- !u!1 &605677189
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 605677191}
+  - component: {fileID: 605677190}
+  m_Layer: 0
+  m_Name: TestTarget
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &605677190
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 605677189}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62e71c3a6dabb7042a0b363883e1f6af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_unitStats: []
+  m_TestSlot: {fileID: 0}
+  m_TestItem: {fileID: 0}
+  m_WrongTestItem: {fileID: 0}
+  m_TestTarget: {fileID: 0}
+  m_Team: 0
+--- !u!4 &605677191
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 605677189}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 9.50354, y: 6.649051, z: 10.521844}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -489,6 +593,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: TestUnitSpawner
+      objectReference: {fileID: 0}
+    - target: {fileID: 2959488829443907602, guid: 204ccaef7d079c342b9757ee297c3403,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -626,6 +735,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: TestTarget
       objectReference: {fileID: 0}
+    - target: {fileID: 8647318800286466400, guid: 8bc569bf85a2f4840ab3eba412160082,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -641,3 +755,5 @@ SceneRoots:
   - {fileID: 8949805495608526197}
   - {fileID: 1103566850889141516}
   - {fileID: 4360066657399442149}
+  - {fileID: 48335352}
+  - {fileID: 605677191}

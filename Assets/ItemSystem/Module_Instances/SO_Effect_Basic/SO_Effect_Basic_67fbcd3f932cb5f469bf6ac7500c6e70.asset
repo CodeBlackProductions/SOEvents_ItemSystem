@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 727238865d913414ea54e6ac43f28971, type: 3}
+  m_Name: SO_Effect_Basic_67fbcd3f932cb5f469bf6ac7500c6e70
+  m_EditorClassIdentifier: 
+  m_EffectName: BasicOnHitEffect
+  m_Trigger: {fileID: 11400000, guid: 38ed9b696082ca5458878cdcaf9646f6, type: 2}
+  m_EffectTarget: 1
+  m_AllowedEffectTargets: 2
+  m_TargetRange: 0

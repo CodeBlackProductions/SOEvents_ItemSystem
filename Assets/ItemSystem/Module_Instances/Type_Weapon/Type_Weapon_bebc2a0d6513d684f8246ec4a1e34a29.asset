@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed37ad9e12e02ad46a5476aeb72d7183, type: 3}
+  m_Name: Type_Weapon_bebc2a0d6513d684f8246ec4a1e34a29
+  m_EditorClassIdentifier: 
+  m_TypeName: OneHandedRangedType
+  m_TypeStats: []
+  m_hands: 1
+  m_Type: 1
+  m_Range: 75
+  m_MinRange: 0
+  m_Projectile: {fileID: 2900508419396136528, guid: 096d4ed837b8b71468c0af90d21b6c3e,
+    type: 3}
+  m_Damage: 10
+  m_AtkCooldown: 1

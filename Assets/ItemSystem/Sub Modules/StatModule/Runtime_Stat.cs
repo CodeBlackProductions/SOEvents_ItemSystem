@@ -19,10 +19,7 @@ namespace ItemSystem.SubModules
             get => m_Value.ConvertTo(m_Type);
             set
             {
-                if (m_Type == value.GetType())
-                {
-                    m_Value = value;
-                }
+                m_Value = value.ConvertTo(m_Type);
             }
         }
 

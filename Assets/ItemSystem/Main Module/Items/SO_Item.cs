@@ -22,6 +22,7 @@ namespace ItemSystem.MainModule
         [SerializeField] private SO_Item_Class m_Class;
         [SerializeField] private ERarity m_Rarity;
         [SerializeField] private SO_Item_Effect[] m_Effects;
+        [SerializeField] private List<SO_Stat> m_ItemStats = new List<SO_Stat>();
 
         private int m_TypeIndex;
         private string m_SlotType;
@@ -32,7 +33,18 @@ namespace ItemSystem.MainModule
         [ItemToolkitAccess] public ERarity Rarity { get => m_Rarity; set => m_Rarity = value; }
         [ItemToolkitAccess] public SO_Item_Effect[] Effects { get => m_Effects; set => m_Effects = value; }
         [ItemToolkitAccess] public string ItemName { get => m_ItemName; set => m_ItemName = value; }
-        [ItemToolkitAccess] public Dictionary<string, SO_Stat> Stats { get => m_Stats; set => m_Stats = value; }
+        [ItemToolkitAccess] public Dictionary<string, SO_Stat> Stats
+        {
+            get => m_Stats; set
+            {
+                m_ItemStats.Clear();
+                foreach (var stat in value)
+                {
+                    m_ItemStats.Add(stat.Value);
+                }
+                m_Stats = value;
+            }
+        }
 
         public string ModuleName { get => m_ItemName; set => m_ItemName = value; }
         public GUID ModuleGUID { get => m_ItemGUID; set => m_ItemGUID = value; }
@@ -41,9 +53,19 @@ namespace ItemSystem.MainModule
         {
             if (m_Class != null)
             {
-                m_SlotType = m_Class.ClassName;
-                EditorUtility.SetDirty(this);
-                AssetDatabase.SaveAssets();
+                m_SlotType = m_Class.ClassName; 
+            }
+
+            if (m_ItemStats != null && m_ItemStats.Count > 0)
+            {
+                m_Stats.Clear();
+                foreach (SO_Stat stat in m_ItemStats)
+                {
+                    if (stat != null && !m_Stats.ContainsKey(stat.StatName))
+                    {
+                        m_Stats.Add(stat.StatName, stat);
+                    }
+                }
             }
         }
     }

@@ -14,7 +14,7 @@ namespace ItemSystem.MainModule
     {
         [SerializeField] private string m_TypeName = "NewType";
         [SerializeField] private GUID m_TypeGUID;
-        [SerializeField] private List<SO_Stat> m_TypeStats;
+        [SerializeField] private List<SO_Stat> m_TypeStats = new List<SO_Stat>();
 
         private Dictionary<string, SO_Stat> m_Stats = new Dictionary<string, SO_Stat>();
 
@@ -48,8 +48,6 @@ namespace ItemSystem.MainModule
                         m_Stats.Add(stat.StatName, stat);
                     }
                 }
-                EditorUtility.SetDirty(this);
-                AssetDatabase.SaveAssets();
             }
         }
     }

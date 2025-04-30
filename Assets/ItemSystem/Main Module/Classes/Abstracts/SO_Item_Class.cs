@@ -15,13 +15,24 @@ namespace ItemSystem.MainModule
         [SerializeField] private string m_ClassName = "NewClass";
         [SerializeField] private GUID m_ClassGUID;
         [SerializeField] private SO_Class_Type[] m_Types;
-        [SerializeField] private List<SO_Stat> m_ClassStats;
+        [SerializeField] private List<SO_Stat> m_ClassStats = new List<SO_Stat>();
 
         private Dictionary<string, SO_Stat> m_Stats = new Dictionary<string, SO_Stat>();
 
         [ItemToolkitAccess] public string ClassName { get => m_ClassName; set => m_ClassName = value; }
         [ItemToolkitAccess] public SO_Class_Type[] Types { get => m_Types; set => m_Types = value; }
-        [ItemToolkitAccess] public Dictionary<string, SO_Stat> Stats { get => m_Stats; set => m_Stats = value; }
+        [ItemToolkitAccess] public Dictionary<string, SO_Stat> Stats
+        {
+            get => m_Stats; set
+            {
+                m_ClassStats.Clear();
+                foreach (var stat in value)
+                {
+                    m_ClassStats.Add(stat.Value);
+                }
+                m_Stats = value;
+            }
+        }
 
         public string ModuleName { get => m_ClassName; set => m_ClassName = value; }
         public GUID ModuleGUID { get => m_ClassGUID; set => m_ClassGUID = value; }
@@ -38,8 +49,6 @@ namespace ItemSystem.MainModule
                         m_Stats.Add(stat.StatName, stat);
                     }
                 }
-                EditorUtility.SetDirty(this);
-                AssetDatabase.SaveAssets();
             }
         }
     }

@@ -37,7 +37,7 @@ public class UnitController : MonoBehaviour, IItemUser
 
     private ItemEventHandler m_ItemEventHandler;
 
-    private void Awake()
+    private void Start()
     {
         m_ItemEventHandler = ItemEventHandler.Instance;
 
@@ -56,31 +56,20 @@ public class UnitController : MonoBehaviour, IItemUser
 
         this.GetComponent<IItemUser>().OnInitialize();
 
-        Type healthType = UserStats["Health"].Type;
-        var health = UserStats["Health"].Value;
-
-        Type armorType = UserStats["Armor"].Type;
-        var armor = UserStats["Armor"].Value;
-
-        Type typeOfArmorType = UserStats["Armor Type"].Type;
-        var typeOfArmor = UserStats["Armor Type"].Value;
-
-        Debug.Log("Health: " + health + " of type: " + healthType.Name);
-        Debug.Log("Armor: " + armor + " of type: " + armorType.Name);
-        Debug.Log("Armor Type: " + typeOfArmor + " of type: " + typeOfArmorType.Name);
+        foreach (var stat in UserStats)
+        {
+            Debug.Log($"Stat: {stat.Key}: {stat.Value.Value}");
+        }
 
         foreach (var item in m_effectRegistry)
         {
-            Debug.Log(item.Key);
+            Debug.Log("Added:" + item.Key.TriggerName);
             foreach (var entry in item.Value)
             {
-                Debug.Log(entry.EffectName);
+                Debug.Log("Added:" + entry.EffectName);
             }
         }
-    }
 
-    private void Start()
-    {
         ItemEventHandler.Instance.InvokeEvent<SO_Effect_Trigger_Interval>(this, this);
         if (m_TestTargetUser != null)
         {
