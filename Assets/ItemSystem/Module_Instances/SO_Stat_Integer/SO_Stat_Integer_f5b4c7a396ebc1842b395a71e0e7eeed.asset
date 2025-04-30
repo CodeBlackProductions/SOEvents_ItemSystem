@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0ae490fe454ca842b63a8498d277dba, type: 3}
   m_Name: SO_Stat_Integer_f5b4c7a396ebc1842b395a71e0e7eeed
   m_EditorClassIdentifier: 
-  m_StatName: Stat_Int_10
+  m_StatName: Stat_Int
+  m_ModuleName: Stat_Int_10
   m_Value: 10

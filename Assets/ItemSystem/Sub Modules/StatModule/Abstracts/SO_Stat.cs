@@ -14,11 +14,12 @@ namespace ItemSystem.SubModules
     public abstract class SO_Stat : ScriptableObject, IItemModule
     {
         [SerializeField] protected string m_StatName = "NewStat";
+        [SerializeField] protected string m_ModuleName = "NewStatModule";
         [SerializeField] protected GUID m_StatGUID;
 
         [ItemToolkitAccess] public string StatName { get => m_StatName; set => m_StatName = value; }
+        [ItemToolkitAccess] public string ModuleName { get => m_ModuleName; set => m_ModuleName = value; }
 
-        public string ModuleName { get => m_StatName; set => m_StatName = value; }
         public GUID ModuleGUID { get => m_StatGUID; set => m_StatGUID = value; }
 
         public abstract Type GetStatType();
