@@ -132,5 +132,12 @@ namespace ItemSystem.Editor
 
             OnFilterChangedCallback?.Invoke(m_Filter, m_ModulesToCheck);
         }
+
+        public void ClearFilter()
+        {
+            m_FilterPanelContent.Clear();
+            LoadFilterOptions();
+            LoadFilterTypes();
+        }
     }
 }

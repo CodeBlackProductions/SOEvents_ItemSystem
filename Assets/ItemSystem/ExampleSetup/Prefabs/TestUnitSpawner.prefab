@@ -45,4 +45,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_NumberToSpawn: 100
-  m_Prefab: {fileID: 926482983179771703, guid: ed93257e781ac7b43b78ca501dca1006, type: 3}
+  m_Prefab: {fileID: 2779707793131743406, guid: 59aba415ad4a13a48b5a52781cb5beb6,
+    type: 3}

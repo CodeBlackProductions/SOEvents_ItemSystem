@@ -26,10 +26,15 @@ namespace ItemSystem.Editor
 
         protected override void OnSubTabChanged(Type _ModuleType, bool _ShowAddAndRemove, bool _LoadSubTypes, bool _ShowInspectorPanel, bool _LoadLocalFiles)
         {
+            if (m_FilterPanel != null)
+            {
+                (m_FilterPanel as FilterPanel).ClearFilter();
+            }
+
             m_SubTabContent.Clear();
             MethodInfo method = typeof(FileManagerTab).GetMethod("LoadSubTabHierarchy", BindingFlags.NonPublic | BindingFlags.Instance);
             MethodInfo generic = method.MakeGenericMethod(_ModuleType);
-            generic.Invoke(this, new object[] { _ShowAddAndRemove, _ShowInspectorPanel,_LoadSubTypes, _LoadLocalFiles });
+            generic.Invoke(this, new object[] { _ShowAddAndRemove, _ShowInspectorPanel, _LoadSubTypes, _LoadLocalFiles });
         }
 
         protected override void LoadHierarchy()

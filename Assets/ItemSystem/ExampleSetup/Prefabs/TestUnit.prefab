@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &3138150868315826303
+--- !u!1 &2779707793131743406
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,22 +8,22 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 3680165193917726468}
-  - component: {fileID: 5288092132675201374}
+  - component: {fileID: 9115857886121798763}
+  - component: {fileID: 929572519763770729}
   m_Layer: 0
-  m_Name: TestTarget
+  m_Name: TestUnit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &3680165193917726468
+--- !u!4 &9115857886121798763
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3138150868315826303}
+  m_GameObject: {fileID: 2779707793131743406}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 9.50354, y: 6.649051, z: 10.521844}
@@ -32,21 +32,25 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5288092132675201374
+--- !u!114 &929572519763770729
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3138150868315826303}
+  m_GameObject: {fileID: 2779707793131743406}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 62e71c3a6dabb7042a0b363883e1f6af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_unitStats: []
-  m_TestSlot: {fileID: 0}
-  m_TestItem1: {fileID: 0}
-  m_TestItem2: {fileID: 0}
+  m_unitStats:
+  - {fileID: 11400000, guid: 15eda8ca333740c4a9dc4ac95cf050b7, type: 2}
+  - {fileID: 11400000, guid: b832e6da41a7d254fa43de00329ec612, type: 2}
+  - {fileID: 11400000, guid: c6c5ff2088dda084ebd51bc5f39a86b7, type: 2}
+  - {fileID: 11400000, guid: 9710fd439be214247b38b036a32a8f15, type: 2}
+  m_TestSlot: {fileID: 11400000, guid: 52a0c8b13f893b343aeb3451867d1521, type: 2}
+  m_TestItem1: {fileID: 11400000, guid: cc7ccd3bd65b9b847b7ad001d2316230, type: 2}
+  m_TestItem2: {fileID: 11400000, guid: d4d1169eaeacb0140bf129fdb2a7b995, type: 2}
   m_TestTarget: {fileID: 0}
   m_Team: 0
