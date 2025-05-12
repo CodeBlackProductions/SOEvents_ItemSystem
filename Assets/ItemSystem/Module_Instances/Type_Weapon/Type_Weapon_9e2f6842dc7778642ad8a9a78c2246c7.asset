@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed37ad9e12e02ad46a5476aeb72d7183, type: 3}
   m_Name: Type_Weapon_9e2f6842dc7778642ad8a9a78c2246c7
   m_EditorClassIdentifier: 
-  m_TypeName: OneHandedMeleeType
+  m_TypeName: Type/OneHanded/Melee
   m_TypeStats:
   - {fileID: 11400000, guid: 15eda8ca333740c4a9dc4ac95cf050b7, type: 2}
+  m_Tags: []
   m_hands: 1
   m_Type: 0
   m_Range: 0

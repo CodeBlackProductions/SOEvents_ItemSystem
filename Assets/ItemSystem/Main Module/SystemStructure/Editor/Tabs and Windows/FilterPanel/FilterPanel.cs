@@ -1,3 +1,4 @@
+using ItemSystem.SubModules;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -53,6 +54,7 @@ namespace ItemSystem.Editor
 
             LoadFilterOptions();
             LoadFilterTypes();
+            LoadFilterTags();
 
             m_FilterPanelContent.style.flexDirection = FlexDirection.Row;
             m_FilterPanelContent.style.flexGrow = 1;
@@ -67,7 +69,7 @@ namespace ItemSystem.Editor
         private void LoadFilterOptions()
         {
             var filterTypeDropdown = new DropdownField("", new List<string> { "Contains All", "Contains Any", "Contains None" }, 0);
-            
+
             filterTypeDropdown.RegisterValueChangedCallback(evt =>
             {
                 switch (evt.newValue)
@@ -83,6 +85,7 @@ namespace ItemSystem.Editor
                     case "Contains None":
                         OnFilterOptionsChanged(obj => !containsAny(obj));
                         break;
+
                     default:
                         Debug.LogWarning($"Unknown filter option: {evt.newValue}");
                         OnFilterOptionsChanged(containsAll);
@@ -97,7 +100,7 @@ namespace ItemSystem.Editor
         private void LoadFilterTypes()
         {
             List<ScriptableObject> empty = new List<ScriptableObject>();
-            InspectorList<ScriptableObject> filterTypeList = new InspectorList<ScriptableObject>(empty, "Filter types", true);
+            InspectorList<ScriptableObject> filterTypeList = new InspectorList<ScriptableObject>(empty, new List<Type>() { typeof(SO_Tag) }, "Filter types", true);
 
             filterTypeList.ItemAddCallback += (item) =>
             {
@@ -111,10 +114,27 @@ namespace ItemSystem.Editor
             m_FilterPanelContent.Add(filterTypeList);
         }
 
+        private void LoadFilterTags() 
+        {
+            List<SO_Tag> empty = new List<SO_Tag>();
+            InspectorList<SO_Tag> filterTagList = new InspectorList<SO_Tag>(empty,null, "Filter tags", true);
+
+            filterTagList.ItemAddCallback += (item) =>
+            {
+                OnFilterObjectsChanged(item, true);
+            };
+            filterTagList.ItemRemoveCallback += (item) =>
+            {
+                OnFilterObjectsChanged(item, false);
+            };
+
+            m_FilterPanelContent.Add(filterTagList);
+        }
+
         private void OnFilterOptionsChanged(Func<object, bool> _Filter)
         {
             m_Filter = _Filter;
-            OnFilterChangedCallback?.Invoke(m_Filter,m_ModulesToCheck);
+            OnFilterChangedCallback?.Invoke(m_Filter, m_ModulesToCheck);
         }
 
         private void OnFilterObjectsChanged(ScriptableObject _Object, bool _Additive)
@@ -138,6 +158,7 @@ namespace ItemSystem.Editor
             m_FilterPanelContent.Clear();
             LoadFilterOptions();
             LoadFilterTypes();
+            LoadFilterTags();
         }
     }
 }

@@ -8,7 +8,7 @@ namespace ItemSystem.SubModules
 {
     public enum EAllowedConditions
     {
-        ClassOrType, ClassAndType
+        ClassOrTypeOrTag, ClassAndTypeAndTag
     }
 
     /// <summary>
@@ -22,6 +22,7 @@ namespace ItemSystem.SubModules
 
         [SerializeField] private SO_Item_Class[] m_AllowedClasses;
         [SerializeField] private SO_Class_Type[] m_AllowedTypes;
+        [SerializeField] private SO_Class_Type[] m_AllowedTags;
         [SerializeField] private EAllowedConditions m_AllowConidtions;
         [SerializeField] private SO_Tag[] m_Tags;
 
@@ -30,33 +31,53 @@ namespace ItemSystem.SubModules
             get => m_StoredItem;
             set
             {
-                switch (m_AllowConidtions)
+                bool tagMatch = false;
+                if (m_AllowedTags?.Length > 0 && value.Tags?.Length > 0)
                 {
-                    case EAllowedConditions.ClassOrType:
-                        if (m_AllowedClasses.Contains(value.Class) || m_AllowedTypes.Contains(value.Class.Types[value.TypeIndex]))
+                    for (int i = 0; i < m_AllowedTags.Length; i++)
+                    {
+                        for (int o = 0; o < value.Tags.Length; o++)
                         {
-                            m_StoredItem = value;
+                            if (m_AllowedTags[i] == value.Tags[o])
+                            {
+                                tagMatch = true;
+                            }
                         }
-                        else
-                        {
-                            Debug.Log("Nope, not allowed in this slot!");
-                        }
-                        break;
-
-                    case EAllowedConditions.ClassAndType:
-                        if (m_AllowedClasses.Contains(value.Class) && m_AllowedTypes.Contains(value.Class.Types[value.TypeIndex]))
-                        {
-                            m_StoredItem = value;
-                        }
-                        else
-                        {
-                            Debug.Log("Nope, not allowed in this slot!");
-                        }
-                        break;
-
-                    default:
-                        break;
+                    }
                 }
+                else if (m_AllowedTags?.Length <= 0)
+                {
+                    tagMatch = true;
+                }
+
+                switch (m_AllowConidtions)
+                    {
+                        case EAllowedConditions.ClassOrTypeOrTag:
+                            if (m_AllowedClasses.Contains(value.Class) || m_AllowedTypes.Contains(value.Class.Types[value.TypeIndex]) || tagMatch)
+                            {
+
+                                m_StoredItem = value;
+                            }
+                            else
+                            {
+                                Debug.Log("Nope, not allowed in this slot!");
+                            }
+                            break;
+
+                        case EAllowedConditions.ClassAndTypeAndTag:
+                            if (m_AllowedClasses.Contains(value.Class) && m_AllowedTypes.Contains(value.Class.Types[value.TypeIndex]) && tagMatch)
+                            {
+                                m_StoredItem = value;
+                            }
+                            else
+                            {
+                                Debug.Log("Nope, not allowed in this slot!");
+                            }
+                            break;
+
+                        default:
+                            break;
+                    }
             }
         }
 

@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6a683474c142854082145a214c2bf07, type: 3}
   m_Name: Class_Weapon_eb127f59e33351b4eb81e6eee1090ef9
   m_EditorClassIdentifier: 
-  m_ClassName: WeaponClass
+  m_ClassName: Class/Weapon
   m_Types:
   - {fileID: 11400000, guid: f363d8604e0147f499aab9cc122795fa, type: 2}
   - {fileID: 11400000, guid: 70f6c63838ca2aa4795f57b690b05312, type: 2}
-  m_ClassStats:
-  - {fileID: 11400000, guid: 15eda8ca333740c4a9dc4ac95cf050b7, type: 2}
+  m_ClassStats: []
+  m_Tags: []

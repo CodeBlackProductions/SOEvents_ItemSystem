@@ -2,7 +2,6 @@ using ItemSystem.MainModule;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -17,12 +16,13 @@ namespace ItemSystem.Editor
         private VisualElement m_ParentView = new VisualElement();
         private ListView m_ListView;
         private List<T> m_Items;
+        private List<Type> m_TypesToExclude = new List<Type>();
 
         public Action<T> ItemAddCallback;
         public Action<T> ItemRemoveCallback;
         public Action<T> ItemSelectCallback;
 
-        public InspectorList(List<T> _SourceList, string _Title, bool _ShowAddAndRemove)
+        public InspectorList(List<T> _SourceList, List<Type> _TypesToExclude, string _Title, bool _ShowAddAndRemove)
         {
             if (_SourceList == null)
             {
@@ -33,10 +33,15 @@ namespace ItemSystem.Editor
                 m_Items = _SourceList;
             }
 
+            if (_TypesToExclude != null && _TypesToExclude.Count > 0)
+            {
+                m_TypesToExclude = _TypesToExclude;
+            }
+
             InstantiateUI(_Title, _ShowAddAndRemove);
         }
 
-        public InspectorList(T[] _SourceArray, string _Title, bool _ShowAddAndRemove)
+        public InspectorList(T[] _SourceArray, List<Type> _TypesToExclude, string _Title, bool _ShowAddAndRemove)
         {
             if (_SourceArray == null)
             {
@@ -47,10 +52,15 @@ namespace ItemSystem.Editor
                 m_Items = _SourceArray.ToList();
             }
 
+            if (_TypesToExclude != null && _TypesToExclude.Count > 0)
+            {
+                m_TypesToExclude = _TypesToExclude;
+            }
+
             InstantiateUI(_Title, _ShowAddAndRemove);
         }
 
-        public InspectorList(Dictionary<string, T> _SourceDictionary, string _Title, bool _ShowAddAndRemove)
+        public InspectorList(Dictionary<string, T> _SourceDictionary, List<Type> _TypesToExclude, string _Title, bool _ShowAddAndRemove)
         {
             if (_SourceDictionary == null)
             {
@@ -59,6 +69,11 @@ namespace ItemSystem.Editor
             else
             {
                 m_Items = _SourceDictionary.Values.ToList();
+            }
+
+            if (_TypesToExclude != null && _TypesToExclude.Count > 0)
+            {
+                m_TypesToExclude = _TypesToExclude;
             }
 
             InstantiateUI(_Title, _ShowAddAndRemove);
@@ -105,6 +120,20 @@ namespace ItemSystem.Editor
             soNames.Add("Choose new entry");
             for (int i = 0; i < soList.Count; i++)
             {
+                if (m_TypesToExclude != null)
+                {
+                    bool isExcluded = false;
+                    for (int t = 0; t < m_TypesToExclude.Count; t++)
+                    {
+                        if (soList[i].GetType() == m_TypesToExclude[t])
+                        {
+                            isExcluded = true;
+                            break;
+                        }
+                    }
+                    if (isExcluded) continue;
+                }
+
                 if (soList[i] is not IItemModule || (soList[i] as IItemModule).ModuleName == "EditorSettings" || soList[i].GetType().IsAbstract)
                 {
                     continue;

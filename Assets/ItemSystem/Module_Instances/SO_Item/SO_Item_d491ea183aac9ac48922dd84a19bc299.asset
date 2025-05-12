@@ -12,10 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9d1bc8c88308a9418d893a2bc28e3be, type: 3}
   m_Name: SO_Item_d491ea183aac9ac48922dd84a19bc299
   m_EditorClassIdentifier: 
-  m_ItemName: BasicMeleeOnHitItem
+  m_ItemName: Item/MeleeOnHit
   m_Class: {fileID: 11400000, guid: 8437c152eee51574ab71e96e8bc9158d, type: 2}
   m_Rarity: 0
   m_Effects:
   - {fileID: 11400000, guid: 72ef3c7c183573049ac7c23632998cb9, type: 2}
+  - {fileID: 11400000, guid: e5b253ed6b3a9aa4bacb5d8aeaf6bee5, type: 2}
+  m_Tags: []
   m_ItemStats:
   - {fileID: 11400000, guid: 15eda8ca333740c4a9dc4ac95cf050b7, type: 2}
+  m_TypeIndex: 0

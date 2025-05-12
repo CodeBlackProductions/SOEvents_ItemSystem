@@ -205,7 +205,7 @@ namespace ItemSystem.Editor
                 {
                     dictionary = new Dictionary<string, SO_Stat>();
                 }
-                InspectorList<SO_Stat> statList = new InspectorList<SO_Stat>(dictionary, "Stats", true);
+                InspectorList<SO_Stat> statList = new InspectorList<SO_Stat>(dictionary,null, "Stats", true);
 
                 statList.ItemAddCallback += (newItem) =>
                 {
@@ -507,7 +507,7 @@ namespace ItemSystem.Editor
             {
                 array = new T[0];
             }
-            InspectorList<T> list = new InspectorList<T>(array, _Title, _ShowAddAndRemove);
+            InspectorList<T> list = new InspectorList<T>(array,null, _Title, _ShowAddAndRemove);
 
             list.ItemAddCallback += (newItem) =>
             {

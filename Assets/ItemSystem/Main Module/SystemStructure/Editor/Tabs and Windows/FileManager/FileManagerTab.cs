@@ -28,7 +28,7 @@ namespace ItemSystem.Editor
         {
             if (m_FilterPanel != null)
             {
-                (m_FilterPanel as FilterPanel).ClearFilter();
+                m_FilterPanel.ClearFilter();
             }
 
             m_SubTabContent.Clear();

@@ -9,8 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2104df14c59d738488360d057682aede, type: 3}
-  m_Name: SO_Effect_Trigger_OnHit_fa92f4bcd28e913468cbc77d9e70322f
+  m_Script: {fileID: 11500000, guid: 5988fe7e1b2dfe64b937f84cd83f36c8, type: 3}
+  m_Name: SO_Effect_Trigger_Interval_4f1fde0e35f9494498f2993b6f5901cd
   m_EditorClassIdentifier: 
-  m_TriggerName: Trigger/OnHit
+  m_TriggerName: Trigger/Interval/1s
   m_Tags: []
+  m_Interval: 1

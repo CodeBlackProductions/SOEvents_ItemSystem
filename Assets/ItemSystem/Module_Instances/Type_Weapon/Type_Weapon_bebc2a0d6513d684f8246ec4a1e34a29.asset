@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed37ad9e12e02ad46a5476aeb72d7183, type: 3}
   m_Name: Type_Weapon_bebc2a0d6513d684f8246ec4a1e34a29
   m_EditorClassIdentifier: 
-  m_TypeName: OneHandedRangedType
+  m_TypeName: Type/OneHanded/Range
   m_TypeStats: []
+  m_Tags: []
   m_hands: 1
   m_Type: 1
   m_Range: 75

@@ -24,9 +24,8 @@ namespace ItemSystem.MainModule
         [SerializeField] private SO_Item_Effect[] m_Effects;
         [SerializeField] private SO_Tag[] m_Tags;
         [SerializeField] private List<SO_Stat> m_ItemStats = new List<SO_Stat>();
+        [SerializeField] private int m_TypeIndex;
 
-        private int m_TypeIndex;
-        private string m_SlotType;
         private Dictionary<string, SO_Stat> m_Stats = new Dictionary<string, SO_Stat>();
 
         [ItemToolkitAccess] public SO_Item_Class Class { get => m_Class; set => m_Class = value; }
@@ -53,10 +52,6 @@ namespace ItemSystem.MainModule
 
         private void OnValidate()
         {
-            if (m_Class != null)
-            {
-                m_SlotType = m_Class.ClassName; 
-            }
 
             if (m_ItemStats != null && m_ItemStats.Count > 0)
             {

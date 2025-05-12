@@ -25,6 +25,14 @@ namespace ItemSystem.MainModule
         /// </summary>
         public void OnInitialize()
         {
+            if (Stats != null && Stats.Count > 0)
+            {
+                for (int i = 0; i < Stats.Count; i++)
+                {
+                    RegisterStat(Stats[i]);
+                }
+            }
+
             if (Items != null && Items.Count > 0)
             {
                 for (int i = 0; i < Items.Count; i++)
@@ -42,9 +50,9 @@ namespace ItemSystem.MainModule
                         }
                     }
 
-                    if (Items[i].Stats != null && Items[i].Stats.Count > 0)
+                    if (Items[i].Class.Types[Items[i].TypeIndex].Stats != null && Items[i].Class.Types[Items[i].TypeIndex].Stats.Count > 0)
                     {
-                        foreach (var stat in Items[i].Stats)
+                        foreach (var stat in Items[i].Class.Types[Items[i].TypeIndex].Stats)
                         {
                             RegisterStat(stat.Value);
                         }
@@ -58,21 +66,13 @@ namespace ItemSystem.MainModule
                         }
                     }
 
-                    if (Items[i].Class.Types[Items[i].TypeIndex].Stats != null && Items[i].Class.Types[Items[i].TypeIndex].Stats.Count > 0)
+                    if (Items[i].Stats != null && Items[i].Stats.Count > 0)
                     {
-                        foreach (var stat in Items[i].Class.Types[Items[i].TypeIndex].Stats)
+                        foreach (var stat in Items[i].Stats)
                         {
                             RegisterStat(stat.Value);
                         }
                     }
-                }
-            }
-
-            if (Stats != null && Stats.Count > 0)
-            {
-                for (int i = 0; i < Stats.Count; i++)
-                {
-                    RegisterStat(Stats[i]);
                 }
             }
         }
@@ -89,7 +89,7 @@ namespace ItemSystem.MainModule
             }
             else
             {
-                Debug.Log($"{_Stat.TargetUserStat} was already present.");
+                UserStats[_Stat.TargetUserStat].Value = _Stat.GetStatValue();
             }
         }
     }

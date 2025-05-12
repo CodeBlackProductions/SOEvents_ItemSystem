@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2104df14c59d738488360d057682aede, type: 3}
-  m_Name: SO_Effect_Trigger_OnHit_fa92f4bcd28e913468cbc77d9e70322f
+  m_Script: {fileID: 11500000, guid: cc833bc556c10ae4d85886048379dbd6, type: 3}
+  m_Name: SO_Effect_Trigger_Stack_69284cba1f671c948b1339363b238263
   m_EditorClassIdentifier: 
-  m_TriggerName: Trigger/OnHit
+  m_TriggerName: Trigger/Stack
   m_Tags: []

@@ -56,6 +56,11 @@ namespace ItemSystem.Editor
 
         protected override void OnSubTabChanged(Type _ModuleType, bool _ShowAddAndRemove, bool _LoadSubTypes, bool _ShowInspectorPanel, bool _LoadLocalFiles)
         {
+            if (m_FilterPanel != null)
+            {
+                m_FilterPanel.ClearFilter();
+            }
+
             m_SubTabContent.Clear();
 
             MethodInfo method = typeof(StatModuleTab).GetMethod("LoadSubTabHierarchy", BindingFlags.NonPublic | BindingFlags.Instance);
