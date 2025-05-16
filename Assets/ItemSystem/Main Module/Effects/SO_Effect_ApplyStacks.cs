@@ -13,7 +13,7 @@ namespace ItemSystem
         protected override void ItemEffect(IItemUser _Source, IItemUser _Target)
         {
             Debug.Log(EffectName + " just applied stacks!");
-            m_StackEffect.Trigger.Invoke(_Source, _Target);
+            (m_StackEffect.Trigger as SO_Effect_Trigger_Stack).Invoke(_Source, _Target, this);
         }
     }
 }

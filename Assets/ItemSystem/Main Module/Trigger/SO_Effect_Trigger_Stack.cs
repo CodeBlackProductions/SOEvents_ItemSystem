@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ItemSystem.MainModule;
+using static Unity.VisualScripting.Member;
+using System.Linq;
+using Unity.VisualScripting;
+using ItemSystem;
 
 /// <summary>
 /// This trigger adds and manages stacks for <see cref="So_Item_StackEffect"/>.
@@ -12,16 +16,42 @@ public class SO_Effect_Trigger_Stack : SO_Effect_Trigger
 {
     private Dictionary<IItemUser, Dictionary<So_Item_StackEffect, StackEffectData>> activeEffects = new Dictionary<IItemUser, Dictionary<So_Item_StackEffect, StackEffectData>>();
 
+    public void Invoke(IItemUser _Source, IItemUser _Target, SO_Item_Effect _CallingEffect)
+    {
+        if (m_Listener == null)
+        {
+            throw new System.Exception("Listeners not initialized in " + this.name);
+        }
+
+        if (m_Listener.Count > 0)
+        {
+            if (CheckCondition(_Source, _Target))
+            {
+                CustomFunctionality(_Source, _Target, _CallingEffect);
+            }
+        }
+    }
+
     /// <summary>
     /// Add/ Remove Stacks for <see cref="So_Item_StackEffect"/>.
     /// </summary>
     /// <param name="_Source"><see cref="IItemUser"/> that called the trigger</param>
     /// <param name="_Target"><see cref="IItemUser"/> that should get targeted by effect</param>
     /// <returns>Always returns false, since we dont want to call the effects multiple times.</returns>
-    protected override bool CustomFunctionality(IItemUser _Source, IItemUser _Target)
+    protected bool CustomFunctionality(IItemUser _Source, IItemUser _Target, SO_Item_Effect _CallingEffect)
     {
         foreach (var effect in m_Listener)
         {
+            SO_Effect_ApplyStacks applyStacks = _CallingEffect as SO_Effect_ApplyStacks;
+
+            if (applyStacks != null)
+            {
+                if (applyStacks.StackEffect != effect)
+                {
+                    continue;
+                }
+            }   
+
             So_Item_StackEffect stackEffect = effect as So_Item_StackEffect;
 
             if (stackEffect == null)

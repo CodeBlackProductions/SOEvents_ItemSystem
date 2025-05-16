@@ -31,7 +31,7 @@ namespace ItemSystem.MainModule
 
         public static event System.Action Initialized;
 
-        private Dictionary<System.Type, ScriptableObject> events = new Dictionary<System.Type, ScriptableObject>();
+        private Dictionary<System.Type, List<ScriptableObject>> events = new Dictionary<System.Type, List<ScriptableObject>>();
 
         /// <summary>
         /// Registers an <see cref="SO_Effect_Trigger"/> as event.
@@ -43,7 +43,11 @@ namespace ItemSystem.MainModule
             var type = _eventSO.GetType();
             if (!events.ContainsKey(type))
             {
-                events.Add(type, _eventSO);
+                events.Add(type, new List<ScriptableObject>() { _eventSO });
+            }
+            else if (!events[type].Contains(_eventSO))
+            {
+                events[type].Add(_eventSO);
             }
         }
 
@@ -55,9 +59,13 @@ namespace ItemSystem.MainModule
         public void RemoveEvent<T>(T _eventSO) where T : ScriptableObject
         {
             var type = _eventSO.GetType();
-            if (events.ContainsKey(type))
+            if (events.ContainsKey(type) && events[type].Contains(_eventSO))
             {
-                events.Remove(type);
+                events[type].Remove(_eventSO);
+                if (events[type].Count <= 0)
+                {
+                    events.Remove(type);
+                }
             }
         }
 
@@ -69,9 +77,12 @@ namespace ItemSystem.MainModule
         /// <param name="_Target"><see cref="IItemUser"/> that gets targeted by the effect</param>
         public void InvokeEvent<T>(IItemUser _Source, IItemUser _Target) where T : SO_Effect_Trigger
         {
-            T eventSO = GetEvent<T>();
+            List<ScriptableObject> eventSOs = GetEvents<T>();
 
-            eventSO?.Invoke(_Source, _Target);
+            foreach (var SO in eventSOs)
+            {
+                (SO as T).Invoke(_Source, _Target);
+            }
         }
 
         /// <summary>
@@ -79,12 +90,12 @@ namespace ItemSystem.MainModule
         /// </summary>
         /// <typeparam name="T">Type of <see cref="SO_Effect_Trigger"/> to fetch</typeparam>
         /// <returns><see cref="SO_Effect_Trigger"/> event</returns>
-        private T GetEvent<T>() where T : ScriptableObject
+        private List<ScriptableObject> GetEvents<T>() where T : ScriptableObject
         {
             var type = typeof(T);
             if (events.ContainsKey(type))
             {
-                return events[type] as T;
+                return events[type];
             }
             return null;
         }

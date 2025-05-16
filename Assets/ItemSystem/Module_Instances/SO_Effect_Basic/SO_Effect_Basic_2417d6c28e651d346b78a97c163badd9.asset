@@ -9,13 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e28f3995e2ccd6541bb41cd5e9648925, type: 3}
-  m_Name: SO_Effect_ApplyStacks_d0ed05c8784f004478a38329c9745811
+  m_Script: {fileID: 11500000, guid: 727238865d913414ea54e6ac43f28971, type: 3}
+  m_Name: SO_Effect_Basic_2417d6c28e651d346b78a97c163badd9
   m_EditorClassIdentifier: 
-  m_EffectName: Effect/ApplyStack
-  m_Trigger: {fileID: 11400000, guid: 38ed9b696082ca5458878cdcaf9646f6, type: 2}
+  m_EffectName: Effect/BasicOnHit2
+  m_Trigger: {fileID: 11400000, guid: 1ff893bccaef2d94b9a464013ebd7f20, type: 2}
   m_EffectTarget: 1
   m_AllowedEffectTargets: 2
   m_TargetRange: 0
   m_Tags: []
-  m_StackEffect: {fileID: 11400000, guid: 8bc6dcfc63d599c419c20a0d124c3c02, type: 2}
