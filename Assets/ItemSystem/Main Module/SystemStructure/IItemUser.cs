@@ -2,6 +2,7 @@ using ItemSystem.SubModules;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEditor.Progress;
 
 namespace ItemSystem.MainModule
 {
@@ -37,18 +38,33 @@ namespace ItemSystem.MainModule
             {
                 for (int i = 0; i < Items.Count; i++)
                 {
-                    for (int e = 0; e < Items[i].Effects.Length; e++)
+                    EffectRegistryHelper.RegisterAllEffectsRecursive(Items[i], effect =>
                     {
-                        if (EffectRegistry.ContainsKey(Items[i].Effects[e].Trigger))
+                        if (effect != null)
                         {
-                            EffectRegistry[Items[i].Effects[e].Trigger].Add(Items[i].Effects[e]);
+                            if (EffectRegistry.ContainsKey(effect.Trigger))
+                            {
+                                EffectRegistry[effect.Trigger].Add(effect);
+                            }
+                            else
+                            {
+                                EffectRegistry.Add(effect.Trigger, new List<SO_Item_Effect> { effect });
+                            }
                         }
-                        else
-                        {
-                            EffectRegistry.Add(Items[i].Effects[e].Trigger, new List<SO_Item_Effect>());
-                            EffectRegistry[Items[i].Effects[e].Trigger].Add(Items[i].Effects[e]);
-                        }
-                    }
+                    });
+
+                    //for (int e = 0; e < Items[i].Effects.Length; e++)
+                    //{
+                    //    if (EffectRegistry.ContainsKey(Items[i].Effects[e].Trigger))
+                    //    {
+                    //        EffectRegistry[Items[i].Effects[e].Trigger].Add(Items[i].Effects[e]);
+                    //    }
+                    //    else
+                    //    {
+                    //        EffectRegistry.Add(Items[i].Effects[e].Trigger, new List<SO_Item_Effect>());
+                    //        EffectRegistry[Items[i].Effects[e].Trigger].Add(Items[i].Effects[e]);
+                    //    }
+                    //}
 
                     if (Items[i].Class.Types[Items[i].TypeIndex].Stats != null && Items[i].Class.Types[Items[i].TypeIndex].Stats.Count > 0)
                     {
