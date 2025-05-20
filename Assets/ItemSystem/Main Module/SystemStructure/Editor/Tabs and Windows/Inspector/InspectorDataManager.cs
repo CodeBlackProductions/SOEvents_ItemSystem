@@ -200,34 +200,151 @@ namespace ItemSystem.Editor
 
             if (_Property.PropertyType == typeof(Dictionary<string, SO_Stat>))
             {
-                Dictionary<string, SO_Stat> dictionary = dict as Dictionary<string, SO_Stat>;
-                if (dictionary == null)
+                List<SO_Stat> allStats = ItemEditor_AssetLoader.LoadAssetsByType<SO_Stat>();
+                List<string> allTargetUserStats = new List<string>();
+
+                allStats.ForEach(so =>
                 {
-                    dictionary = new Dictionary<string, SO_Stat>();
+                    if (so.GetType().IsSubclassOf(typeof(SO_Stat)) && !allTargetUserStats.Contains(so.TargetUserStat))
+                    {
+                        allTargetUserStats.Add(so.TargetUserStat);
+                    }
+                });
+
+                Dictionary<string, SO_Stat> statDictionary = dict as Dictionary<string, SO_Stat>;
+                if (statDictionary == null)
+                {
+                    statDictionary = new Dictionary<string, SO_Stat>();
                 }
-                InspectorList<SO_Stat> statList = new InspectorList<SO_Stat>(dictionary,null, "Stats", true);
 
-                statList.ItemAddCallback += (newItem) =>
+                List<string> selectedStats = new List<string>();
+                foreach (KeyValuePair<string, SO_Stat> entry in statDictionary)
                 {
-                    dictionary.Add(newItem.StatName, newItem);
-                    _Property.SetValue(_ParentSO, dictionary);
-                    EditorUtility.SetDirty(_ParentSO);
-                    AssetDatabase.SaveAssets();
-                    _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
-                    _InspectorValueChangeCallback?.Invoke(true);
+                    if (!selectedStats.Contains(entry.Value.TargetUserStat))
+                    {
+                        selectedStats.Add(entry.Value.TargetUserStat);
+                    }
+                }
+
+                VisualElement container = new VisualElement();
+                VisualElement selectedList = new VisualElement();
+                selectedList.style.flexDirection = FlexDirection.Column;
+
+                List<string> availableStats = allTargetUserStats.Except(selectedStats).ToList();
+                DropdownField dropdown;
+                if (availableStats.Count > 0)
+                {
+                    dropdown = new DropdownField("", availableStats, availableStats.FirstOrDefault());
+                }
+                else
+                {
+                    dropdown = new DropdownField("", new List<string> { "No available stats" }, "No available stats");
+                    dropdown.SetEnabled(false);
+                }
+
+                Action updateUI = null;
+                updateUI = () =>
+                {
+                    selectedList.Clear();
+                    foreach (var stat in selectedStats)
+                    {
+                        var row = new VisualElement { style = { flexDirection = FlexDirection.Row } };
+                        row.Add(new Label(stat));
+
+                        var matchingStats = allStats
+                            .Where(s => s.TargetUserStat == stat)
+                            .ToList();
+
+                        List<string> soNames = matchingStats
+                            .Select(s => $"{s.ModuleName} ({s.GetType().Name})")
+                            .ToList();
+
+                        SO_Stat current = statDictionary.FirstOrDefault(x => x.Value.TargetUserStat == stat).Value;
+                        string currentName = current != null ? $"{current.ModuleName} ({current.GetType().Name})" : soNames.FirstOrDefault();
+
+                        DropdownField statDropdown = new DropdownField("", soNames, currentName);
+                        statDropdown.RegisterValueChangedCallback(c =>
+                        {
+                            SO_Stat selectedSO = matchingStats.FirstOrDefault(s => $"{s.ModuleName} ({s.GetType().Name})" == c.newValue);
+                            if (selectedSO != null)
+                            {
+                                string oldKey = statDictionary.FirstOrDefault(x => x.Value.TargetUserStat == stat).Key;
+                                if (!string.IsNullOrEmpty(oldKey))
+                                {
+                                    statDictionary.Remove(oldKey);
+                                }
+
+                                statDictionary[selectedSO.StatName] = selectedSO;
+                                _Property.SetValue(_ParentSO, statDictionary);
+                                EditorUtility.SetDirty(_ParentSO);
+                                AssetDatabase.SaveAssets();
+                                _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
+                                _InspectorValueChangeCallback?.Invoke(true);
+
+                                updateUI();
+                            }
+                        });
+
+                        row.Add(statDropdown);
+
+                        var removeButton = new Button(() =>
+                        {
+                            selectedStats.Remove(stat);
+                            dropdown.choices = allTargetUserStats.Except(selectedStats).ToList();
+                            dropdown.value = dropdown.choices.FirstOrDefault();
+                            updateUI();
+
+                            string toRemove = statDictionary.FirstOrDefault(x => x.Value.TargetUserStat == stat).Key;
+                            statDictionary.Remove(toRemove);
+                            _Property.SetValue(_ParentSO, statDictionary);
+                            EditorUtility.SetDirty(_ParentSO);
+                            AssetDatabase.SaveAssets();
+                            _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
+                            _InspectorValueChangeCallback?.Invoke(true);
+                        })
+                        { text = "Remove" };
+                        row.Add(removeButton);
+
+                        selectedList.Add(row);
+                    }
                 };
 
-                statList.ItemRemoveCallback += (removeItem) =>
+                Button addButton = new Button(() =>
                 {
-                    dictionary.Remove(removeItem.StatName);
-                    _Property.SetValue(_ParentSO, dictionary);
-                    EditorUtility.SetDirty(_ParentSO);
-                    AssetDatabase.SaveAssets();
-                    _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
-                    _InspectorValueChangeCallback?.Invoke(true);
-                };
+                    string selected = dropdown.value;
+                    if (!string.IsNullOrEmpty(selected) && !selectedStats.Contains(selected))
+                    {
+                        selectedStats.Add(selected);
+                        dropdown.choices = allTargetUserStats.Except(selectedStats).ToList();
+                        dropdown.value = dropdown.choices.FirstOrDefault();
+                        updateUI();
 
-                _UIParent.Add(statList);
+                        SO_Stat newItem = allStats.FirstOrDefault(so => so.TargetUserStat == selected);
+                        statDictionary.Add(newItem.StatName, newItem);
+                        _Property.SetValue(_ParentSO, statDictionary);
+                        EditorUtility.SetDirty(_ParentSO);
+                        AssetDatabase.SaveAssets();
+                        _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
+                        _InspectorValueChangeCallback?.Invoke(true);
+                    }
+                })
+                { text = "Add" };
+
+                if (!dropdown.enabledSelf)
+                {
+                    addButton.SetEnabled(false);
+                }
+
+                VisualElement SelectionContainer = new VisualElement { style = { flexDirection = FlexDirection.Row } };
+                SelectionContainer.Add(dropdown);
+                SelectionContainer.Add(addButton);
+
+                container.Add(SelectionContainer);
+                container.Add(selectedList);
+
+                updateUI();
+
+                _UIParent.Add(container);
                 return _UIParent;
             }
 
@@ -298,7 +415,13 @@ namespace ItemSystem.Editor
 
             if (projectileNames.Count > 0)
             {
-                string currentEntry = (_Property.GetValue(_ParentSO) as GameObject)?.GetComponent<IProjectile>().ProjectileName;
+                object propertyVal = _Property.GetValue(_ParentSO);
+                string currentEntry = null;
+
+                if (propertyVal is UnityEngine.Object unityObj && unityObj != null)
+                {
+                    currentEntry = (propertyVal as GameObject)?.GetComponent<IProjectile>().ProjectileName;
+                }
 
                 if (currentEntry == null || !projectileNames.Contains(currentEntry))
                 {
@@ -341,11 +464,6 @@ namespace ItemSystem.Editor
             {
                 case ETypes.String:
 
-                    if (!(_ParentSO.GetType() == typeof(SO_EditorSettings)))
-                    {
-                        field.maxLength = 20;
-                    }
-
                     field.value = _Property.GetValue(_ParentSO)?.ToString() ?? string.Empty;
                     _UIParent.Add(field);
 
@@ -364,7 +482,7 @@ namespace ItemSystem.Editor
                     return _UIParent;
 
                 case ETypes.Int:
-                    field.maxLength = 5;
+
                     field.value = _Property.GetValue(_ParentSO)?.ToString() ?? string.Empty;
                     _UIParent.Add(field);
 
@@ -389,7 +507,7 @@ namespace ItemSystem.Editor
                     return _UIParent;
 
                 case ETypes.Float:
-                    field.maxLength = 10;
+
                     field.value = _Property.GetValue(_ParentSO)?.ToString() ?? string.Empty;
                     _UIParent.Add(field);
 
@@ -507,7 +625,7 @@ namespace ItemSystem.Editor
             {
                 array = new T[0];
             }
-            InspectorList<T> list = new InspectorList<T>(array,null, _Title, _ShowAddAndRemove);
+            InspectorList<T> list = new InspectorList<T>(array, null, _Title, _ShowAddAndRemove);
 
             list.ItemAddCallback += (newItem) =>
             {

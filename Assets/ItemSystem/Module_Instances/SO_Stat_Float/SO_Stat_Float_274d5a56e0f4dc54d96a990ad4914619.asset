@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6aefc8afd4fecee41ae829fec1a6f0e8, type: 3}
   m_Name: SO_Stat_Float_274d5a56e0f4dc54d96a990ad4914619
   m_EditorClassIdentifier: 
-  m_StatName: Damage
+  m_StatName: Damage/UserBase
   m_TargetUserStat: Damage
   m_Tags:
   - {fileID: 11400000, guid: 02abd3381c4a9c74bbd2c28d6bf5707f, type: 2}

@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d0ae490fe454ca842b63a8498d277dba, type: 3}
-  m_Name: SO_Stat_Integer_ab738a054e42d16499bce17209d7c304
+  m_Name: SO_Stat_Integer_d3fd2c2ad899dee4b9b4ca3625acfe1f
   m_EditorClassIdentifier: 
-  m_StatName: Hands/1
+  m_StatName: Hands/2
   m_TargetUserStat: Hands
   m_Tags: []
-  m_Value: 1
+  m_Value: 2

@@ -53,19 +53,6 @@ namespace ItemSystem.MainModule
                         }
                     });
 
-                    //for (int e = 0; e < Items[i].Effects.Length; e++)
-                    //{
-                    //    if (EffectRegistry.ContainsKey(Items[i].Effects[e].Trigger))
-                    //    {
-                    //        EffectRegistry[Items[i].Effects[e].Trigger].Add(Items[i].Effects[e]);
-                    //    }
-                    //    else
-                    //    {
-                    //        EffectRegistry.Add(Items[i].Effects[e].Trigger, new List<SO_Item_Effect>());
-                    //        EffectRegistry[Items[i].Effects[e].Trigger].Add(Items[i].Effects[e]);
-                    //    }
-                    //}
-
                     if (Items[i].Class.Types[Items[i].TypeIndex].Stats != null && Items[i].Class.Types[Items[i].TypeIndex].Stats.Count > 0)
                     {
                         foreach (var stat in Items[i].Class.Types[Items[i].TypeIndex].Stats)

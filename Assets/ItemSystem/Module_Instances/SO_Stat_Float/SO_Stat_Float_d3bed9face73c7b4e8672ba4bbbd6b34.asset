@@ -9,10 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0ae490fe454ca842b63a8498d277dba, type: 3}
-  m_Name: SO_Stat_Integer_ab738a054e42d16499bce17209d7c304
+  m_Script: {fileID: 11500000, guid: 6aefc8afd4fecee41ae829fec1a6f0e8, type: 3}
+  m_Name: SO_Stat_Float_d3bed9face73c7b4e8672ba4bbbd6b34
   m_EditorClassIdentifier: 
-  m_StatName: Hands/1
-  m_TargetUserStat: Hands
+  m_StatName: AttackCD/0,5
+  m_TargetUserStat: AttackCD
   m_Tags: []
-  m_Value: 1
+  m_Value: 0.5
