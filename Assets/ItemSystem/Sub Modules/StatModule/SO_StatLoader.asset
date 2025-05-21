@@ -9,8 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 540277f225658164d9dc06c6ad26c2da, type: 3}
-  m_Name: EditorSettings
+  m_Script: {fileID: 11500000, guid: 4e976d27da3b10842ac27927d02eb81f, type: 3}
+  m_Name: SO_StatLoader
   m_EditorClassIdentifier: 
-  m_InstancesPath: Assets/ItemSystem/Module_Instances
-  m_FilePath: D:/Dokumente/Dokumente/SAE/Projekte/Unity/SOEvents_ItemSystem/Assets/ItemSystem/Module_JSON
+  m_LoadOrder: 1
+  m_OverrideBehaviour: 1
+  m_BaseStatBehaviour: 0

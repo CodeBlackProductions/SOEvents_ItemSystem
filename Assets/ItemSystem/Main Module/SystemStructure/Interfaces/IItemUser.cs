@@ -1,6 +1,7 @@
 using ItemSystem.SubModules;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using static UnityEditor.Progress;
 
@@ -26,26 +27,6 @@ namespace ItemSystem.MainModule
         /// </summary>
         public void OnInitialize()
         {
-            if (Stats != null && Stats.Count > 0)
-            {
-                for (int i = 0; i < Stats.Count; i++)
-                {
-                    if (Stats[i] is SO_Stat_Collection)
-                    {
-                        SO_Stat[] collection = Stats[i].GetStatValue() as SO_Stat[];
-
-                        for (int c = 0; c < collection.Length; c++)
-                        {
-                            RegisterStat(collection[c]);
-                        }
-                    }
-                    else
-                    {
-                        RegisterStat(Stats[i]);
-                    }
-                }
-            }
-
             if (Items != null && Items.Count > 0)
             {
                 for (int i = 0; i < Items.Count; i++)
@@ -64,66 +45,12 @@ namespace ItemSystem.MainModule
                             }
                         }
                     });
+                }
 
-                    if (Items[i].Class.Types[Items[i].TypeIndex].Stats != null && Items[i].Class.Types[Items[i].TypeIndex].Stats.Count > 0)
-                    {
-                        foreach (var stat in Items[i].Class.Types[Items[i].TypeIndex].Stats)
-                        {
-                            if (stat.Value is SO_Stat_Collection)
-                            {
-                                SO_Stat[] collection = stat.Value.GetStatValue() as SO_Stat[];
-
-                                for (int c = 0; c < collection.Length; c++)
-                                {
-                                    RegisterStat(collection[c]);
-                                }
-                            }
-                            else
-                            {
-                                RegisterStat(stat.Value);
-                            }
-                        }
-                    }
-
-                    if (Items[i].Class.Stats != null && Items[i].Class.Stats.Count > 0)
-                    {
-                        foreach (var stat in Items[i].Class.Stats)
-                        {
-                            if (stat.Value is SO_Stat_Collection)
-                            {
-                                SO_Stat[] collection = stat.Value.GetStatValue() as SO_Stat[];
-
-                                for (int c = 0; c < collection.Length; c++)
-                                {
-                                    RegisterStat(collection[c]);
-                                }
-                            }
-                            else
-                            {
-                                RegisterStat(stat.Value);
-                            }
-                        }
-                    }
-
-                    if (Items[i].Stats != null && Items[i].Stats.Count > 0)
-                    {
-                        foreach (var stat in Items[i].Stats)
-                        {
-                            if (stat.Value is SO_Stat_Collection)
-                            {
-                                SO_Stat[] collection = stat.Value.GetStatValue() as SO_Stat[];
-
-                                for (int c = 0; c < collection.Length; c++)
-                                {
-                                    RegisterStat(collection[c]);
-                                }
-                            }
-                            else
-                            {
-                                RegisterStat(stat.Value);
-                            }
-                        }
-                    }
+                SO_StatLoader statLoader = AssetDatabase.LoadAssetAtPath<SO_StatLoader>("Assets/ItemSystem/Sub Modules/StatModule/SO_StatLoader.asset");
+                if (statLoader != null)
+                {
+                    statLoader.LoadStats(this);
                 }
             }
         }
