@@ -20,7 +20,7 @@ namespace ItemSystem.MainModule
     /// Base item effect. Contains all necessary elements to add additional effects to items. (e.g. Poison or Stat boosts)
     /// Inherit from this when creating new effects.
     /// </summary>
-    public abstract class SO_Item_Effect : ScriptableObject, IItemModule
+    public abstract class SO_Item_Effect : ScriptableObject, IItemModule, IItemModuleBase
     {
         [SerializeField] private string m_EffectName = "NewEffect";
         [SerializeField] private GUID m_EffectGUID;

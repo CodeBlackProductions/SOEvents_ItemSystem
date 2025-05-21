@@ -30,7 +30,19 @@ namespace ItemSystem.MainModule
             {
                 for (int i = 0; i < Stats.Count; i++)
                 {
-                    RegisterStat(Stats[i]);
+                    if (Stats[i] is SO_Stat_Collection)
+                    {
+                        SO_Stat[] collection = Stats[i].GetStatValue() as SO_Stat[];
+
+                        for (int c = 0; c < collection.Length; c++)
+                        {
+                            RegisterStat(collection[c]);
+                        }
+                    }
+                    else
+                    {
+                        RegisterStat(Stats[i]);
+                    }
                 }
             }
 
@@ -57,7 +69,19 @@ namespace ItemSystem.MainModule
                     {
                         foreach (var stat in Items[i].Class.Types[Items[i].TypeIndex].Stats)
                         {
-                            RegisterStat(stat.Value);
+                            if (stat.Value is SO_Stat_Collection)
+                            {
+                                SO_Stat[] collection = stat.Value.GetStatValue() as SO_Stat[];
+
+                                for (int c = 0; c < collection.Length; c++)
+                                {
+                                    RegisterStat(collection[c]);
+                                }
+                            }
+                            else
+                            {
+                                RegisterStat(stat.Value);
+                            }
                         }
                     }
 
@@ -65,7 +89,19 @@ namespace ItemSystem.MainModule
                     {
                         foreach (var stat in Items[i].Class.Stats)
                         {
-                            RegisterStat(stat.Value);
+                            if (stat.Value is SO_Stat_Collection)
+                            {
+                                SO_Stat[] collection = stat.Value.GetStatValue() as SO_Stat[];
+
+                                for (int c = 0; c < collection.Length; c++)
+                                {
+                                    RegisterStat(collection[c]);
+                                }
+                            }
+                            else
+                            {
+                                RegisterStat(stat.Value);
+                            }
                         }
                     }
 
@@ -73,7 +109,19 @@ namespace ItemSystem.MainModule
                     {
                         foreach (var stat in Items[i].Stats)
                         {
-                            RegisterStat(stat.Value);
+                            if (stat.Value is SO_Stat_Collection)
+                            {
+                                SO_Stat[] collection = stat.Value.GetStatValue() as SO_Stat[];
+
+                                for (int c = 0; c < collection.Length; c++)
+                                {
+                                    RegisterStat(collection[c]);
+                                }
+                            }
+                            else
+                            {
+                                RegisterStat(stat.Value);
+                            }
                         }
                     }
                 }

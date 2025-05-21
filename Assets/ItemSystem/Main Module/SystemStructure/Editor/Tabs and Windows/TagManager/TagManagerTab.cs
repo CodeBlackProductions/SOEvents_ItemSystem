@@ -44,7 +44,7 @@ namespace ItemSystem.Editor
 
         protected override void OnSubTabChanged(Type _ModuleType, bool _ShowAddAndRemove, bool _LoadSubTypes, bool _ShowInspectorPanel, bool _LoadLocalFiles)
         {
-         
+
         }
     }
 }

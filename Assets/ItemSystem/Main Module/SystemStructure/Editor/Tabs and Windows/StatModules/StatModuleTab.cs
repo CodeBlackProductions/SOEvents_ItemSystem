@@ -1,6 +1,7 @@
 using ItemSystem.SubModules;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEngine.UIElements;
 
@@ -32,12 +33,16 @@ namespace ItemSystem.Editor
             m_SubTabMenu?.Clear();
             m_SubTabContent?.Clear();
 
-            m_SubTabMenu = new TabbedMenu(new KeyValuePair<string, Type>[]
+            List<Type> statTypes = ItemEditor_AssetLoader.LoadDerivedTypes(typeof(SO_Stat)).ToList();
+            List<KeyValuePair<string, Type>> statTypePairs = new List<KeyValuePair<string, Type>>();
+
+            foreach (Type type in statTypes)
             {
-           new KeyValuePair<string, Type>("Integer", typeof(SO_Stat_Integer)),
-           new KeyValuePair<string, Type>("Float", typeof(SO_Stat_Float)),
-           new KeyValuePair<string, Type>("String", typeof(SO_Stat_String)),
-            }, OnSubTabChanged, true, true, true, false);
+                string name = type.Name.Replace("SO_Stat_", "");
+                statTypePairs.Add(new KeyValuePair<string, Type>(name, type));
+            }
+
+            m_SubTabMenu = new TabbedMenu(statTypePairs.ToArray(), OnSubTabChanged, true, true, true, false);
 
             m_SubTabContent = new VisualElement();
             m_SubTabInspectorPanel = new InspectorPanel();

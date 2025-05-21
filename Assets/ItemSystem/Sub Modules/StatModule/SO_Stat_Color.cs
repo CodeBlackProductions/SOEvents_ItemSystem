@@ -1,0 +1,27 @@
+using ItemSystem.Editor;
+using ItemSystem.SubModules;
+using System;
+using UnityEngine;
+
+[Serializable]
+public class SO_Stat_Color : SO_Stat
+{
+    [SerializeField] private Color m_Value = Color.white;
+
+    [ItemToolkitAccess] public Color StatValue { get => m_Value; set => m_Value = value; }
+
+    public override Type GetStatType()
+    {
+        return m_Value.GetType();
+    }
+
+    public override object GetStatValue()
+    {
+        return m_Value;
+    }
+
+    public override void SetStatValue(object value)
+    {
+        m_Value = (Color)value;
+    }
+}

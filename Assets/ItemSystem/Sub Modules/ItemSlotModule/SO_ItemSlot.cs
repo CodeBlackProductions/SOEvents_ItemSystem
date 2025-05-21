@@ -14,7 +14,7 @@ namespace ItemSystem.SubModules
     /// <summary>
     /// Optional item slots for usage in an inventory system.
     /// </summary>
-    public class SO_ItemSlot : ScriptableObject, IItemModule
+    public class SO_ItemSlot : ScriptableObject, IItemModule, IItemModuleBase
     {
         private string m_SlotName = "NewSlot";
         private GUID m_SlotGUID;

@@ -25,6 +25,8 @@ namespace ItemSystem.Editor
         {
             ItemSystemEditor window = GetWindow<ItemSystemEditor>("Item System");
             window.minSize = new Vector2(700, 400);
+
+            AssetDatabase.SaveAssets();
         }
 
         public void CreateGUI()
@@ -82,10 +84,12 @@ namespace ItemSystem.Editor
                     m_MainTabContent?.Clear();
                     m_MainTabContent.Add(new FileManagerTab(m_InspectorValueChangeCallback, m_TreeviewSelectionChangeCallback, m_LocalFileTreeviewSelectionChangeCallback));
                     break;
+
                 case EMainTabType.Tags:
                     m_MainTabContent?.Clear();
                     m_MainTabContent.Add(new TagManagerTab(m_InspectorValueChangeCallback, m_TreeviewSelectionChangeCallback));
                     break;
+
                 default:
                     break;
             }

@@ -10,7 +10,7 @@ namespace ItemSystem.MainModule
     /// Base item type, subcategory of <see cref="SO_Item_Class"/> (e.g. weapon / one handed weapon).
     /// Inherit from this when creating new item types.
     /// </summary>
-    public abstract class SO_Class_Type : ScriptableObject, IItemModule
+    public abstract class SO_Class_Type : ScriptableObject, IItemModule, IItemModuleBase
     {
         [SerializeField] private string m_TypeName = "NewType";
         [SerializeField] private GUID m_TypeGUID;

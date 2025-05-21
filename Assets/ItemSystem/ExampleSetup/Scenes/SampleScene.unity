@@ -279,6 +279,17 @@ PrefabInstance:
       propertyPath: m_TestTarget
       value: 
       objectReference: {fileID: 323194864}
+    - target: {fileID: 929572519763770729, guid: 59aba415ad4a13a48b5a52781cb5beb6,
+        type: 3}
+      propertyPath: m_unitStats.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 929572519763770729, guid: 59aba415ad4a13a48b5a52781cb5beb6,
+        type: 3}
+      propertyPath: m_unitStats.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: 7c5b6b7f8a53f24428be6e5a60137ae1,
+        type: 2}
     - target: {fileID: 2779707793131743406, guid: 59aba415ad4a13a48b5a52781cb5beb6,
         type: 3}
       propertyPath: m_Name

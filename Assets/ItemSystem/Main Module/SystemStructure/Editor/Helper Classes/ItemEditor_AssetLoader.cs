@@ -1,5 +1,4 @@
 using ItemSystem.MainModule;
-using ItemSystem.SubModules;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -47,10 +46,9 @@ namespace ItemSystem.Editor
            .Where(type =>
                  (
                    typeof(ScriptableObject).IsAssignableFrom(type)
-                   && typeof(IItemModule).IsAssignableFrom(type)
+                   && typeof(IItemModuleBase).IsAssignableFrom(type)
                    && type.BaseType == typeof(ScriptableObject)
-                   && type.IsAbstract
-                 ) || type == typeof(SO_Item) || type == typeof(SO_Tag)
+                 )
            );
 
             return moduleTypes;

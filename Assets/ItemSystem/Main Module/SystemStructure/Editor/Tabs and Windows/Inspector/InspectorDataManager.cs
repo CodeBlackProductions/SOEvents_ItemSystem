@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEditor;
+using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -18,14 +19,18 @@ namespace ItemSystem.Editor
     {
         private enum ETypes
         {
-            String, Int, Float
+            String, Int, Float, Bool, Vector2, Vector3, Color
         }
 
         private static Dictionary<Type, ETypes> m_Typedictionary = new Dictionary<Type, ETypes>()
         {
             { typeof(string), ETypes.String },
             { typeof(int), ETypes.Int },
-            { typeof(float), ETypes.Float }
+            { typeof(float), ETypes.Float },
+            { typeof(bool), ETypes.Bool },
+            { typeof(Vector2), ETypes.Vector2 },
+            { typeof(Vector3), ETypes.Vector3 },
+            { typeof(Color), ETypes.Color }
         };
 
         public static VisualElement CreateEntry(
@@ -391,6 +396,14 @@ namespace ItemSystem.Editor
                 return _UIParent;
             }
 
+            if (_Property.PropertyType == typeof(SO_Stat[]))
+            {
+                InspectorList<SO_Stat> statList = ConvertArrayToInspectorList<SO_Stat>(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, "Stats", true);
+
+                _UIParent.Add(statList);
+                return _UIParent;
+            }
+
             Debug.LogWarning($"Could not generate InspectorList for Array {_ParentSO} : {_Property.Name}");
             return null;
         }
@@ -460,6 +473,9 @@ namespace ItemSystem.Editor
            VisualElement _UIParent)
         {
             TextField field = new TextField();
+            TextField field2 = new TextField();
+            TextField field3 = new TextField();
+
             switch (m_Typedictionary[_Property.PropertyType])
             {
                 case ETypes.String:
@@ -528,6 +544,222 @@ namespace ItemSystem.Editor
                     field.RegisterCallback<FocusOutEvent>(t =>
                    _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback)
                    );
+
+                    return _UIParent;
+
+                case ETypes.Bool:
+
+                    Toggle boolField = new Toggle();
+                    boolField.value = (bool)_Property.GetValue(_ParentSO);
+
+                    _UIParent.Add(boolField);
+
+                    boolField.RegisterValueChangedCallback(t =>
+                    {
+                        _Property.SetValue(_ParentSO, t.newValue);
+                        EditorUtility.SetDirty(_ParentSO);
+                        AssetDatabase.SaveAssets();
+                        _InspectorValueChangeCallback?.Invoke(true);
+                    });
+
+                    boolField.RegisterCallback<FocusOutEvent>(t =>
+                    _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback)
+                    );
+
+                    return _UIParent;
+
+                case ETypes.Vector2:
+
+                    field.value = ((Vector2)_Property.GetValue(_ParentSO)).x.ToString() ?? string.Empty;
+
+                    field2.value = ((Vector2)_Property.GetValue(_ParentSO)).y.ToString() ?? string.Empty;
+
+                    _UIParent.Add(field);
+                    _UIParent.Add(field2);
+
+                    field.RegisterValueChangedCallback(t =>
+                    {
+                        if (float.TryParse(t.newValue, out float result))
+                        {
+                            if (float.TryParse(field2.value, out float result2))
+                            {
+                                Vector2 newValue = new Vector2(result, result2);
+                                _Property.SetValue(_ParentSO, newValue);
+                                EditorUtility.SetDirty(_ParentSO);
+                                AssetDatabase.SaveAssets();
+                            }
+                            else
+                            {
+                                Debug.LogWarning("Invalid input");
+                            }
+                        }
+                        else
+                        {
+                            Debug.LogWarning("Invalid input");
+                        }
+                    });
+
+                    field2.RegisterValueChangedCallback(t =>
+                    {
+                        if (float.TryParse(t.newValue, out float result2))
+                        {
+                            if (float.TryParse(field.value, out float result))
+                            {
+                                Vector2 newValue = new Vector2(result, result2);
+                                _Property.SetValue(_ParentSO, newValue);
+                                EditorUtility.SetDirty(_ParentSO);
+                                AssetDatabase.SaveAssets();
+                            }
+                            else
+                            {
+                                Debug.LogWarning("Invalid input");
+                            }
+                        }
+                        else
+                        {
+                            Debug.LogWarning("Invalid input");
+                        }
+                    });
+
+                    field.RegisterCallback<FocusOutEvent>(t =>
+                   _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback)
+                   );
+
+                    field2.RegisterCallback<FocusOutEvent>(t =>
+                 _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback)
+                 );
+
+                    return _UIParent;
+
+                case ETypes.Vector3:
+
+                    field.value = ((Vector3)_Property.GetValue(_ParentSO)).x.ToString() ?? string.Empty;
+
+                    field2.value = ((Vector3)_Property.GetValue(_ParentSO)).y.ToString() ?? string.Empty;
+
+                    field3.value = ((Vector3)_Property.GetValue(_ParentSO)).z.ToString() ?? string.Empty;
+
+                    _UIParent.Add(field);
+                    _UIParent.Add(field2);
+                    _UIParent.Add(field3);
+
+                    field.RegisterValueChangedCallback(t =>
+                    {
+                        if (float.TryParse(t.newValue, out float result))
+                        {
+                            if (float.TryParse(field2.value, out float result2))
+                            {
+                                if (float.TryParse(field3.value, out float result3))
+                                {
+                                    Vector3 newValue = new Vector3(result, result2, result3);
+                                    _Property.SetValue(_ParentSO, newValue);
+                                    EditorUtility.SetDirty(_ParentSO);
+                                    AssetDatabase.SaveAssets();
+                                }
+                                else
+                                {
+                                    Debug.LogWarning("Invalid input");
+                                }
+                            }
+                            else
+                            {
+                                Debug.LogWarning("Invalid input");
+                            }
+                        }
+                        else
+                        {
+                            Debug.LogWarning("Invalid input");
+                        }
+                    });
+
+                    field2.RegisterValueChangedCallback(t =>
+                    {
+                        if (float.TryParse(t.newValue, out float result2))
+                        {
+                            if (float.TryParse(field.value, out float result))
+                            {
+                                if (float.TryParse(field3.value, out float result3))
+                                {
+                                    Vector3 newValue = new Vector3(result, result2, result3);
+                                    _Property.SetValue(_ParentSO, newValue);
+                                    EditorUtility.SetDirty(_ParentSO);
+                                    AssetDatabase.SaveAssets();
+                                }
+                                else
+                                {
+                                    Debug.LogWarning("Invalid input");
+                                }
+                            }
+                            else
+                            {
+                                Debug.LogWarning("Invalid input");
+                            }
+                        }
+                        else
+                        {
+                            Debug.LogWarning("Invalid input");
+                        }
+                    });
+
+                    field3.RegisterValueChangedCallback(t =>
+                    {
+                        if (float.TryParse(t.newValue, out float result3))
+                        {
+                            if (float.TryParse(field.value, out float result))
+                            {
+                                if (float.TryParse(field2.value, out float result2))
+                                {
+                                    Vector3 newValue = new Vector3(result, result2, result3);
+                                    _Property.SetValue(_ParentSO, newValue);
+                                    EditorUtility.SetDirty(_ParentSO);
+                                    AssetDatabase.SaveAssets();
+                                }
+                                else
+                                {
+                                    Debug.LogWarning("Invalid input");
+                                }
+                            }
+                            else
+                            {
+                                Debug.LogWarning("Invalid input");
+                            }
+                        }
+                        else
+                        {
+                            Debug.LogWarning("Invalid input");
+                        }
+                    });
+
+                    field.RegisterCallback<FocusOutEvent>(t =>
+                   _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback)
+                   );
+
+                    field2.RegisterCallback<FocusOutEvent>(t =>
+                    _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback)
+                    );
+
+                    field3.RegisterCallback<FocusOutEvent>(t =>
+                    _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback)
+                    );
+
+                    return _UIParent;
+
+                case ETypes.Color:
+
+                    ColorField colorField = new ColorField();
+                    colorField.value = (Color)_Property.GetValue(_ParentSO);
+
+                    _UIParent.Add(colorField);
+
+                    colorField.RegisterCallback<FocusOutEvent>(t =>
+                    {
+                        _Property.SetValue(_ParentSO, colorField.value);
+                        EditorUtility.SetDirty(_ParentSO);
+                        AssetDatabase.SaveAssets();
+                        _InspectorValueChangeCallback?.Invoke(true);
+
+                        _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
+                    });
 
                     return _UIParent;
 

@@ -45,10 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_unitStats:
-  - {fileID: 11400000, guid: 15eda8ca333740c4a9dc4ac95cf050b7, type: 2}
-  - {fileID: 11400000, guid: b832e6da41a7d254fa43de00329ec612, type: 2}
-  - {fileID: 11400000, guid: c6c5ff2088dda084ebd51bc5f39a86b7, type: 2}
-  - {fileID: 11400000, guid: 9710fd439be214247b38b036a32a8f15, type: 2}
+  - {fileID: 11400000, guid: 7c5b6b7f8a53f24428be6e5a60137ae1, type: 2}
   m_TestSlot: {fileID: 11400000, guid: 52a0c8b13f893b343aeb3451867d1521, type: 2}
   m_TestItem1: {fileID: 11400000, guid: cc7ccd3bd65b9b847b7ad001d2316230, type: 2}
   m_TestItem2: {fileID: 11400000, guid: d4d1169eaeacb0140bf129fdb2a7b995, type: 2}

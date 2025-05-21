@@ -10,7 +10,7 @@ namespace ItemSystem.MainModule
     /// Base effect trigger, used to handle <see cref="SO_Item_Effect"/> calls.
     /// Inherit from this when creating new effect triggers.
     /// </summary>
-    public abstract class SO_Effect_Trigger : ScriptableObject, IItemModule
+    public abstract class SO_Effect_Trigger : ScriptableObject, IItemModule, IItemModuleBase
     {
         [SerializeField] private string m_TriggerName = "NewTrigger";
         [SerializeField] private GUID m_TriggerGUID;

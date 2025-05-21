@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace ItemSystem.SubModules
 {
-    public class SO_Tag : ScriptableObject, IItemModule
+    public class SO_Tag : ScriptableObject, IItemModule, IItemModuleBase
     {
         [SerializeField] private string m_TagName = "NewTag";
 

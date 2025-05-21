@@ -39,8 +39,8 @@ namespace ItemSystem.Editor
 
         protected void LoadSubTabHierarchy<T>(bool _ShowAddAndRemove, bool _ShowInspectorPanel, bool _LoadSubtypes, bool _LoadLocalFiles) where T : ScriptableObject
         {
-            CreateTreeview<T>(_ShowAddAndRemove, _LoadSubtypes, _ShowInspectorPanel, _LoadLocalFiles);
             m_TreeviewSelectionChangeCallback += OnTreeViewSelectionChanged;
+            CreateTreeview<T>(_ShowAddAndRemove, _LoadSubtypes, _ShowInspectorPanel, _LoadLocalFiles);
 
             if (_LoadLocalFiles)
             {

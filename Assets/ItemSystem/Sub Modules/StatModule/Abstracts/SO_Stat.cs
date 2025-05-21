@@ -11,7 +11,7 @@ namespace ItemSystem.SubModules
     /// Inherit from this when creating a new base type of stat. (e.g. <see cref="SO_Stat_Float"/> , <see cref="SO_Stat_String"/>  etc.)
     /// </summary>
     [Serializable]
-    public abstract class SO_Stat : ScriptableObject, IItemModule
+    public abstract class SO_Stat : ScriptableObject, IItemModule, IItemModuleBase
     {
         //Name of the Stat Module
         [SerializeField] protected string m_StatName = "NewStat";

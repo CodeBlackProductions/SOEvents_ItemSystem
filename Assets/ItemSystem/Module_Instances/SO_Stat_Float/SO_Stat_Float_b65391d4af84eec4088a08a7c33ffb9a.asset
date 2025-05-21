@@ -14,5 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_StatName: AttackRange/10
   m_TargetUserStat: AttackRange
-  m_Tags: []
+  m_Tags:
+  - {fileID: 11400000, guid: c48d569b4f305ca4eb7142e57194f32f, type: 2}
   m_Value: 10

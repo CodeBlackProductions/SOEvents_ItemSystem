@@ -1,7 +1,7 @@
 using ItemSystem.MainModule;
-using ItemSystem.SubModules;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEngine.UIElements;
 
@@ -40,17 +40,16 @@ namespace ItemSystem.Editor
         protected override void LoadHierarchy()
         {
             m_SubTabContent?.Clear();
-            m_SubTabMenu = new TabbedMenu(new KeyValuePair<string, Type>[]
-           {
-          new KeyValuePair<string, Type>("Items", typeof(SO_Item)),
-          new KeyValuePair<string, Type>("Classes", typeof(SO_Item_Class)),
-          new KeyValuePair<string, Type>("Types", typeof(SO_Class_Type)),
-          new KeyValuePair<string, Type>("Effects", typeof(SO_Item_Effect)),
-          new KeyValuePair<string, Type>("Triggers", typeof(SO_Effect_Trigger)),
-          new KeyValuePair<string, Type>("ItemSlots", typeof(SO_ItemSlot)),
-          new KeyValuePair<string, Type>("ItemPools", null),
-          new KeyValuePair<string, Type>("Stats", typeof(SO_Stat)),
-           }, OnSubTabChanged, false, false, false, true);
+
+            Type[] baseTypes = ItemEditor_AssetLoader.LoadAllBaseTypes().ToArray();
+            KeyValuePair<string, Type>[] statTypePairs = new KeyValuePair<string, Type>[baseTypes.Length];
+
+            for (int i = 0; i < statTypePairs.Length; i++)
+            {
+                statTypePairs[i] = new KeyValuePair<string, Type>(baseTypes[i].Name.Substring(baseTypes[i].Name.LastIndexOf("_") + 1), baseTypes[i]);
+            }
+
+            m_SubTabMenu = new TabbedMenu(statTypePairs, OnSubTabChanged, false, false, false, true);
             m_SubTabContent = new VisualElement();
 
             m_SubTabContent.style.flexDirection = FlexDirection.Row;

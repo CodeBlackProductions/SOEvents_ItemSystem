@@ -15,7 +15,7 @@ namespace ItemSystem.MainModule
     /// Core class of the entire system. Contains all necessary pieces to create a functioning item.
     /// </summary>
 
-    public class SO_Item : ScriptableObject, IItemModule, IEffectModule
+    public class SO_Item : ScriptableObject, IItemModule, IEffectModule, IItemModuleBase
     {
         [SerializeField] private string m_ItemName = "NewItem";
         [SerializeField] private GUID m_ItemGUID;

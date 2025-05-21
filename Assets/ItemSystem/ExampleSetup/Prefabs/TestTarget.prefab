@@ -44,7 +44,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62e71c3a6dabb7042a0b363883e1f6af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_unitStats: []
+  m_unitStats:
+  - {fileID: 11400000, guid: 7c5b6b7f8a53f24428be6e5a60137ae1, type: 2}
   m_TestSlot: {fileID: 0}
   m_TestItem1: {fileID: 0}
   m_TestItem2: {fileID: 0}

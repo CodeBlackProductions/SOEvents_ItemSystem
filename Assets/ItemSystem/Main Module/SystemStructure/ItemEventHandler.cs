@@ -79,6 +79,11 @@ namespace ItemSystem.MainModule
         {
             List<ScriptableObject> eventSOs = GetEvents<T>();
 
+            if (eventSOs == null || eventSOs.Count <= 0)
+            {
+                return;
+            }
+
             foreach (var SO in eventSOs)
             {
                 (SO as T).Invoke(_Source, _Target);
