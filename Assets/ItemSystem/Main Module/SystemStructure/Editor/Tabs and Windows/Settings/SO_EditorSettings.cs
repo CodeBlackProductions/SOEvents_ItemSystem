@@ -22,7 +22,7 @@ namespace ItemSystem.Editor
         public string FilePath { get => m_FilePath; set => m_FilePath = value; }
 
         [ItemToolkitAccess]
-        [Tooltip("Apply = Adds up item- and basestats\nIgnore = Completely ignore basestats\nOverride = add basestats but replace when itemstats are available.")]
+        [Tooltip("Defines how to load stats into the dictionary of the IItemUser\nApply = Adds up item- and basestats\nIgnore = Only loads itemstats\nOverride = add basestats but replace when itemstats are available\nExclusive = Only loads basestats")]
         public SO_StatLoader.EBaseStatBehaviour BaseStatBehaviour { get => StatLoader.BaseStatBehaviour; set => StatLoader.BaseStatBehaviour = value; }
 
         [ItemToolkitAccess]

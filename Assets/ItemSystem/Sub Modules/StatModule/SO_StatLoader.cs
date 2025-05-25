@@ -18,9 +18,8 @@ public class SO_StatLoader : ScriptableObject
 
     public enum EBaseStatBehaviour
     {
-        Apply, Ignore, Override
+        Apply, Ignore, Override, Exclusive
     }
-
 
     [SerializeField] private EStatLoadOrder m_LoadOrder = EStatLoadOrder.LowToHigh;
     [SerializeField] private ENonAddableStatBehaviour m_OverrideBehaviour = ENonAddableStatBehaviour.KeepLast;
@@ -41,6 +40,10 @@ public class SO_StatLoader : ScriptableObject
             case EBaseStatBehaviour.Override:
                 LoadBaseStats(_User, true);
                 LoadItemStats(_User, m_LoadOrder == EStatLoadOrder.HighToLow);
+                break;
+
+            case EBaseStatBehaviour.Exclusive:
+                LoadBaseStats(_User, false);
                 break;
 
             case EBaseStatBehaviour.Apply:
