@@ -91,6 +91,35 @@ namespace ItemSystem.MainModule
         }
 
         /// <summary>
+        /// Invokes a registered <see cref="SO_Effect_Trigger"/> event, if it is part of referenced <see cref="SO_Item"/>.
+        /// </summary>
+        /// <typeparam name="T">Type of <see cref="SO_Effect_Trigger"/> event to invoke</typeparam>
+        /// <param name="_Source"><see cref="IItemUser"/> that invokes the effect</param>
+        /// <param name="_Target"><see cref="IItemUser"/> that gets targeted by the effect</param>
+        /// <param name="_Item"><see cref="SO_Item"/> that gets checked for the invoked trigger</param>
+        public void InvokeEvent<T>(IItemUser _Source, IItemUser _Target, SO_Item _Item) where T : SO_Effect_Trigger
+        {
+            List<ScriptableObject> eventSOs = GetEvents<T>();
+
+            if (eventSOs == null || eventSOs.Count <= 0)
+            {
+                return;
+            }
+
+            foreach (var SO in eventSOs)
+            {
+                foreach (var effect in _Item.Effects)
+                {
+                    if (effect.Trigger == SO)
+                    {
+                        (SO as T).Invoke(_Source, _Target);
+                    }
+                }
+
+            }
+        }
+
+        /// <summary>
         /// Fetches an <see cref="SO_Effect_Trigger"/> evént from the registry.
         /// </summary>
         /// <typeparam name="T">Type of <see cref="SO_Effect_Trigger"/> to fetch</typeparam>
