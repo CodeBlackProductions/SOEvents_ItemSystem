@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -49,6 +50,8 @@ namespace ItemSystem.Editor
                     uiParent.style.paddingBottom = 10;
                     Label label = new Label($"{_Property.Name}: ");
                     uiParent.Add(label);
+
+                    uiParent.tooltip = _Property.GetAttribute<TooltipAttribute>()?.tooltip;
 
                     if (_Property.PropertyType.IsEnum)
                     {
@@ -475,6 +478,8 @@ namespace ItemSystem.Editor
             TextField field = new TextField();
             TextField field2 = new TextField();
             TextField field3 = new TextField();
+
+            _UIParent.tooltip = _Property.GetAttribute<TooltipAttribute>()?.tooltip;
 
             switch (m_Typedictionary[_Property.PropertyType])
             {
