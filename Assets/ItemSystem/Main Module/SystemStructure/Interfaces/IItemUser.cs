@@ -46,12 +46,12 @@ namespace ItemSystem.MainModule
                         }
                     });
                 }
+            }
 
-                SO_StatLoader statLoader = AssetDatabase.LoadAssetAtPath<SO_StatLoader>("Assets/ItemSystem/Sub Modules/StatModule/SO_StatLoader.asset");
-                if (statLoader != null)
-                {
-                    statLoader.LoadStats(this);
-                }
+            SO_StatLoader statLoader = AssetDatabase.LoadAssetAtPath<SO_StatLoader>("Assets/ItemSystem/Sub Modules/StatModule/SO_StatLoader.asset");
+            if (statLoader != null)
+            {
+                statLoader.LoadStats(this);
             }
         }
     }
