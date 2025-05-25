@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2104df14c59d738488360d057682aede, type: 3}
-  m_Name: SO_Effect_Trigger_OnHit_fa92f4bcd28e913468cbc77d9e70322f
+  m_Name: SO_Effect_Trigger_OnHit_399fa32c927dd644e815997790046eb4
   m_EditorClassIdentifier: 
   m_TriggerName: Trigger/OnHit
   m_Tags: []

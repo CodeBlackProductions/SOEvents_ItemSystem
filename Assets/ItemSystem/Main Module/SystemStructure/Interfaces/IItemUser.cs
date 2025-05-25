@@ -54,21 +54,5 @@ namespace ItemSystem.MainModule
                 }
             }
         }
-
-        private void RegisterStat(SO_Stat _Stat)
-        {
-            if (!UserStats.ContainsKey(_Stat.TargetUserStat))
-            {
-                UserStats.Add(_Stat.TargetUserStat, new Runtime_Stat(_Stat.GetStatValue(), _Stat.GetStatType()));
-            }
-            else if (_Stat.GetStatType().IsNumeric() && UserStats.ContainsKey(_Stat.TargetUserStat))
-            {
-                UserStats[_Stat.TargetUserStat].Value = (double.Parse(UserStats[_Stat.TargetUserStat].Value.ToString()) + double.Parse(_Stat.GetStatValue().ToString()));
-            }
-            else
-            {
-                UserStats[_Stat.TargetUserStat].Value = _Stat.GetStatValue();
-            }
-        }
     }
 }

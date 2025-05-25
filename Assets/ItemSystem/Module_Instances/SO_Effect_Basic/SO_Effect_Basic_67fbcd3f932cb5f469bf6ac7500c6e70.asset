@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SO_Effect_Basic_67fbcd3f932cb5f469bf6ac7500c6e70
   m_EditorClassIdentifier: 
   m_EffectName: Effect/BasicOnHit
-  m_Trigger: {fileID: 11400000, guid: 38ed9b696082ca5458878cdcaf9646f6, type: 2}
+  m_Trigger: {fileID: 11400000, guid: c98d35eeb5291104e9a5066eb45bbf42, type: 2}
   m_EffectTarget: 1
   m_AllowedEffectTargets: 2
   m_TargetRange: 0

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -19,6 +20,7 @@ namespace ItemSystem.Editor
         private VisualElement m_ButtonPanel;
         private Button m_BTN_AddNewSO;
         private Button m_BTN_RemoveSelectedModule;
+        private Button m_BTN_CopySelectedModule;
 
         private Func<object, bool> m_Filter = null;
         private List<ScriptableObject> m_FilterObjects = new List<ScriptableObject>();
@@ -72,6 +74,28 @@ namespace ItemSystem.Editor
                 };
 
                 m_ButtonPanel.Add(m_BTN_RemoveSelectedModule);
+
+                m_BTN_CopySelectedModule = new Button(() =>
+                {
+                    object selection = m_TreeView.selectedItem;
+                    if (selection != null)
+                    {
+                        ScriptableObject copyFile = ItemEditor_AssetLoader.LoadAssetByName<ScriptableObject>((selection as TreeViewEntryData).FileName);
+                        Type copyType = copyFile.GetType();
+                        ItemEditor_InstanceManager.CopyInstance(copyFile, copyType);
+                        RefreshTreeView(_LoadSubTypes);
+                    }
+                })
+                {
+                    text = "Copy",
+                    style =
+                {
+                    height = 25,
+                    alignSelf = Align.Center
+                }
+                };
+
+                m_ButtonPanel.Add(m_BTN_CopySelectedModule);
 
                 hierarchy.Add(m_ButtonPanel);
             }
