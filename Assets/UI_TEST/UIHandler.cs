@@ -113,7 +113,7 @@ public class UIHandler : MonoBehaviour
     private void OnLinkLeftClick(string linkId)
     {
         string text = UIToolTipRegistry.Instance.RetrieveTooltip(linkId);
-        UIFactory.Instance.CreateNewUI($"{linkId}", text, Color.white, Color.blue, 36);
+        UIFactory.Instance.CreateNewUIWindow($"{linkId}", text, Color.white, Color.blue, 36);
     }
 
     private void OnLinkRightClick(string linkId)
