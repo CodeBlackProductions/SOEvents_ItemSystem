@@ -20,25 +20,12 @@ public class UIHandler : MonoBehaviour
         }
     }
 
-    private int lastHoveredLinkIndex = -1;
-    private TextMeshProUGUI lastHoveredText = null;
+    private int m_LastHoveredLinkIndex = -1;
+    private TextMeshProUGUI m_LastHoveredText = null;
 
     private void Update()
     {
-        PointerEventData pointerData = new PointerEventData(EventSystem.current)
-        {
-            position = Input.mousePosition
-        };
-        List<RaycastResult> results = new List<RaycastResult>();
-        EventSystem.current.RaycastAll(pointerData, results);
-
-        TextMeshProUGUI hoveredText = null;
-        foreach (var result in results)
-        {
-            hoveredText = result.gameObject.GetComponent<TextMeshProUGUI>();
-            if (hoveredText != null)
-                break;
-        }
+        TextMeshProUGUI hoveredText = GetTopmostValidTMP();
 
         int linkIndex = -1;
         if (hoveredText != null)
@@ -46,11 +33,11 @@ public class UIHandler : MonoBehaviour
             linkIndex = TMP_TextUtilities.FindIntersectingLink(hoveredText, Input.mousePosition, null);
         }
 
-        if (hoveredText != lastHoveredText || linkIndex != lastHoveredLinkIndex)
+        if (hoveredText != m_LastHoveredText || linkIndex != m_LastHoveredLinkIndex)
         {
-            if (lastHoveredText != null && lastHoveredLinkIndex != -1)
+            if (m_LastHoveredText != null && m_LastHoveredLinkIndex != -1)
             {
-                TMP_LinkInfo linkInfo = lastHoveredText.textInfo.linkInfo[lastHoveredLinkIndex];
+                TMP_LinkInfo linkInfo = m_LastHoveredText.textInfo.linkInfo[m_LastHoveredLinkIndex];
                 OnLinkHoverEnd(linkInfo.GetLinkID());
             }
             if (hoveredText != null && linkIndex != -1)
@@ -60,42 +47,56 @@ public class UIHandler : MonoBehaviour
             }
         }
 
-        lastHoveredText = hoveredText;
-        lastHoveredLinkIndex = linkIndex;
+        m_LastHoveredText = hoveredText;
+        m_LastHoveredLinkIndex = linkIndex;
     }
 
     private void LateUpdate()
     {
         if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
         {
-            PointerEventData pointerData = new PointerEventData(EventSystem.current)
-            {
-                position = Input.mousePosition
-            };
-            List<RaycastResult> results = new List<RaycastResult>();
-            EventSystem.current.RaycastAll(pointerData, results);
+            TextMeshProUGUI clickedText = GetTopmostValidTMP();
 
-            foreach (var result in results)
+            if (clickedText != null)
             {
-                var tmp = result.gameObject.GetComponent<TextMeshProUGUI>();
-                if (tmp != null)
+                int linkIndex = TMP_TextUtilities.FindIntersectingLink(clickedText, Input.mousePosition, null);
+                if (linkIndex != -1)
                 {
-                    int linkIndex = TMP_TextUtilities.FindIntersectingLink(tmp, Input.mousePosition, null);
-                    if (linkIndex != -1)
-                    {
-                        TMP_LinkInfo linkInfo = tmp.textInfo.linkInfo[linkIndex];
-                        string linkId = linkInfo.GetLinkID();
+                    TMP_LinkInfo linkInfo = clickedText.textInfo.linkInfo[linkIndex];
+                    string linkId = linkInfo.GetLinkID();
 
-                        if (Input.GetMouseButtonDown(0))
-                            OnLinkLeftClick(linkId);
-                        else if (Input.GetMouseButtonDown(1))
-                            OnLinkRightClick(linkId);
-
-                        break;
-                    }
+                    if (Input.GetMouseButtonDown(0))
+                        OnLinkLeftClick(linkId);
+                    else if (Input.GetMouseButtonDown(1))
+                        OnLinkRightClick(linkId);
                 }
             }
         }
+    }
+
+    private TextMeshProUGUI GetTopmostValidTMP()
+    {
+        PointerEventData pointerData = new PointerEventData(EventSystem.current)
+        {
+            position = Input.mousePosition
+        };
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointerData, results);
+
+        foreach (var result in results)
+        {
+            if (result.gameObject.TryGetComponent<TextMeshProUGUI>(out var tmp))
+            {
+                return tmp;
+            }
+
+            if (result.gameObject.TryGetComponent<Graphic>(out var graphic))
+            {
+                break;
+            }
+        }
+
+        return null;
     }
 
     private void OnLinkHoverStart(string linkId)
@@ -113,7 +114,7 @@ public class UIHandler : MonoBehaviour
     private void OnLinkLeftClick(string linkId)
     {
         string text = UIToolTipRegistry.Instance.RetrieveTooltip(linkId);
-        UIFactory.Instance.CreateNewUIWindow($"{linkId}", text, Color.white, Color.blue, 36);
+        UIFactory.Instance.CreateNewUIWindow($"{linkId}", Input.mousePosition, new Vector2(0.5f, 0.5f), text, Color.white, Color.blue, 36);
     }
 
     private void OnLinkRightClick(string linkId)
