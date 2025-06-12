@@ -24,7 +24,7 @@ namespace ItemSystem.Editor
         public static void ShowWindow()
         {
             ItemSystemEditor window = GetWindow<ItemSystemEditor>("Item System");
-            window.minSize = new Vector2(700, 400);
+            window.minSize = new Vector2(800, 500);
 
             AssetDatabase.SaveAssets();
         }
@@ -33,7 +33,7 @@ namespace ItemSystem.Editor
         {
             m_Root = rootVisualElement;
 
-            m_MainTabMenu = new TabbedMenu(new string[] { "ItemModules", "ItemContainers", "StatsModules", "FileManager", "Tags", "Settings" }, OnMainTabChanged);
+            m_MainTabMenu = new TabbedMenu(new string[] { "ItemModules", "ItemContainers", "StatsModules", "ToolTips", "FileManager", "Tags", "Settings" }, OnMainTabChanged);
             m_MainTabContent = new VisualElement();
 
             m_MainTabContent.style.flexDirection = FlexDirection.Column;
@@ -89,6 +89,10 @@ namespace ItemSystem.Editor
                     m_MainTabContent?.Clear();
                     m_MainTabContent.Add(new TagManagerTab(m_InspectorValueChangeCallback, m_TreeviewSelectionChangeCallback));
                     break;
+                case EMainTabType.ToolTips:
+                    m_MainTabContent?.Clear();
+                    m_MainTabContent.Add(new ToolTipManagerTab(m_InspectorValueChangeCallback, m_TreeviewSelectionChangeCallback));
+                    break;
 
                 default:
                     break;
@@ -101,6 +105,7 @@ namespace ItemSystem.Editor
             ItemModules,
             ItemContainers,
             StatsModules,
+            ToolTips,
             Tags,
             FileManager
         }

@@ -14,13 +14,13 @@ namespace ItemSystem.MainModule
     {
         [SerializeField] private string m_TypeName = "NewType";
         [SerializeField] private GUID m_TypeGUID;
+        [SerializeField] private SO_ToolTip[] m_ToolTips;
         [SerializeField] private List<SO_Stat> m_TypeStats = new List<SO_Stat>();
         [SerializeField] private SO_Tag[] m_Tags;
 
         private Dictionary<string, SO_Stat> m_Stats = new Dictionary<string, SO_Stat>();
 
         [ItemToolkitAccess] public string TypeName { get => m_TypeName; set => m_TypeName = value; }
-        [ItemToolkitAccess] public SO_Tag[] Tags { get => m_Tags; set => m_Tags = value; }
 
         [ItemToolkitAccess]
         public Dictionary<string, SO_Stat> Stats
@@ -35,6 +35,9 @@ namespace ItemSystem.MainModule
                 m_Stats = value;
             }
         }
+
+        [ItemToolkitAccess] public SO_ToolTip[] ToolTips { get => m_ToolTips; set => m_ToolTips = value; }
+        [ItemToolkitAccess] public SO_Tag[] Tags { get => m_Tags; set => m_Tags = value; }
 
         public string ModuleName { get => m_TypeName; set => m_TypeName = value; }
         public GUID ModuleGUID { get => m_TypeGUID; set => m_TypeGUID = value; }

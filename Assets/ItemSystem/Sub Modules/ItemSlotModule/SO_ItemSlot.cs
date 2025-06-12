@@ -24,6 +24,7 @@ namespace ItemSystem.SubModules
         [SerializeField] private SO_Class_Type[] m_AllowedTypes;
         [SerializeField] private SO_Class_Type[] m_AllowedTags;
         [SerializeField] private EAllowedConditions m_AllowConidtions;
+        [SerializeField] private SO_ToolTip[] m_ToolTips;
         [SerializeField] private SO_Tag[] m_Tags;
 
         public SO_Item StoredItem
@@ -51,33 +52,32 @@ namespace ItemSystem.SubModules
                 }
 
                 switch (m_AllowConidtions)
-                    {
-                        case EAllowedConditions.ClassOrTypeOrTag:
-                            if (m_AllowedClasses.Contains(value.Class) || m_AllowedTypes.Contains(value.Class.Types[value.TypeIndex]) || tagMatch)
-                            {
+                {
+                    case EAllowedConditions.ClassOrTypeOrTag:
+                        if (m_AllowedClasses.Contains(value.Class) || m_AllowedTypes.Contains(value.Class.Types[value.TypeIndex]) || tagMatch)
+                        {
+                            m_StoredItem = value;
+                        }
+                        else
+                        {
+                            Debug.Log("Nope, not allowed in this slot!");
+                        }
+                        break;
 
-                                m_StoredItem = value;
-                            }
-                            else
-                            {
-                                Debug.Log("Nope, not allowed in this slot!");
-                            }
-                            break;
+                    case EAllowedConditions.ClassAndTypeAndTag:
+                        if (m_AllowedClasses.Contains(value.Class) && m_AllowedTypes.Contains(value.Class.Types[value.TypeIndex]) && tagMatch)
+                        {
+                            m_StoredItem = value;
+                        }
+                        else
+                        {
+                            Debug.Log("Nope, not allowed in this slot!");
+                        }
+                        break;
 
-                        case EAllowedConditions.ClassAndTypeAndTag:
-                            if (m_AllowedClasses.Contains(value.Class) && m_AllowedTypes.Contains(value.Class.Types[value.TypeIndex]) && tagMatch)
-                            {
-                                m_StoredItem = value;
-                            }
-                            else
-                            {
-                                Debug.Log("Nope, not allowed in this slot!");
-                            }
-                            break;
-
-                        default:
-                            break;
-                    }
+                    default:
+                        break;
+                }
             }
         }
 
@@ -85,6 +85,7 @@ namespace ItemSystem.SubModules
         [ItemToolkitAccess] public SO_Item_Class[] AllowedClasses { get => m_AllowedClasses; set => m_AllowedClasses = value; }
         [ItemToolkitAccess] public SO_Class_Type[] AllowedTypes { get => m_AllowedTypes; set => m_AllowedTypes = value; }
         [ItemToolkitAccess] public EAllowedConditions AllowConidtions { get => m_AllowConidtions; set => m_AllowConidtions = value; }
+        [ItemToolkitAccess] public SO_ToolTip[] ToolTips { get => m_ToolTips; set => m_ToolTips = value; }
         [ItemToolkitAccess] public SO_Tag[] Tags { get => m_Tags; set => m_Tags = value; }
 
         public string ModuleName { get => m_SlotName; set => m_SlotName = value; }

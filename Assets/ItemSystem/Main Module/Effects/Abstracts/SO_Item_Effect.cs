@@ -24,6 +24,7 @@ namespace ItemSystem.MainModule
     {
         [SerializeField] private string m_EffectName = "NewEffect";
         [SerializeField] private GUID m_EffectGUID;
+        [SerializeField] private SO_ToolTip[] m_ToolTips;
         [SerializeField] private SO_Effect_Trigger m_Trigger;
         [SerializeField] private ETarget m_EffectTarget;
         [SerializeField] private EAllowedTargets m_AllowedEffectTargets;
@@ -40,6 +41,7 @@ namespace ItemSystem.MainModule
         [ItemToolkitAccess] public float TargetRange { get => m_TargetRange; set => m_TargetRange = value; }
 
         [ItemToolkitAccess] public SO_Effect_Trigger Trigger { get => m_Trigger; set => m_Trigger = value; }
+        [ItemToolkitAccess] public SO_ToolTip[] ToolTips { get => m_ToolTips; set => m_ToolTips = value; }
         [ItemToolkitAccess] public SO_Tag[] Tags { get => m_Tags; set => m_Tags = value; }
 
         public string ModuleName { get => m_EffectName; set => m_EffectName = value; }

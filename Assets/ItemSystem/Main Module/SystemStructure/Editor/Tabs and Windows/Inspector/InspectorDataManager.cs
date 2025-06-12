@@ -407,6 +407,14 @@ namespace ItemSystem.Editor
                 return _UIParent;
             }
 
+            if (_Property.PropertyType == typeof(SO_ToolTip[]))
+            {
+                InspectorList<SO_ToolTip> toolTipList = ConvertArrayToInspectorList<SO_ToolTip>(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, "ToolTips", true);
+
+                _UIParent.Add(toolTipList);
+                return _UIParent;
+            }
+
             Debug.LogWarning($"Could not generate InspectorList for Array {_ParentSO} : {_Property.Name}");
             return null;
         }

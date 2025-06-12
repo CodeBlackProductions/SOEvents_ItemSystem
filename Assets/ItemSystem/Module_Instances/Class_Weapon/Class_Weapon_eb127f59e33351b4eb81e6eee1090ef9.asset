@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Class_Weapon_eb127f59e33351b4eb81e6eee1090ef9
   m_EditorClassIdentifier: 
   m_ClassName: Class/Weapon
+  m_ToolTips: []
   m_Types:
   - {fileID: 11400000, guid: f363d8604e0147f499aab9cc122795fa, type: 2}
   - {fileID: 11400000, guid: 70f6c63838ca2aa4795f57b690b05312, type: 2}

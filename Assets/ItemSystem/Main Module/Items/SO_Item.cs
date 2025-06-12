@@ -19,6 +19,7 @@ namespace ItemSystem.MainModule
     {
         [SerializeField] private string m_ItemName = "NewItem";
         [SerializeField] private GUID m_ItemGUID;
+        [SerializeField] private SO_ToolTip[] m_ToolTips;
         [SerializeField] private SO_Item_Class m_Class;
         [SerializeField] private ERarity m_Rarity;
         [SerializeField] private SO_Item_Effect[] m_Effects;
@@ -28,13 +29,14 @@ namespace ItemSystem.MainModule
 
         private Dictionary<string, SO_Stat> m_Stats = new Dictionary<string, SO_Stat>();
 
+        [ItemToolkitAccess] public string ItemName { get => m_ItemName; set => m_ItemName = value; }
         [ItemToolkitAccess] public SO_Item_Class Class { get => m_Class; set => m_Class = value; }
         [ItemToolkitAccess] public int TypeIndex { get => m_TypeIndex; set => m_TypeIndex = value; }
         [ItemToolkitAccess] public ERarity Rarity { get => m_Rarity; set => m_Rarity = value; }
         [ItemToolkitAccess] public SO_Item_Effect[] Effects { get => m_Effects; set => m_Effects = value; }
-        [ItemToolkitAccess] public SO_Tag[] Tags { get => m_Tags; set => m_Tags = value; }
-        [ItemToolkitAccess] public string ItemName { get => m_ItemName; set => m_ItemName = value; }
-        [ItemToolkitAccess] public Dictionary<string, SO_Stat> Stats
+
+        [ItemToolkitAccess]
+        public Dictionary<string, SO_Stat> Stats
         {
             get => m_Stats; set
             {
@@ -47,12 +49,14 @@ namespace ItemSystem.MainModule
             }
         }
 
+        [ItemToolkitAccess] public SO_ToolTip[] ToolTips { get => m_ToolTips; set => m_ToolTips = value; }
+        [ItemToolkitAccess] public SO_Tag[] Tags { get => m_Tags; set => m_Tags = value; }
+
         public string ModuleName { get => m_ItemName; set => m_ItemName = value; }
         public GUID ModuleGUID { get => m_ItemGUID; set => m_ItemGUID = value; }
 
         private void OnValidate()
         {
-
             if (m_ItemStats != null && m_ItemStats.Count > 0)
             {
                 m_Stats.Clear();

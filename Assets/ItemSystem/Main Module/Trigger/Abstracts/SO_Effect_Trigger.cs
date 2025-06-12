@@ -14,11 +14,13 @@ namespace ItemSystem.MainModule
     {
         [SerializeField] private string m_TriggerName = "NewTrigger";
         [SerializeField] private GUID m_TriggerGUID;
+        [SerializeField] private SO_ToolTip[] m_ToolTips;
         [SerializeField] private SO_Tag[] m_Tags;
 
         protected List<SO_Item_Effect> m_Listener = new List<SO_Item_Effect>();
 
         [ItemToolkitAccess] public string TriggerName { get => m_TriggerName; set => m_TriggerName = value; }
+        [ItemToolkitAccess] public SO_ToolTip[] ToolTips { get => m_ToolTips; set => m_ToolTips = value; }
         [ItemToolkitAccess] public SO_Tag[] Tags { get => m_Tags; set => m_Tags = value; }
 
         public string ModuleName { get => m_TriggerName; set => m_TriggerName = value; }

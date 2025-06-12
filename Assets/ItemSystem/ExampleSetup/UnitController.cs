@@ -1,8 +1,7 @@
-using System;
-using System.Collections.Generic;
-using UnityEngine;
 using ItemSystem.MainModule;
 using ItemSystem.SubModules;
+using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
 /// This is just an example implementation of the item System.
@@ -68,6 +67,13 @@ public class UnitController : MonoBehaviour, IItemUser
             {
                 Debug.Log("Added:" + entry.EffectName);
             }
+        }
+
+        foreach (SO_Item item in Items)
+        {
+            string header = UIToolTipRegistry.Instance.RetrieveTooltip($"{item.ModuleName}/Header");
+            string body = UIToolTipRegistry.Instance.RetrieveTooltip($"{item.ModuleName}/Body");
+            UIFactory.CreateNewUIWindow($"{item.ModuleName}_UI", new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.75f, 0.75f), header, body, Color.white, Color.blue, 36);
         }
 
         ItemEventHandler.Instance.InvokeEvent<SO_Effect_Trigger_Interval>(this, this);
