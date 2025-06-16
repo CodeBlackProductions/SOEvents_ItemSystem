@@ -119,7 +119,7 @@ namespace ItemSystem.SubModules
         private void OnLinkLeftClick(string linkId)
         {
             string text = UIToolTipRegistry.Instance.RetrieveTooltip(linkId);
-            UIFactory.CreateNewUIWindow($"{linkId}", Input.mousePosition, new Vector2(0.75f, 0.75f), linkId, text, Color.white, Color.blue, 36);
+            UIFactory.CreateNewUIWindow($"{linkId}", Input.mousePosition, new Vector2(0.75f, 0.75f), linkId, text, Color.white, Color.blue, Color.red, 36);
         }
 
         private void OnLinkRightClick(string linkId)

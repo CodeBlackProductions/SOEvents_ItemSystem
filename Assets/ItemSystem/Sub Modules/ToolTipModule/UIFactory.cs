@@ -17,16 +17,16 @@ namespace ItemSystem.SubModules
     /// </summary>
     public static class UIFactory
     {
-        public static GameObject CreateNewUIWindow(string _UIName, Vector3 _MousePos, Vector2 _ScreenPercent, string _HeaderText, string _Text, Color _TextColor, Color _HyperlinkColor, int _FontSize)
+        public static GameObject CreateNewUIWindow(string _UIName, Vector3 _MousePos, Vector2 _ScreenPercent, string _HeaderText, string _Text, Color _TextColor, Color _HyperlinkColor, Color _ValueColor, int _FontSize)
         {
             Vector2 screenPos = new Vector2(_MousePos.x / Screen.width, _MousePos.y / Screen.height);
 
-            GameObject newUI = CreateNewUIWindow(_UIName, screenPos, _ScreenPercent, _HeaderText, _Text, _TextColor, _HyperlinkColor, _FontSize);
+            GameObject newUI = CreateNewUIWindow(_UIName, screenPos, _ScreenPercent, _HeaderText, _Text, _TextColor, _HyperlinkColor, _ValueColor, _FontSize);
 
             return newUI;
         }
 
-        public static GameObject CreateNewUIWindow(string _UIName, Vector2 _ScreenPos, Vector2 _ScreenPercent, string _HeaderText, string _Text, Color _TextColor, Color _HyperlinkColor, int _FontSize)
+        public static GameObject CreateNewUIWindow(string _UIName, Vector2 _ScreenPos, Vector2 _ScreenPercent, string _HeaderText, string _Text, Color _TextColor, Color _HyperlinkColor, Color _ValueColor, int _FontSize)
         {
             GameObject newUI = new GameObject(_UIName);
             Canvas canvas = newUI.AddComponent<Canvas>();
@@ -48,7 +48,7 @@ namespace ItemSystem.SubModules
             CreateUIElement<Image>(_UIName, "Background_Border", uiContainer, null, Color.black, new Vector2(0f, 0f), new Vector2(1f, 1f), true, false);
             CreateUIElement<Image>(_UIName, "Background", uiContainer, null, Color.gray, new Vector2(0.01f, 0.01f), new Vector2(0.99f, 0.99f), true, false);
 
-            GameObject textObj = CreateNewTextElement(_UIName, _Text, _TextColor, _HyperlinkColor, _FontSize, new Vector2(0.025f, 0.1f), new Vector2(0.95f, 0.85f), true);
+            GameObject textObj = CreateNewTextElement(_UIName, _Text, _TextColor, _HyperlinkColor, _ValueColor, _FontSize, new Vector2(0.025f, 0.1f), new Vector2(0.95f, 0.85f), true);
             TextMeshProUGUI text = textObj.GetComponent<TextMeshProUGUI>();
             text.transform.SetParent(uiContainer.transform, false);
             ResetRectTransform(textObj);
@@ -57,7 +57,7 @@ namespace ItemSystem.SubModules
             Button btn_TopBorder = CreateUIElement<Button>(_UIName, "TopBorder", uiContainer, null, Color.black, new Vector2(0f, 0.9f), new Vector2(1f, 1f), true, true).GetComponent<Button>();
             AddDragFunctionality(btn_TopBorder, rt);
 
-            GameObject headerObj = CreateNewTextElement(_UIName + "_Header_", _HeaderText, Color.white, _HyperlinkColor, 18, new Vector2(0.02f, 0.92f), new Vector2(0.98f, 0.98f), false);
+            GameObject headerObj = CreateNewTextElement(_UIName + "_Header_", _HeaderText, Color.white, _HyperlinkColor, _ValueColor, 18, new Vector2(0.02f, 0.92f), new Vector2(0.98f, 0.98f), false);
             TextMeshProUGUI headerText = headerObj.GetComponent<TextMeshProUGUI>();
             headerText.transform.SetParent(uiContainer.transform, false);
             ResetRectTransform(headerObj);
@@ -78,16 +78,16 @@ namespace ItemSystem.SubModules
             return newUI;
         }
 
-        public static GameObject CreateNewUIFromPrefab(GameObject _Prefab, string _UIName, Vector3 _MousePos, Vector2 _Pivot, string _HeaderText, string _Text, Color _HyperlinkColor)
+        public static GameObject CreateNewUIFromPrefab(GameObject _Prefab, string _UIName, Vector3 _MousePos, Vector2 _Pivot, string _HeaderText, string _Text, Color _HyperlinkColor, Color _ValueColor)
         {
             Vector2 _ScreenPos = new Vector2(_MousePos.x / Screen.width, _MousePos.y / Screen.height);
 
-            GameObject newUI = CreateNewUIFromPrefab(_Prefab, _UIName, _ScreenPos, _Pivot, _HeaderText, _Text, _HyperlinkColor);
+            GameObject newUI = CreateNewUIFromPrefab(_Prefab, _UIName, _ScreenPos, _Pivot, _HeaderText, _Text, _HyperlinkColor, _ValueColor);
 
             return newUI;
         }
 
-        public static GameObject CreateNewUIFromPrefab(GameObject _Prefab, string _UIName, Vector2 _ScreenPos, Vector2 _Pivot, string _HeaderText, string _Text, Color _HyperlinkColor)
+        public static GameObject CreateNewUIFromPrefab(GameObject _Prefab, string _UIName, Vector2 _ScreenPos, Vector2 _Pivot, string _HeaderText, string _Text, Color _HyperlinkColor, Color _ValueColor)
         {
             GameObject newUI = GameObject.Instantiate(_Prefab);
             newUI.name = _UIName;
@@ -116,7 +116,7 @@ namespace ItemSystem.SubModules
             else
             {
                 ContentText.text = CreateHyperlink(_Text, _HyperlinkColor);
-                ContentText.text = ImportValues(ContentText.text);
+                ContentText.text = ImportValues(ContentText.text, _ValueColor);
             }
 
             IEnumerable<Button> btn_draggables = newUI.GetComponentsInChildren<Button>().Where((b, c) => { return b.name.Contains("_BTNDrag"); });
@@ -133,7 +133,7 @@ namespace ItemSystem.SubModules
             else
             {
                 headerText.text = CreateHyperlink(_HeaderText, _HyperlinkColor);
-                headerText.text = ImportValues(headerText.text);
+                headerText.text = ImportValues(headerText.text, _ValueColor);
             }
 
             Button btn_CloseWindow = newUI.GetComponentsInChildren<Button>().Where((b, c) => { return b.name.Contains("_BTNClose"); }).FirstOrDefault();
@@ -289,12 +289,12 @@ namespace ItemSystem.SubModules
             trigger.triggers.Add(drag);
         }
 
-        public static GameObject CreateNewTextElement(string _UIName, string _Text, Color _TextColor, Color _HyperlinkColor, int _FontSize, Vector2 _MinAnchor, Vector2 _MaxAnchor, bool _IsRaycastTarget)
+        public static GameObject CreateNewTextElement(string _UIName, string _Text, Color _TextColor, Color _HyperlinkColor, Color _ValueColor, int _FontSize, Vector2 _MinAnchor, Vector2 _MaxAnchor, bool _IsRaycastTarget)
         {
             GameObject textObj = new GameObject(_UIName + "_Text");
             TextMeshProUGUI text = textObj.AddComponent<TextMeshProUGUI>();
             text.text = CreateHyperlink(_Text, _HyperlinkColor);
-            text.text = ImportValues(text.text);
+            text.text = ImportValues(text.text, _ValueColor);
             text.fontSize = _FontSize;
             text.color = _TextColor;
             text.rectTransform.anchorMin = _MinAnchor;
@@ -319,7 +319,7 @@ namespace ItemSystem.SubModules
             return text;
         }
 
-        public static string ImportValues(string _Text)
+        public static string ImportValues(string _Text, Color _ValueColor)
         {
             string text = _Text;
             List<string> substrings = GetSubstringsInBraces(text, '[', ']');
@@ -354,7 +354,7 @@ namespace ItemSystem.SubModules
                     if (propInfo != null)
                     {
                         object propValue = propInfo.GetValue(item);
-                        text = text.Replace("[" + subTTID + "]", propValue?.ToString() ?? string.Empty);
+                        text = text.Replace("[" + subTTID + "]", $"<color=#{UnityEngine.ColorUtility.ToHtmlStringRGBA(_ValueColor)}>{propValue?.ToString() ?? string.Empty}</color>");
                     }
                     else
                     {
@@ -372,7 +372,7 @@ namespace ItemSystem.SubModules
 
                         if (stat != null)
                         {
-                            text = text.Replace("[" + subTTID + "]", $"<color=red>{stat.GetStatValue()?.ToString() ?? string.Empty}</color>");
+                            text = text.Replace("[" + subTTID + "]", $"<color=#{UnityEngine.ColorUtility.ToHtmlStringRGBA(_ValueColor)}>{stat.GetStatValue()?.ToString() ?? string.Empty}</color>");
                         }
                         else
                         {

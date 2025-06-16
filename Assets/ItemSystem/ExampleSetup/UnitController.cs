@@ -73,7 +73,7 @@ public class UnitController : MonoBehaviour, IItemUser
         {
             string header = UIToolTipRegistry.Instance.RetrieveTooltip($"{item.ModuleName}/Header");
             string body = UIToolTipRegistry.Instance.RetrieveTooltip($"{item.ModuleName}/Body");
-            UIFactory.CreateNewUIWindow($"{item.ModuleName}_UI", new Vector2(0.5f, 0.5f), new Vector2(0.75f, 0.75f), header, body, Color.white, Color.blue, 36);
+            UIFactory.CreateNewUIWindow($"{item.ModuleName}_UI", new Vector2(0.5f, 0.5f), new Vector2(0.75f, 0.75f), header, body, Color.white, Color.blue,Color.red, 36);
         }
 
         ItemEventHandler.Instance.InvokeEvent<SO_Effect_Trigger_Interval>(this, this);
