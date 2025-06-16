@@ -52,9 +52,9 @@ namespace ItemSystem.MainModule
                 m_Stats.Clear();
                 foreach (SO_Stat stat in m_ClassStats)
                 {
-                    if (stat != null && !m_Stats.ContainsKey(stat.StatName))
+                    if (stat != null && !m_Stats.ContainsKey(stat.TargetUserStat))
                     {
-                        m_Stats.Add(stat.StatName, stat);
+                        m_Stats.Add(stat.TargetUserStat, stat);
                     }
                 }
             }

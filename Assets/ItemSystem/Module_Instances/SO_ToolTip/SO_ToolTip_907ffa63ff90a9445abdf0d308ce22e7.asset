@@ -14,4 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ToolTipName: TT/ItemExample/Body
   m_ToolTipID: Item/OnHit/MeleeBasic/Body
-  m_ToolTipText: This item deals {Damage}!<br>Who would have thought...
+  m_ToolTipText: This item deals [(Module:Item/OnHit/MeleeBasic)(Stat:Damage)] {Damage}!<br>Who
+    would have thought...

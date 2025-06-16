@@ -1,8 +1,11 @@
+using ItemSystem.MainModule;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using TMPro;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -113,6 +116,7 @@ namespace ItemSystem.SubModules
             else
             {
                 ContentText.text = CreateHyperlink(_Text, _HyperlinkColor);
+                ContentText.text = ImportValues(ContentText.text);
             }
 
             IEnumerable<Button> btn_draggables = newUI.GetComponentsInChildren<Button>().Where((b, c) => { return b.name.Contains("_BTNDrag"); });
@@ -129,6 +133,7 @@ namespace ItemSystem.SubModules
             else
             {
                 headerText.text = CreateHyperlink(_HeaderText, _HyperlinkColor);
+                headerText.text = ImportValues(headerText.text);
             }
 
             Button btn_CloseWindow = newUI.GetComponentsInChildren<Button>().Where((b, c) => { return b.name.Contains("_BTNClose"); }).FirstOrDefault();
@@ -289,6 +294,7 @@ namespace ItemSystem.SubModules
             GameObject textObj = new GameObject(_UIName + "_Text");
             TextMeshProUGUI text = textObj.AddComponent<TextMeshProUGUI>();
             text.text = CreateHyperlink(_Text, _HyperlinkColor);
+            text.text = ImportValues(text.text);
             text.fontSize = _FontSize;
             text.color = _TextColor;
             text.rectTransform.anchorMin = _MinAnchor;
@@ -302,7 +308,7 @@ namespace ItemSystem.SubModules
         public static string CreateHyperlink(string _Text, Color _Color)
         {
             string text = _Text;
-            List<string> substrings = GetSubstringsInBraces(text);
+            List<string> substrings = GetSubstringsInBraces(text, '{', '}');
 
             foreach (string subTTID in substrings)
             {
@@ -313,15 +319,112 @@ namespace ItemSystem.SubModules
             return text;
         }
 
-        private static List<string> GetSubstringsInBraces(string _Input)
+        public static string ImportValues(string _Text)
         {
-            var matches = Regex.Matches(_Input, @"\{([^}]*)\}");
+            string text = _Text;
+            List<string> substrings = GetSubstringsInBraces(text, '[', ']');
+
+            foreach (string subTTID in substrings)
+            {
+                List<string> subTTIDKeys = GetSubstringsInBraces(text, '(', ')');
+                ScriptableObject item = null;
+                string propName = null;
+                string statName = null;
+
+                foreach (string subTTIDKey in subTTIDKeys)
+                {
+                    if (subTTIDKey.Contains("Module:"))
+                    {
+                        string moduleName = subTTIDKey.Replace("Module:", "");
+                        item = LoadAssetByName<ScriptableObject>(moduleName);
+                    }
+                    else if (subTTIDKey.Contains("Property:"))
+                    {
+                        propName = subTTIDKey.Replace("Property:", "");
+                    }
+                    else if (subTTIDKey.Contains("Stat:"))
+                    {
+                        statName = subTTIDKey.Replace("Stat:", "");
+                    }
+                }
+
+                if (item != null && !string.IsNullOrEmpty(propName))
+                {
+                    var propInfo = item.GetType().GetProperty(propName, BindingFlags.Public | BindingFlags.Instance);
+                    if (propInfo != null)
+                    {
+                        object propValue = propInfo.GetValue(item);
+                        text = text.Replace("[" + subTTID + "]", propValue?.ToString() ?? string.Empty);
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Property '{propName}' not found in item '{item.name}'.");
+                    }
+                }
+                else if (item != null && !string.IsNullOrEmpty(statName))
+                {
+                    var propInfo = item.GetType().GetProperty("Stats", BindingFlags.Public | BindingFlags.Instance);
+                    if (propInfo != null)
+                    {
+                        SO_Stat stat;
+                        Dictionary<string, SO_Stat> propValue = propInfo.GetValue(item) as Dictionary<string, SO_Stat>;
+                        propValue.TryGetValue(statName, out stat);
+
+                        if (stat != null)
+                        {
+                            text = text.Replace("[" + subTTID + "]", $"<color=red>{stat.GetStatValue()?.ToString() ?? string.Empty}</color>");
+                        }
+                        else
+                        {
+                            Debug.LogWarning($"Stat '{statName}' not found in item '{item.name}'.");
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Stat Dictionary not found in item '{item.name}'.");
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning($"Item or property not found for ID '{subTTID}'.");
+                }
+            }
+
+            return text;
+        }
+
+        private static List<string> GetSubstringsInBraces(string _Input, char _MarkerOpen, char _MarkerClose)
+        {
+            string matchString = @"\{([^}]*)\}";
+            matchString = matchString.Replace("{", _MarkerOpen.ToString());
+            matchString = matchString.Replace("}", _MarkerClose.ToString());
+            var matches = Regex.Matches(_Input, matchString);
             var results = new List<string>();
             foreach (Match match in matches)
             {
                 results.Add(match.Groups[1].Value);
             }
             return results;
+        }
+
+        private static T LoadAssetByName<T>(string _AssetName) where T : Object
+        {
+            string[] guids = AssetDatabase.FindAssets(" t:" + typeof(T).Name);
+            if (guids.Length > 0)
+            {
+                for (int i = 0; i < guids.Length; i++)
+                {
+                    string path = AssetDatabase.GUIDToAssetPath(guids[i]);
+                    ScriptableObject asset = AssetDatabase.LoadAssetAtPath<ScriptableObject>(path);
+                    if (asset != null && asset is IItemModule && (asset as IItemModule).ModuleName == _AssetName)
+                    {
+                        return asset as T;
+                    }
+                }
+            }
+
+            Debug.LogError($"Asset '{_AssetName}' of type {typeof(T).Name} not found.");
+            return null;
         }
     }
 }
