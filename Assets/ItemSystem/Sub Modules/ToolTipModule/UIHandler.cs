@@ -107,13 +107,11 @@ namespace ItemSystem.SubModules
         private void OnLinkHoverStart(string linkId)
         {
             Debug.Log($"Hover Start: {linkId}");
-            // Hier gewünschte Logik für Hover-Start
         }
 
         private void OnLinkHoverEnd(string linkId)
         {
             Debug.Log($"Hover End: {linkId}");
-            // Hier gewünschte Logik für Hover-Ende
         }
 
         private void OnLinkLeftClick(string linkId)
@@ -125,7 +123,6 @@ namespace ItemSystem.SubModules
         private void OnLinkRightClick(string linkId)
         {
             Debug.Log($"Right Click: {linkId}");
-            // Hier gewünschte Logik für Rechtsklick
         }
     }
 }

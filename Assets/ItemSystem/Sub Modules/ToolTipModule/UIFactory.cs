@@ -236,7 +236,7 @@ namespace ItemSystem.SubModules
             trigger.triggers.Add(drag);
         }
 
-        public static void AddResizeFunctionality(Button handleButton, RectTransform target, Vector2 _MinSize)
+        private static void AddResizeFunctionality(Button handleButton, RectTransform target, Vector2 _MinSize)
         {
             Vector2 startMousePos = Vector2.zero;
             Vector2 startSize = Vector2.zero;
