@@ -312,8 +312,8 @@ namespace ItemSystem.SubModules
 
             foreach (string subTTID in substrings)
             {
-                string subTTContent = UIToolTipRegistry.Instance.RetrieveTooltip(subTTID);
-                text = text.Replace("{" + subTTID + "}", $"<link=\"{subTTID}\"><color=#{UnityEngine.ColorUtility.ToHtmlStringRGBA(_Color)}>{subTTID}</color></link>");
+                string subTTDisplay = UIToolTipRegistry.Instance.RetrieveTooltipHyperlinkText(subTTID);
+                text = text.Replace("{" + subTTID + "}", $"<link=\"{subTTID}\"><color=#{UnityEngine.ColorUtility.ToHtmlStringRGBA(_Color)}>{subTTDisplay}</color></link>");
             }
 
             return text;

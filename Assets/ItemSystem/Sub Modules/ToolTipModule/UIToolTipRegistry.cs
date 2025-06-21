@@ -24,7 +24,7 @@ namespace ItemSystem.SubModules
             }
         }
 
-        private Dictionary<string, string> m_ToolTipRegistry = new Dictionary<string, string>();
+        private Dictionary<string, string[]> m_ToolTipRegistry = new Dictionary<string, string[]>();
 
         private void Start()
         {
@@ -33,7 +33,7 @@ namespace ItemSystem.SubModules
             {
                 if (!string.IsNullOrEmpty(toolTip.ToolTipID) && !string.IsNullOrEmpty(toolTip.ToolTipText))
                 {
-                    RegisterToolTip(toolTip.ToolTipID, toolTip.ToolTipText);
+                    RegisterToolTip(toolTip.ToolTipID, new string[] { toolTip.HyperlinkText, toolTip.ToolTipText });
                 }
             }
         }
@@ -45,14 +45,23 @@ namespace ItemSystem.SubModules
             return guids.Select(guid => AssetDatabase.LoadAssetAtPath<T>(AssetDatabase.GUIDToAssetPath(guid))).ToList();
         }
 
-        public void RegisterToolTip(string _ID, string _Text)
+        public void RegisterToolTip(string _ID, string[] _Content)
         {
-            m_ToolTipRegistry.Add(_ID, _Text);
+            m_ToolTipRegistry.Add(_ID, _Content);
         }
 
         public string RetrieveTooltip(string _ID)
         {
-            return m_ToolTipRegistry.TryGetValue(_ID, out string tooltipText) ? tooltipText : null;
+            m_ToolTipRegistry.TryGetValue(_ID, out string[] content);
+            string text = content != null && content.Length > 1 ? content[1] : string.Empty;
+            return text;
+        }
+
+        public string RetrieveTooltipHyperlinkText(string _ID)
+        {
+            m_ToolTipRegistry.TryGetValue(_ID, out string[] content);
+            string text = content != null && content.Length > 1 ? content[0] : string.Empty;
+            return text;
         }
     }
 }
