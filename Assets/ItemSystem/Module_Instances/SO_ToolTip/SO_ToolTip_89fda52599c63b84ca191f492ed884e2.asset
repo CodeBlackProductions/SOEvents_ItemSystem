@@ -14,4 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ToolTipName: TT/Damage
   m_ToolTipID: Damage
+  m_HyperlinkText: Damage
   m_ToolTipText: The value of damage before armor or other effects.
+  m_Tags:
+  - {fileID: 11400000, guid: 40e436319fc34514b97e65e3ffeacc4f, type: 2}

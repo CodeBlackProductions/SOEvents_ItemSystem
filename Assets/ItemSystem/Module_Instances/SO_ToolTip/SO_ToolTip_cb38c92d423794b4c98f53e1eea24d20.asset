@@ -14,4 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ToolTipName: TT/ItemExample/Header
   m_ToolTipID: Item/OnHit/MeleeBasic/Header
+  m_HyperlinkText: Head
   m_ToolTipText: '[(Module:Item/OnHit/MeleeBasic)(Property:ItemName)]'
+  m_Tags:
+  - {fileID: 11400000, guid: 0dfef4beabb9b8643a59199d8f2f820b, type: 2}
