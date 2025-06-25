@@ -23,7 +23,7 @@ namespace ItemSystem.Editor
             Add(m_Root);
         }
 
-        protected override void OnSubTabChanged(Type _ModuleType, bool _ShowAddAndRemove, bool _LoadSubTypes, bool _ShowInspectorPanel, bool _LoadLocalFiles)
+        protected override void OnSubTabChanged(System.Type _ModuleType, bool _ShowAddAndRemove, bool _LoadSubTypes, bool _ShowInspectorPanel, bool _LoadLocalFiles)
         {
             if (m_FilterPanel != null)
             {
@@ -42,10 +42,10 @@ namespace ItemSystem.Editor
             m_SubTabMenu?.Clear();
             m_SubTabContent?.Clear();
 
-            m_SubTabMenu = new TabbedMenu(new KeyValuePair<string, Type>[]
+            m_SubTabMenu = new TabbedMenu(new KeyValuePair<string, System.Type>[]
             {
-           new KeyValuePair<string, Type>("ItemSlots", typeof(SO_ItemSlot)),
-           new KeyValuePair<string, Type>("ItemPools", null),
+           new KeyValuePair<string, System.Type>("ItemSlots", typeof(SO_ItemSlot)),
+           new KeyValuePair<string, System.Type>("ItemPools", null),
             }, OnSubTabChanged, true, true, true, false);
 
             m_SubTabContent = new VisualElement();

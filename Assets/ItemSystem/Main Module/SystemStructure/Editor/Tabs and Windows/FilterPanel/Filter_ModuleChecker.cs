@@ -16,7 +16,7 @@ namespace ItemSystem.Editor
     /// </remarks>
     public static class Filter_ModuleChecker
     {
-        private static Type[] m_DictionaryInterfaces =
+        private static System.Type[] m_DictionaryInterfaces =
       {
           typeof(IDictionary<,>),
           typeof(System.Collections.IDictionary),
@@ -115,7 +115,7 @@ namespace ItemSystem.Editor
             return false;
         }
 
-        private static bool IsDictionary(Type _Type)
+        private static bool IsDictionary(System.Type _Type)
         {
             return m_DictionaryInterfaces
              .Any(dictInterface =>

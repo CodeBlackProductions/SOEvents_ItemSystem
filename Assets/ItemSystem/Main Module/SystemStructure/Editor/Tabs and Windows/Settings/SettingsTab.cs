@@ -32,7 +32,7 @@ namespace ItemSystem.Editor
             m_Root.Add(m_SubTabInspectorPanel);
         }
 
-        protected override void OnSubTabChanged(Type _ModuleType, bool _ShowAddAndRemove, bool _LoadSubTypes, bool _ShowInspectorPanel, bool _LoadLocalFiles)
+        protected override void OnSubTabChanged(System.Type _ModuleType, bool _ShowAddAndRemove, bool _LoadSubTypes, bool _ShowInspectorPanel, bool _LoadLocalFiles)
         {
             return;
         }

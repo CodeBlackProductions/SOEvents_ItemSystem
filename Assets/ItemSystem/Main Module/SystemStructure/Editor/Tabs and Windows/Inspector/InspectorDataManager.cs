@@ -23,7 +23,7 @@ namespace ItemSystem.Editor
             String, Int, Float, Bool, Vector2, Vector3, Color
         }
 
-        private static Dictionary<Type, ETypes> m_Typedictionary = new Dictionary<Type, ETypes>()
+        private static Dictionary<System.Type, ETypes> m_Typedictionary = new Dictionary<System.Type, ETypes>()
         {
             { typeof(string), ETypes.String },
             { typeof(int), ETypes.Int },
@@ -573,11 +573,8 @@ namespace ItemSystem.Editor
                         EditorUtility.SetDirty(_ParentSO);
                         AssetDatabase.SaveAssets();
                         _InspectorValueChangeCallback?.Invoke(true);
+                        _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
                     });
-
-                    boolField.RegisterCallback<FocusOutEvent>(t =>
-                    _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback)
-                    );
 
                     return _UIParent;
 

@@ -33,13 +33,13 @@ namespace ItemSystem.Editor
             m_SubTabMenu?.Clear();
             m_SubTabContent?.Clear();
 
-            List<Type> statTypes = ItemEditor_AssetLoader.LoadDerivedTypes(typeof(SO_Stat)).ToList();
-            List<KeyValuePair<string, Type>> statTypePairs = new List<KeyValuePair<string, Type>>();
+            List<System.Type> statTypes = ItemEditor_AssetLoader.LoadDerivedTypes(typeof(SO_Stat)).ToList();
+            List<KeyValuePair<string, System.Type>> statTypePairs = new List<KeyValuePair<string, System.Type>>();
 
-            foreach (Type type in statTypes)
+            foreach (System.Type type in statTypes)
             {
                 string name = type.Name.Replace("SO_Stat_", "");
-                statTypePairs.Add(new KeyValuePair<string, Type>(name, type));
+                statTypePairs.Add(new KeyValuePair<string, System.Type>(name, type));
             }
 
             m_SubTabMenu = new TabbedMenu(statTypePairs.ToArray(), OnSubTabChanged, true, true, true, false);
@@ -59,7 +59,7 @@ namespace ItemSystem.Editor
             m_Root.Add(m_SubTabContent);
         }
 
-        protected override void OnSubTabChanged(Type _ModuleType, bool _ShowAddAndRemove, bool _LoadSubTypes, bool _ShowInspectorPanel, bool _LoadLocalFiles)
+        protected override void OnSubTabChanged(System.Type _ModuleType, bool _ShowAddAndRemove, bool _LoadSubTypes, bool _ShowInspectorPanel, bool _LoadLocalFiles)
         {
             if (m_FilterPanel != null)
             {

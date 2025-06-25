@@ -64,8 +64,6 @@ namespace ItemSystem.MainModule
         /// <param name="_Target"><see cref="IItemUser"/> that gets hit by the effect</param>
         public void OnInvoke(IItemUser _Source, IItemUser _Target)
         {
-            List<IItemUser> targets = GetTargetsInRange(_Source.ImplementingUser.transform.position, m_TargetRange);
-
             switch (m_EffectTarget)
             {
                 case ETarget.Self:
@@ -77,6 +75,8 @@ namespace ItemSystem.MainModule
                     break;
 
                 case ETarget.TargetsInRangeSelf:
+
+                    List<IItemUser> targets = GetTargetsInRange(_Source.ImplementingUser.transform.position, m_TargetRange);
 
                     foreach (var target in targets)
                     {

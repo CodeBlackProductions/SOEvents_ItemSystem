@@ -31,6 +31,11 @@ namespace ItemSystem.MainModule
 
         public static event System.Action Initialized;
 
+        public System.Action<string> OnHyperlinkHoverStart;
+        public System.Action<string> OnHyperlinkHoverEnd;
+        public System.Action<string> OnHyperlinkClickLeft;
+        public System.Action<string> OnHyperlinkClickRight;
+
         private Dictionary<System.Type, List<ScriptableObject>> events = new Dictionary<System.Type, List<ScriptableObject>>();
 
         /// <summary>

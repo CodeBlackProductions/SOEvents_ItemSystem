@@ -13,7 +13,7 @@ namespace ItemSystem.Editor
     /// </summary>
     public static class ItemEditor_InstanceManager
     {
-        public static void CreateInstance<T>(T _TemporarySOInstance, Type _ModuleType) where T : ScriptableObject
+        public static void CreateInstance<T>(T _TemporarySOInstance, System.Type _ModuleType) where T : ScriptableObject
         {
             if (_TemporarySOInstance.IsConvertibleTo<IItemModule>(true))
             {
@@ -55,7 +55,7 @@ namespace ItemSystem.Editor
             }
         }
 
-        public static void CopyInstance<T>(T _CopySOInstance, Type _ModuleType)
+        public static void CopyInstance<T>(T _CopySOInstance, System.Type _ModuleType)
         {
             ScriptableObject temporarySOInstance = ScriptableObject.CreateInstance(_ModuleType);
 

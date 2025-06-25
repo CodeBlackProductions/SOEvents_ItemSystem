@@ -16,13 +16,13 @@ namespace ItemSystem.Editor
         private VisualElement m_ParentView = new VisualElement();
         private ListView m_ListView;
         private List<T> m_Items;
-        private List<Type> m_TypesToExclude = new List<Type>();
+        private List<System.Type> m_TypesToExclude = new List<System.Type>();
 
         public Action<T> ItemAddCallback;
         public Action<T> ItemRemoveCallback;
         public Action<T> ItemSelectCallback;
 
-        public InspectorList(List<T> _SourceList, List<Type> _TypesToExclude, string _Title, bool _ShowAddAndRemove)
+        public InspectorList(List<T> _SourceList, List<System.Type> _TypesToExclude, string _Title, bool _ShowAddAndRemove)
         {
             if (_SourceList == null)
             {
@@ -41,7 +41,7 @@ namespace ItemSystem.Editor
             InstantiateUI(_Title, _ShowAddAndRemove);
         }
 
-        public InspectorList(T[] _SourceArray, List<Type> _TypesToExclude, string _Title, bool _ShowAddAndRemove)
+        public InspectorList(T[] _SourceArray, List<System.Type> _TypesToExclude, string _Title, bool _ShowAddAndRemove)
         {
             if (_SourceArray == null)
             {
@@ -60,7 +60,7 @@ namespace ItemSystem.Editor
             InstantiateUI(_Title, _ShowAddAndRemove);
         }
 
-        public InspectorList(Dictionary<string, T> _SourceDictionary, List<Type> _TypesToExclude, string _Title, bool _ShowAddAndRemove)
+        public InspectorList(Dictionary<string, T> _SourceDictionary, List<System.Type> _TypesToExclude, string _Title, bool _ShowAddAndRemove)
         {
             if (_SourceDictionary == null)
             {

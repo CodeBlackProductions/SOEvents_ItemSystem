@@ -33,7 +33,7 @@ namespace ItemSystem.SubModules
         public string ModuleName { get => m_StatName; set => m_StatName = value; }
         public GUID ModuleGUID { get => m_StatGUID; set => m_StatGUID = value; }
 
-        public abstract Type GetStatType();
+        public abstract System.Type GetStatType();
 
         public abstract object GetStatValue();
 

@@ -20,8 +20,8 @@ namespace ItemSystem.Editor
         private InspectorPanel m_InspectorPanel;
         private Button m_FinishButton;
 
-        private static Dictionary<string, Type> m_ModuleTypeRegistry = new Dictionary<string, Type>();
-        private static Type m_SelectedModuleType;
+        private static Dictionary<string, System.Type> m_ModuleTypeRegistry = new Dictionary<string, System.Type>();
+        private static System.Type m_SelectedModuleType;
 
         private Action<bool> OnClose;
 
@@ -34,7 +34,7 @@ namespace ItemSystem.Editor
             window.OnClose += _OnWindowClosedCallback;
         }
 
-        public static void ShowWindow(Action<bool> _OnWindowClosedCallback, Type _SelectedType)
+        public static void ShowWindow(Action<bool> _OnWindowClosedCallback, System.Type _SelectedType)
         {
             m_SelectedModuleType = _SelectedType;
 
@@ -51,7 +51,7 @@ namespace ItemSystem.Editor
 
             m_ModuleSelection = new DropdownField("Module type");
 
-            IEnumerable<Type> moduleTypes = ItemEditor_AssetLoader.LoadAllBaseTypes();
+            IEnumerable<System.Type> moduleTypes = ItemEditor_AssetLoader.LoadAllBaseTypes();
 
             foreach (var type in moduleTypes)
             {
@@ -63,7 +63,7 @@ namespace ItemSystem.Editor
 
             m_ModuleSelection?.RegisterValueChangedCallback((evt) =>
             {
-                Type type = m_ModuleTypeRegistry[evt.newValue];
+                System.Type type = m_ModuleTypeRegistry[evt.newValue];
 
                 if (type == null)
                 {
@@ -115,8 +115,8 @@ namespace ItemSystem.Editor
             m_InspectorPanel?.Clear();
             m_SubModuleSelection?.choices?.Clear();
 
-            List<Type> types = new List<Type>();
-            Type panelType;
+            List<System.Type> types = new List<System.Type>();
+            System.Type panelType;
 
             types = ItemEditor_AssetLoader.LoadDerivedTypes(typeof(T)).ToList();
             panelType = typeof(T);
@@ -128,7 +128,7 @@ namespace ItemSystem.Editor
             m_SubModuleSelection?.RegisterValueChangedCallback((evt) => SetupInspectorPanel(types.Find((t) => GetModuleNameSubstring(t.Name) == evt.newValue), panelType));
         }
 
-        private void SetupInspectorPanel(Type _SubType, Type _ModuleType)
+        private void SetupInspectorPanel(System.Type _SubType, System.Type _ModuleType)
         {
             if (_SubType == null) { return; }
             ScriptableObject temporarySOInstance = CreateTemporaryInstance(_SubType);
@@ -137,7 +137,7 @@ namespace ItemSystem.Editor
             m_FinishButton.clicked += () => FinishSetup(temporarySOInstance, _SubType);
         }
 
-        private ScriptableObject CreateTemporaryInstance(Type _Type)
+        private ScriptableObject CreateTemporaryInstance(System.Type _Type)
         {
             if (_Type != null && typeof(ScriptableObject).IsAssignableFrom(_Type))
             {
@@ -152,7 +152,7 @@ namespace ItemSystem.Editor
             }
         }
 
-        private void FinishSetup(ScriptableObject _TemporarySOInstance, Type _ModuleType)
+        private void FinishSetup(ScriptableObject _TemporarySOInstance, System.Type _ModuleType)
         {
             if (_TemporarySOInstance != null)
             {

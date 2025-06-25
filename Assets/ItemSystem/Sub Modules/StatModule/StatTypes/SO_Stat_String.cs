@@ -10,7 +10,7 @@ public class SO_Stat_String : SO_Stat
 
     [ItemToolkitAccess] public string StatValue { get => m_Value; set => m_Value = value; }
 
-    public override Type GetStatType()
+    public override System.Type GetStatType()
     {
         return m_Value.GetType();
     }

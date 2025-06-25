@@ -1,3 +1,4 @@
+using ItemSystem.MainModule;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -104,25 +105,24 @@ namespace ItemSystem.SubModules
             return null;
         }
 
-        private void OnLinkHoverStart(string linkId)
+        private void OnLinkHoverStart(string _LinkID)
         {
-            Debug.Log($"Hover Start: {linkId}");
+            ItemEventHandler.Instance.OnHyperlinkHoverStart.Invoke(_LinkID);
         }
 
-        private void OnLinkHoverEnd(string linkId)
+        private void OnLinkHoverEnd(string _LinkID)
         {
-            Debug.Log($"Hover End: {linkId}");
+            ItemEventHandler.Instance.OnHyperlinkHoverEnd.Invoke(_LinkID);
         }
 
-        private void OnLinkLeftClick(string linkId)
+        private void OnLinkLeftClick(string _LinkID)
         {
-            string text = UIToolTipRegistry.Instance.RetrieveTooltip(linkId);
-            UIFactory.CreateNewUIWindow($"{linkId}", Input.mousePosition, new Vector2(0.75f, 0.75f), linkId, text, Color.white, Color.blue, Color.red, 36);
+            ItemEventHandler.Instance.OnHyperlinkClickLeft.Invoke(_LinkID);
         }
 
-        private void OnLinkRightClick(string linkId)
+        private void OnLinkRightClick(string _LinkID)
         {
-            Debug.Log($"Right Click: {linkId}");
+            ItemEventHandler.Instance.OnHyperlinkClickRight.Invoke(_LinkID);
         }
     }
 }

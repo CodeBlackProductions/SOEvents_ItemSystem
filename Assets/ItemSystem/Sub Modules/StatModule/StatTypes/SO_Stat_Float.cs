@@ -10,7 +10,7 @@ public class SO_Stat_Float : SO_Stat
 
     [ItemToolkitAccess] public float StatValue { get => m_Value; set => m_Value = value; }
 
-    public override Type GetStatType()
+    public override System.Type GetStatType()
     {
         return m_Value.GetType();
     }

@@ -32,13 +32,13 @@ namespace ItemSystem.Editor
             m_SubTabMenu?.Clear();
             m_SubTabContent?.Clear();
 
-            m_SubTabMenu = new TabbedMenu(new KeyValuePair<string, Type>[]
+            m_SubTabMenu = new TabbedMenu(new KeyValuePair<string, System.Type>[]
             {
-           new KeyValuePair<string, Type>("Items", typeof(SO_Item)),
-           new KeyValuePair<string, Type>("Classes", typeof(SO_Item_Class)),
-           new KeyValuePair<string, Type>("Types", typeof(SO_Class_Type)),
-           new KeyValuePair<string, Type>("Effects", typeof(SO_Item_Effect)),
-           new KeyValuePair<string, Type>("Triggers", typeof(SO_Effect_Trigger))
+           new KeyValuePair<string, System.Type>("Items", typeof(SO_Item)),
+           new KeyValuePair<string, System.Type>("Classes", typeof(SO_Item_Class)),
+           new KeyValuePair<string, System.Type>("Types", typeof(SO_Class_Type)),
+           new KeyValuePair<string, System.Type>("Effects", typeof(SO_Item_Effect)),
+           new KeyValuePair<string, System.Type>("Triggers", typeof(SO_Effect_Trigger))
             }, OnSubTabChanged, true, true, true, false);
 
             m_SubTabContent = new VisualElement();
@@ -56,7 +56,7 @@ namespace ItemSystem.Editor
             m_Root.Add(m_SubTabContent);
         }
 
-        protected override void OnSubTabChanged(Type _ModuleType, bool _ShowAddAndRemove, bool _LoadSubTypes, bool _ShowInspectorPanel, bool _LoadLocalFiles)
+        protected override void OnSubTabChanged(System.Type _ModuleType, bool _ShowAddAndRemove, bool _LoadSubTypes, bool _ShowInspectorPanel, bool _LoadLocalFiles)
         {
             if (m_FilterPanel != null)
             {

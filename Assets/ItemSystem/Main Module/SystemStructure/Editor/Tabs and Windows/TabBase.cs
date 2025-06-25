@@ -26,7 +26,7 @@ namespace ItemSystem.Editor
         protected Button m_BTN_SaveToFile;
         protected Button m_BTN_LoadIntoAssets;
 
-        protected abstract void OnSubTabChanged(Type _ModuleType, bool _ShowAddAndRemove, bool _LoadSubTypes, bool _ShowInspectorPanel, bool _LoadLocalFiles);
+        protected abstract void OnSubTabChanged(System.Type _ModuleType, bool _ShowAddAndRemove, bool _LoadSubTypes, bool _ShowInspectorPanel, bool _LoadLocalFiles);
 
         protected abstract void LoadHierarchy();
 

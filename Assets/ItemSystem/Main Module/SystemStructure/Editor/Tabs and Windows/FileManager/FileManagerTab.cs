@@ -24,7 +24,7 @@ namespace ItemSystem.Editor
             Add(m_Root);
         }
 
-        protected override void OnSubTabChanged(Type _ModuleType, bool _ShowAddAndRemove, bool _LoadSubTypes, bool _ShowInspectorPanel, bool _LoadLocalFiles)
+        protected override void OnSubTabChanged(System.Type _ModuleType, bool _ShowAddAndRemove, bool _LoadSubTypes, bool _ShowInspectorPanel, bool _LoadLocalFiles)
         {
             if (m_FilterPanel != null)
             {
@@ -41,12 +41,12 @@ namespace ItemSystem.Editor
         {
             m_SubTabContent?.Clear();
 
-            Type[] baseTypes = ItemEditor_AssetLoader.LoadAllBaseTypes().ToArray();
-            KeyValuePair<string, Type>[] statTypePairs = new KeyValuePair<string, Type>[baseTypes.Length];
+            System.Type[] baseTypes = ItemEditor_AssetLoader.LoadAllBaseTypes().ToArray();
+            KeyValuePair<string, System.Type>[] statTypePairs = new KeyValuePair<string, System.Type>[baseTypes.Length];
 
             for (int i = 0; i < statTypePairs.Length; i++)
             {
-                statTypePairs[i] = new KeyValuePair<string, Type>(baseTypes[i].Name.Substring(baseTypes[i].Name.LastIndexOf("_") + 1), baseTypes[i]);
+                statTypePairs[i] = new KeyValuePair<string, System.Type>(baseTypes[i].Name.Substring(baseTypes[i].Name.LastIndexOf("_") + 1), baseTypes[i]);
             }
 
             m_SubTabMenu = new TabbedMenu(statTypePairs, OnSubTabChanged, false, false, false, true);

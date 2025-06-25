@@ -10,7 +10,7 @@ public class SO_Stat_Color : SO_Stat
 
     [ItemToolkitAccess] public Color StatValue { get => m_Value; set => m_Value = value; }
 
-    public override Type GetStatType()
+    public override System.Type GetStatType()
     {
         return m_Value.GetType();
     }

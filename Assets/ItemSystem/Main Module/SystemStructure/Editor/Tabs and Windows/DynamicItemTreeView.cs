@@ -81,7 +81,7 @@ namespace ItemSystem.Editor
                     if (selection != null)
                     {
                         ScriptableObject copyFile = ItemEditor_AssetLoader.LoadAssetByName<ScriptableObject>((selection as TreeViewEntryData).FileName);
-                        Type copyType = copyFile.GetType();
+                        System.Type copyType = copyFile.GetType();
                         ItemEditor_InstanceManager.CopyInstance(copyFile, copyType);
                         RefreshTreeView(_LoadSubTypes);
                     }
@@ -153,7 +153,7 @@ namespace ItemSystem.Editor
             m_TreeView.Rebuild();
         }
 
-        private List<TreeViewItemData<TreeViewEntryData>> LoadModules(Type _BaseType, bool _LoadSubtypes)
+        private List<TreeViewItemData<TreeViewEntryData>> LoadModules(System.Type _BaseType, bool _LoadSubtypes)
         {
             List<TreeViewItemData<TreeViewEntryData>> treeItems = new List<TreeViewItemData<TreeViewEntryData>>();
 

@@ -100,7 +100,7 @@ namespace ItemSystem.Editor
         private void LoadFilterTypes()
         {
             List<ScriptableObject> empty = new List<ScriptableObject>();
-            InspectorList<ScriptableObject> filterTypeList = new InspectorList<ScriptableObject>(empty, new List<Type>() { typeof(SO_Tag) }, "Filter types", true);
+            InspectorList<ScriptableObject> filterTypeList = new InspectorList<ScriptableObject>(empty, new List<System.Type>() { typeof(SO_Tag) }, "Filter types", true);
 
             filterTypeList.ItemAddCallback += (item) =>
             {

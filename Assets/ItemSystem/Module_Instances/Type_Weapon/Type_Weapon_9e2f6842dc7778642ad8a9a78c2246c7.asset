@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Type_Weapon_9e2f6842dc7778642ad8a9a78c2246c7
   m_EditorClassIdentifier: 
   m_TypeName: Type/OneHanded/Melee
+  m_ToolTips: []
   m_TypeStats:
   - {fileID: 11400000, guid: 15eda8ca333740c4a9dc4ac95cf050b7, type: 2}
   - {fileID: 11400000, guid: 16e9ff9ec8b60d4418625c8b7de3d01f, type: 2}
@@ -21,10 +22,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9710fd439be214247b38b036a32a8f15, type: 2}
   - {fileID: 11400000, guid: c6c5ff2088dda084ebd51bc5f39a86b7, type: 2}
   m_Tags: []
-  m_hands: 1
-  m_Type: 0
-  m_Range: 0
-  m_MinRange: 0
   m_Projectile: {fileID: 0}
-  m_Damage: 10
-  m_AtkCooldown: 0.5

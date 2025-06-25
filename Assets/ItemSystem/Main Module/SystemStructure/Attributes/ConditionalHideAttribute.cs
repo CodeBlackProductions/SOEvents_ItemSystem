@@ -13,11 +13,18 @@ namespace ItemSystem.Editor
     {
         public string m_ConditionName { get; private set; }
         public int[] m_TargetValues { get; private set; }
+        public bool m_TargetBool { get; private set; }
 
         public ConditionalHideAttribute(string _ConditionName, params int[] _TargetValues)
         {
             m_ConditionName = _ConditionName;
             m_TargetValues = _TargetValues;
+        }
+
+        public ConditionalHideAttribute(string _ConditionName, bool _TargetBool)
+        {
+            m_ConditionName = _ConditionName;
+            m_TargetBool = _TargetBool;
         }
 
         public static bool ShouldShowProperty(ScriptableObject _Target, PropertyInfo _Property)
@@ -28,11 +35,10 @@ namespace ItemSystem.Editor
                 return true;
             }
 
-            // Get the ConditionalHideAttribute
             var conditional = _Property.GetCustomAttribute<ConditionalHideAttribute>();
             if (conditional == null)
             {
-                return true; // No condition, so always show
+                return true;
             }
 
             PropertyInfo conditionProperty = _Target.GetType().GetProperty(conditional.m_ConditionName, BindingFlags.Public | BindingFlags.Instance);
@@ -44,7 +50,6 @@ namespace ItemSystem.Editor
                 return true;
             }
 
-            // Evaluate the condition
             return EvaluateCondition(conditional, conditionValue);
         }
 
@@ -52,7 +57,7 @@ namespace ItemSystem.Editor
         {
             if (_ConditionValue is bool boolValue)
             {
-                return _Conditional.m_TargetValues.Contains(boolValue ? 1 : 0);
+                return _Conditional.m_TargetBool.Equals(boolValue);
             }
             if (_ConditionValue is int intValue)
             {

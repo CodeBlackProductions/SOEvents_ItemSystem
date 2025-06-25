@@ -9,10 +9,10 @@ namespace ItemSystem.Editor
     /// </summary>
     public class TabbedMenu : VisualElement
     {
-        public TabbedMenu(KeyValuePair<string, Type>[] _Tabs, System.Action<Type, bool, bool, bool, bool> _OnTabChanged, bool _ShowAddAndRemove, bool _LoadSubTypes, bool _ShowInspectorPanel, bool _LoadLocalFiles)
+        public TabbedMenu(KeyValuePair<string, System.Type>[] _Tabs, System.Action<System.Type, bool, bool, bool, bool> _OnTabChanged, bool _ShowAddAndRemove, bool _LoadSubTypes, bool _ShowInspectorPanel, bool _LoadLocalFiles)
         {
             var tabContainer = new VisualElement { style = { flexDirection = FlexDirection.Row } };
-            foreach (KeyValuePair<string, Type> tab in _Tabs)
+            foreach (KeyValuePair<string, System.Type> tab in _Tabs)
             {
                 var tabButton = new Button(() =>
                 {

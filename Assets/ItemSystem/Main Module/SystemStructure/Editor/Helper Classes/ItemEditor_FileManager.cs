@@ -29,7 +29,7 @@ namespace ItemSystem.Editor
             AssetDatabase.Refresh();
         }
 
-        public static List<ScriptableObject> LoadModulesFromFiles(Type _ModuleType)
+        public static List<ScriptableObject> LoadModulesFromFiles(System.Type _ModuleType)
         {
             SO_EditorSettings settings = ItemEditor_AssetLoader.LoadAssetByName<SO_EditorSettings>("EditorSettings");
 
@@ -43,7 +43,7 @@ namespace ItemSystem.Editor
                     string jsonContent = File.ReadAllText(file);
                     string fileTypeName = Path.GetFileNameWithoutExtension(file);
                     fileTypeName = fileTypeName.Substring(0, fileTypeName.LastIndexOf('_'));
-                    Type fileType = GetTypeByName(fileTypeName);
+                    System.Type fileType = GetTypeByName(fileTypeName);
 
                     if (fileType != null && _ModuleType.IsAssignableFrom(fileType))
                     {
@@ -56,7 +56,7 @@ namespace ItemSystem.Editor
             return localFiles;
         }
 
-        private static Type GetTypeByName(string _TypeName)
+        private static System.Type GetTypeByName(string _TypeName)
         {
             return AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(assembly => assembly.GetTypes())
