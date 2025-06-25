@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Type_Weapon_bebc2a0d6513d684f8246ec4a1e34a29
   m_EditorClassIdentifier: 
   m_TypeName: Type/OneHanded/Range
+  m_ToolTips: []
   m_TypeStats:
   - {fileID: 11400000, guid: c6c5ff2088dda084ebd51bc5f39a86b7, type: 2}
   - {fileID: 11400000, guid: def7087f529f8024b9432bf171ee9e5c, type: 2}

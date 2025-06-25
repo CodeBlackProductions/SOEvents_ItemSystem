@@ -107,22 +107,22 @@ namespace ItemSystem.SubModules
 
         private void OnLinkHoverStart(string _LinkID)
         {
-            ItemEventHandler.Instance.OnHyperlinkHoverStart.Invoke(_LinkID);
+            ItemEventHandler.Instance.OnHyperlinkHoverStart?.Invoke(_LinkID);
         }
 
         private void OnLinkHoverEnd(string _LinkID)
         {
-            ItemEventHandler.Instance.OnHyperlinkHoverEnd.Invoke(_LinkID);
+            ItemEventHandler.Instance.OnHyperlinkHoverEnd?.Invoke(_LinkID);
         }
 
         private void OnLinkLeftClick(string _LinkID)
         {
-            ItemEventHandler.Instance.OnHyperlinkClickLeft.Invoke(_LinkID);
+            ItemEventHandler.Instance.OnHyperlinkClickLeft?.Invoke(_LinkID);
         }
 
         private void OnLinkRightClick(string _LinkID)
         {
-            ItemEventHandler.Instance.OnHyperlinkClickRight.Invoke(_LinkID);
+            ItemEventHandler.Instance.OnHyperlinkClickRight?.Invoke(_LinkID);
         }
     }
 }

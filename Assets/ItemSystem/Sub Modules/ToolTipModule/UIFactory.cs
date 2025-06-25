@@ -292,6 +292,12 @@ namespace ItemSystem.SubModules
         public static GameObject CreateNewTextElement(string _UIName, string _Text, Color _TextColor, Color _HyperlinkColor, Color _ValueColor, int _FontSize, Vector2 _MinAnchor, Vector2 _MaxAnchor, bool _IsRaycastTarget)
         {
             GameObject textObj = new GameObject(_UIName + "_Text");
+            var csf = textObj.AddComponent<ContentSizeFitter>();
+            csf.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+            csf.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            var cvs = textObj.AddComponent<CanvasScaler>();
+            cvs.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            cvs.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
             TextMeshProUGUI text = textObj.AddComponent<TextMeshProUGUI>();
             text.text = CreateHyperlink(_Text, _HyperlinkColor);
             text.text = ImportValues(text.text, _ValueColor);

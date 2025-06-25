@@ -22,12 +22,7 @@ namespace ItemSystem.SubModules
             {
                 Destroy(gameObject);
             }
-        }
 
-        private Dictionary<string, string[]> m_ToolTipRegistry = new Dictionary<string, string[]>();
-
-        private void Start()
-        {
             List<SO_ToolTip> toolTips = LoadAssetsByType<SO_ToolTip>();
             foreach (var toolTip in toolTips)
             {
@@ -37,6 +32,8 @@ namespace ItemSystem.SubModules
                 }
             }
         }
+
+        private Dictionary<string, string[]> m_ToolTipRegistry = new Dictionary<string, string[]>();
 
         private List<T> LoadAssetsByType<T>() where T : Object
         {
