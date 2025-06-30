@@ -24,129 +24,54 @@ public static class UITKFactory
         System.Action<PointerOverLinkTagEvent> _HyplerinkHoveredCallback,
         System.Action<PointerOutLinkTagEvent> _HyplerinkStopHoveredCallback,
         string _LinkID,
-          System.Action<string> _WindowClosedCallback
+        System.Action<string> _WindowClosedCallback,
+        Texture2D _HeaderBGImage = null,
+        Texture2D _WindowBGImage = null,
+        Texture2D _CloseWindowButtonImage = null
         )
     {
         VisualElement root = _UiDocument.rootVisualElement;
 
-        VisualElement window = new VisualElement();
-        window.name = _UIName;
-        window.style.position = Position.Absolute;
-        window.style.left = _ScreenPos.x;
-        window.style.top = _ScreenPos.y;
-        window.style.flexDirection = FlexDirection.Column;
-        window.style.paddingLeft = 0;
-        window.style.paddingRight = 0;
-        window.style.paddingTop = 0;
-        window.style.paddingBottom = 0;
-        window.style.backgroundColor = new StyleColor(Color.gray);
-        window.style.borderTopWidth = 2;
-        window.style.borderBottomWidth = 2;
-        window.style.borderLeftWidth = 2;
-        window.style.borderRightWidth = 2;
-        window.style.borderTopColor = Color.black;
-        window.style.borderBottomColor = Color.black;
-        window.style.borderLeftColor = Color.black;
-        window.style.borderRightColor = Color.black;
-        window.style.maxWidth = Length.Percent(60);
-        window.style.maxHeight = Length.Percent(80);
+        VisualElement window = CreateMainWindow(_UIName, _ScreenPos, _WindowBGImage);
 
-        VisualElement headerRow = new VisualElement();
-        headerRow.style.flexDirection = FlexDirection.Row;
-        headerRow.style.justifyContent = Justify.SpaceBetween;
-        headerRow.style.alignItems = Align.Center;
-        headerRow.style.paddingLeft = 8;
-        headerRow.style.paddingRight = 8;
-        headerRow.style.paddingTop = 4;
-        headerRow.style.paddingBottom = 4;
-        headerRow.style.backgroundColor = new StyleColor(new Color(0.15f, 0.15f, 0.15f));
-        headerRow.style.borderTopLeftRadius = 6;
-        headerRow.style.borderTopRightRadius = 6;
-        headerRow.style.borderBottomWidth = 1;
-        headerRow.style.borderBottomColor = new StyleColor(Color.black);
-        headerRow.style.flexShrink = 0;
-        headerRow.AddManipulator(new DragManipulator(() => window));
+        VisualElement header = CreateHeader(
+            true,
+            window,
+            _HeaderText,
+            _TextColor,
+            _HyperlinkColor,
+            _ValueColor,
+            _FontSize,
+            _HeaderBGImage,
+            _CloseWindowButtonImage,
+            _HyplerinkClickedCallback,
+            _HyplerinkHoveredCallback,
+            _HyplerinkStopHoveredCallback,
+            _LinkID,
+            _WindowClosedCallback);
 
-        Label headerText = new Label(ParseRichText(_HeaderText, _HyperlinkColor, _ValueColor));
-        headerText.style.unityFontStyleAndWeight = FontStyle.Bold;
-        headerText.style.fontSize = _FontSize * 1.2f;
-        headerText.style.color = _TextColor;
-        headerText.style.flexGrow = 1;
-        headerText.style.flexShrink = 1;
-        headerText.style.marginRight = 6;
-        headerText.RegisterCallback<PointerUpLinkTagEvent>(_HyplerinkClickedCallback.Invoke);
-        headerText.RegisterCallback<PointerOverLinkTagEvent>(_HyplerinkHoveredCallback.Invoke);
-        headerText.RegisterCallback<PointerOutLinkTagEvent>(_HyplerinkStopHoveredCallback.Invoke);
+        window.Add(header);
 
-        Button btn_CloseWindow = new Button(() =>
-        {
-            _WindowClosedCallback.Invoke(_LinkID);
-            window.RemoveFromHierarchy();
-        })
-        {
-            text = "X"
-        };
-        btn_CloseWindow.style.alignSelf = Align.Stretch;
-        btn_CloseWindow.style.flexShrink = 0;
-        btn_CloseWindow.style.backgroundColor = Color.red;
-        btn_CloseWindow.style.borderBottomColor = Color.black;
-        btn_CloseWindow.style.borderTopColor = Color.black;
-        btn_CloseWindow.style.borderLeftColor = Color.black;
-        btn_CloseWindow.style.borderRightColor = Color.black;
-        btn_CloseWindow.RegisterCallback<GeometryChangedEvent>(evt =>
-        {
-            float width = btn_CloseWindow.resolvedStyle.width;
-            btn_CloseWindow.style.height = width;
-        });
+        VisualElement body = CreateBody(
+             true,
+            window,
+            _BodyText,
+            _TextColor,
+            _HyperlinkColor,
+            _ValueColor,
+            _FontSize,
+            _HyplerinkClickedCallback,
+            _HyplerinkHoveredCallback,
+            _HyplerinkStopHoveredCallback
+            );
 
-        headerRow.Add(headerText);
-        headerRow.Add(btn_CloseWindow);
-        window.Add(headerRow);
+        window.Add(body);
 
-        Label bodyText = new Label(ParseRichText(_BodyText, _HyperlinkColor, _ValueColor));
-        bodyText.style.whiteSpace = WhiteSpace.Normal;
-        bodyText.style.unityTextAlign = TextAnchor.UpperLeft;
-        bodyText.style.fontSize = _FontSize;
-        bodyText.style.color = _TextColor;
-        bodyText.style.flexShrink = 0;
-        bodyText.style.flexGrow = 0;
-        bodyText.style.marginLeft = 10;
-        bodyText.style.marginRight = 10;
-        bodyText.style.marginTop = 10;
-        bodyText.style.marginBottom = 10;
-        bodyText.RegisterCallback<PointerUpLinkTagEvent>(_HyplerinkClickedCallback.Invoke);
-        bodyText.RegisterCallback<PointerOverLinkTagEvent>(_HyplerinkHoveredCallback.Invoke);
-        bodyText.RegisterCallback<PointerOutLinkTagEvent>(_HyplerinkStopHoveredCallback.Invoke);
+        VisualElement resizeHandle_BL = CreateResizeHandle(window, new Vector2(0, 0));
+        window.Add(resizeHandle_BL);
 
-        ScrollView scrollView = new ScrollView();
-        scrollView.style.maxHeight = Length.Percent(80);
-        scrollView.style.flexGrow = 0;
-        scrollView.style.flexShrink = 1;
-        scrollView.style.height = StyleKeyword.Auto;
-        scrollView.style.unityOverflowClipBox = OverflowClipBox.ContentBox;
-
-        scrollView.Add(bodyText);
-        window.Add(scrollView);
-
-        VisualElement resizeHandleBR = new VisualElement();
-        resizeHandleBR.style.width = Length.Percent(10);
-        resizeHandleBR.style.height = Length.Percent(10);
-        resizeHandleBR.style.backgroundColor = new Color(0, 0, 0, 0.5f);
-        resizeHandleBR.style.position = Position.Absolute;
-        resizeHandleBR.style.right = 0;
-        resizeHandleBR.style.bottom = 0;
-        resizeHandleBR.AddManipulator(new ResizeManipulator(() => window));
-        window.Add(resizeHandleBR);
-
-        VisualElement resizeHandleBL = new VisualElement();
-        resizeHandleBL.style.width = Length.Percent(10);
-        resizeHandleBL.style.height = Length.Percent(10);
-        resizeHandleBL.style.backgroundColor = new Color(0, 0, 0, 0.5f);
-        resizeHandleBL.style.position = Position.Absolute;
-        resizeHandleBL.style.left = 0;
-        resizeHandleBL.style.bottom = 0;
-        resizeHandleBL.AddManipulator(new ResizeManipulator(() => window));
-        window.Add(resizeHandleBL);
+        VisualElement resizeHandle_BR = CreateResizeHandle(window, new Vector2(0.9f, 0));
+        window.Add(resizeHandle_BR);
 
         EventCallback<GeometryChangedEvent> callback = null;
 
@@ -180,57 +105,16 @@ public static class UITKFactory
        Color _HyperlinkColor,
        Color _ValueColor,
        int _FontSize,
-       UIDocument _UiDocument)
+       UIDocument _UiDocument,
+       Texture2D _HeaderBGImage = null,
+       Texture2D _WindowBGImage = null
+       )
     {
         VisualElement root = _UiDocument.rootVisualElement;
 
-        VisualElement window = new VisualElement();
-        window.name = _UIName;
-        window.style.position = Position.Absolute;
-        window.style.left = _ScreenPos.x;
-        window.style.top = _ScreenPos.y;
-        window.style.flexDirection = FlexDirection.Column;
-        window.style.paddingLeft = 0;
-        window.style.paddingRight = 0;
-        window.style.paddingTop = 0;
-        window.style.paddingBottom = 0;
-        window.style.backgroundColor = new StyleColor(Color.gray);
-        window.style.borderTopWidth = 2;
-        window.style.borderBottomWidth = 2;
-        window.style.borderLeftWidth = 2;
-        window.style.borderRightWidth = 2;
-        window.style.borderTopColor = Color.black;
-        window.style.borderBottomColor = Color.black;
-        window.style.borderLeftColor = Color.black;
-        window.style.borderRightColor = Color.black;
-        window.style.maxWidth = Length.Percent(60);
-        window.style.maxHeight = Length.Percent(80);
+        VisualElement window = CreateMainWindow(_UIName, _ScreenPos, _WindowBGImage);
 
-        VisualElement headerRow = new VisualElement();
-        headerRow.style.flexDirection = FlexDirection.Row;
-        headerRow.style.justifyContent = Justify.SpaceBetween;
-        headerRow.style.alignItems = Align.Center;
-        headerRow.style.paddingLeft = 8;
-        headerRow.style.paddingRight = 8;
-        headerRow.style.paddingTop = 4;
-        headerRow.style.paddingBottom = 4;
-        headerRow.style.backgroundColor = new StyleColor(new Color(0.15f, 0.15f, 0.15f));
-        headerRow.style.borderTopLeftRadius = 6;
-        headerRow.style.borderTopRightRadius = 6;
-        headerRow.style.borderBottomWidth = 1;
-        headerRow.style.borderBottomColor = new StyleColor(Color.black);
-        headerRow.style.flexShrink = 0;
-        headerRow.AddManipulator(new DragManipulator(() => window));
-
-        Label headerText = new Label(ParseRichText(_HeaderText, _HyperlinkColor, _ValueColor));
-        headerText.style.unityFontStyleAndWeight = FontStyle.Bold;
-        headerText.style.fontSize = _FontSize * 1.2f;
-        headerText.style.color = _TextColor;
-        headerText.style.flexGrow = 1;
-        headerText.style.flexShrink = 1;
-        headerText.style.marginRight = 6;
-
-        headerRow.Add(headerText);
+        VisualElement headerRow = CreateHeader(false, window, _HeaderText, _TextColor, _HyperlinkColor, _ValueColor, _FontSize, _HeaderBGImage);
 
         window.Add(headerRow);
 
@@ -274,6 +158,212 @@ public static class UITKFactory
         root.Add(window);
 
         return window;
+    }
+
+    #region Internal Methods
+
+    private static VisualElement CreateMainWindow(string _UIName, Vector2 _ScreenPos, Texture2D _WindowBGImage = null)
+    {
+        VisualElement window = new VisualElement();
+        window.name = _UIName;
+        window.style.position = Position.Absolute;
+        window.style.left = _ScreenPos.x;
+        window.style.top = _ScreenPos.y;
+        window.style.flexDirection = FlexDirection.Column;
+        window.style.paddingLeft = 0;
+        window.style.paddingRight = 0;
+        window.style.paddingTop = 0;
+        window.style.paddingBottom = 0;
+
+        if (_WindowBGImage == null)
+        {
+            window.style.backgroundColor = new StyleColor(Color.gray);
+            window.style.borderTopWidth = 2;
+            window.style.borderBottomWidth = 2;
+            window.style.borderLeftWidth = 2;
+            window.style.borderRightWidth = 2;
+            window.style.borderTopColor = Color.black;
+            window.style.borderBottomColor = Color.black;
+            window.style.borderLeftColor = Color.black;
+            window.style.borderRightColor = Color.black;
+        }
+        else
+        {
+            window.style.backgroundImage = _WindowBGImage;
+        }
+
+        window.style.maxWidth = Length.Percent(90);
+        window.style.maxHeight = Length.Percent(90);
+
+        return window;
+    }
+
+    private static VisualElement CreateHeader(
+        bool _AddControlElements,
+        VisualElement _MainWindow,
+        string _HeaderText,
+        Color _TextColor,
+        Color _HyperlinkColor,
+        Color _ValueColor,
+        float _FontSize,
+        Texture2D _HeaderBGImage = null,
+         Texture2D _CloseWindowButtonImage = null,
+        System.Action<PointerUpLinkTagEvent> _HyplerinkClickedCallback = null,
+        System.Action<PointerOverLinkTagEvent> _HyplerinkHoveredCallback = null,
+        System.Action<PointerOutLinkTagEvent> _HyplerinkStopHoveredCallback = null,
+        string _LinkID = null,
+        System.Action<string> _WindowClosedCallback = null
+        )
+    {
+        VisualElement headerRow = new VisualElement();
+        headerRow.style.flexDirection = FlexDirection.Row;
+        headerRow.style.justifyContent = Justify.SpaceBetween;
+        headerRow.style.alignItems = Align.Center;
+        headerRow.style.paddingLeft = 8;
+        headerRow.style.paddingRight = 8;
+        headerRow.style.paddingTop = 4;
+        headerRow.style.paddingBottom = 4;
+
+        if (_HeaderBGImage == null)
+        {
+            headerRow.style.backgroundColor = new StyleColor(new Color(0.15f, 0.15f, 0.15f));
+            headerRow.style.borderTopLeftRadius = 6;
+            headerRow.style.borderTopRightRadius = 6;
+            headerRow.style.borderBottomWidth = 1;
+            headerRow.style.borderBottomColor = new StyleColor(Color.black);
+        }
+        else
+        {
+            headerRow.style.backgroundImage = _HeaderBGImage;
+        }
+
+        headerRow.style.flexShrink = 0;
+
+        Label headerText = new Label(ParseRichText(_HeaderText, _HyperlinkColor, _ValueColor));
+        headerText.style.unityFontStyleAndWeight = FontStyle.Bold;
+        headerText.style.fontSize = _FontSize * 1.2f;
+        headerText.style.color = _TextColor;
+        headerText.style.flexGrow = 1;
+        headerText.style.flexShrink = 1;
+        headerText.style.marginRight = 6;
+
+        headerRow.Add(headerText);
+
+        if (_AddControlElements)
+        {
+            headerRow.AddManipulator(new DragManipulator(() => _MainWindow));
+
+            if (_HyplerinkClickedCallback != null)
+            {
+                headerText.RegisterCallback<PointerUpLinkTagEvent>(_HyplerinkClickedCallback.Invoke);
+            }
+            if (_HyplerinkHoveredCallback != null)
+            {
+                headerText.RegisterCallback<PointerOverLinkTagEvent>(_HyplerinkHoveredCallback.Invoke);
+            }
+            if (_HyplerinkStopHoveredCallback != null)
+            {
+                headerText.RegisterCallback<PointerOutLinkTagEvent>(_HyplerinkStopHoveredCallback.Invoke);
+            }
+
+            if (_WindowClosedCallback != null && _LinkID != null)
+            {
+                Button btn_CloseWindow = new Button(() =>
+                {
+                    _WindowClosedCallback.Invoke(_LinkID);
+                    _MainWindow.RemoveFromHierarchy();
+                })
+                {
+                    text = "X"
+                };
+                btn_CloseWindow.style.alignSelf = Align.Stretch;
+                btn_CloseWindow.style.flexShrink = 0;
+
+                if (_CloseWindowButtonImage == null)
+                {
+                    btn_CloseWindow.style.backgroundColor = Color.red;
+                    btn_CloseWindow.style.borderBottomColor = Color.black;
+                    btn_CloseWindow.style.borderTopColor = Color.black;
+                    btn_CloseWindow.style.borderLeftColor = Color.black;
+                    btn_CloseWindow.style.borderRightColor = Color.black;
+                }
+                else
+                {
+                    btn_CloseWindow.style.backgroundImage = _CloseWindowButtonImage;
+                    btn_CloseWindow.text = "";
+                }
+
+                btn_CloseWindow.RegisterCallback<GeometryChangedEvent>(evt =>
+                {
+                    float width = btn_CloseWindow.resolvedStyle.width;
+                    btn_CloseWindow.style.height = width;
+                });
+
+                headerRow.Add(btn_CloseWindow);
+            }
+        }
+
+        return headerRow;
+    }
+
+    private static VisualElement CreateBody(
+        bool _AddControlElements,
+        VisualElement _MainWindow,
+        string _BodyText,
+        Color _TextColor,
+        Color _HyperlinkColor,
+        Color _ValueColor,
+        float _FontSize,
+        System.Action<PointerUpLinkTagEvent> _HyplerinkClickedCallback = null,
+        System.Action<PointerOverLinkTagEvent> _HyplerinkHoveredCallback = null,
+        System.Action<PointerOutLinkTagEvent> _HyplerinkStopHoveredCallback = null
+        )
+    {
+        Label bodyText = new Label(ParseRichText(_BodyText, _HyperlinkColor, _ValueColor));
+        bodyText.style.whiteSpace = WhiteSpace.Normal;
+        bodyText.style.unityTextAlign = TextAnchor.UpperLeft;
+        bodyText.style.fontSize = _FontSize;
+        bodyText.style.color = _TextColor;
+        bodyText.style.flexShrink = 0;
+        bodyText.style.flexGrow = 0;
+        bodyText.style.marginLeft = 10;
+        bodyText.style.marginRight = 10;
+        bodyText.style.marginTop = 10;
+        bodyText.style.marginBottom = 10;
+
+        ScrollView scrollView = new ScrollView();
+        scrollView.style.maxHeight = Length.Percent(80);
+        scrollView.style.flexGrow = 0;
+        scrollView.style.flexShrink = 1;
+        scrollView.style.height = StyleKeyword.Auto;
+        scrollView.style.unityOverflowClipBox = OverflowClipBox.ContentBox;
+
+        scrollView.Add(bodyText);
+
+        if (_AddControlElements)
+        {
+            bodyText.RegisterCallback<PointerUpLinkTagEvent>(_HyplerinkClickedCallback.Invoke);
+            bodyText.RegisterCallback<PointerOverLinkTagEvent>(_HyplerinkHoveredCallback.Invoke);
+            bodyText.RegisterCallback<PointerOutLinkTagEvent>(_HyplerinkStopHoveredCallback.Invoke);
+        }
+
+        return scrollView;
+    }
+
+    private static VisualElement CreateResizeHandle(VisualElement _MainWindow, Vector2 _RelativePosition)
+    {
+        VisualElement resizeHandle = new VisualElement();
+        resizeHandle.style.width = Length.Percent(10);
+        resizeHandle.style.height = Length.Percent(10);
+        resizeHandle.style.backgroundColor = new Color(0, 0, 0, 0.5f);
+        resizeHandle.style.position = Position.Absolute;
+
+        resizeHandle.style.left = Length.Percent(_RelativePosition.x * 100);
+        resizeHandle.style.bottom = Length.Percent(_RelativePosition.y * 100);
+
+        resizeHandle.AddManipulator(new ResizeManipulator(() => _MainWindow));
+
+        return resizeHandle;
     }
 
     private static string ParseRichText(string _Text, Color _HyperlinColor, Color _ValueColor)
@@ -406,6 +496,8 @@ public static class UITKFactory
         Debug.LogError($"Asset '{_AssetName}' of type {typeof(T).Name} not found.");
         return null;
     }
+
+    #endregion Internal Methods
 }
 
 public class DragManipulator : PointerManipulator
