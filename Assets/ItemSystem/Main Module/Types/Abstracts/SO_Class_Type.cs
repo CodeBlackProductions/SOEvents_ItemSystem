@@ -15,15 +15,17 @@ namespace ItemSystem.MainModule
         [SerializeField] private string m_TypeName = "NewType";
         [SerializeField] private GUID m_TypeGUID;
         [SerializeField] private SO_ToolTip[] m_ToolTips;
-        [SerializeField] private List<SO_Stat> m_TypeStats = new List<SO_Stat>();
+        [SerializeField] private List<SO_Stat_Base> m_TypeStats = new List<SO_Stat_Base>();
+        [SerializeField] private List<int> m_TypeStatIndices = new List<int>();
         [SerializeField] private SO_Tag[] m_Tags;
 
-        private Dictionary<string, SO_Stat> m_Stats = new Dictionary<string, SO_Stat>();
+        private Dictionary<string, SO_Stat_Base> m_Stats = new Dictionary<string, SO_Stat_Base>();
+        private Dictionary<string, int> m_StatIndices = new Dictionary<string, int>();
 
         [ItemToolkitAccess] public string TypeName { get => m_TypeName; set => m_TypeName = value; }
 
         [ItemToolkitAccess]
-        public Dictionary<string, SO_Stat> Stats
+        public Dictionary<string, SO_Stat_Base> Stats
         {
             get => m_Stats; set
             {
@@ -31,10 +33,13 @@ namespace ItemSystem.MainModule
                 foreach (var stat in value)
                 {
                     m_TypeStats.Add(stat.Value);
+                    m_TypeStatIndices.Add(m_StatIndices.ContainsKey(stat.Key) ? m_StatIndices[stat.Key] : 0);
                 }
                 m_Stats = value;
             }
         }
+
+        public Dictionary<string, int> StatIndices { get => m_StatIndices; set => m_StatIndices = value; }
 
         [ItemToolkitAccess] public SO_ToolTip[] ToolTips { get => m_ToolTips; set => m_ToolTips = value; }
         [ItemToolkitAccess] public SO_Tag[] Tags { get => m_Tags; set => m_Tags = value; }
@@ -47,11 +52,23 @@ namespace ItemSystem.MainModule
             if (m_TypeStats != null && m_TypeStats.Count > 0)
             {
                 m_Stats.Clear();
-                foreach (SO_Stat stat in m_TypeStats)
+
+                for (int i = 0; i < m_TypeStats.Count; i++)
                 {
+                    var stat = m_TypeStats[i];
+                    int index = i < m_TypeStatIndices.Count ? m_TypeStatIndices[i] : 0;
                     if (stat != null && !m_Stats.ContainsKey(stat.TargetUserStat))
                     {
                         m_Stats.Add(stat.TargetUserStat, stat);
+
+                        if (m_StatIndices.ContainsKey(stat.TargetUserStat))
+                        {
+                            m_StatIndices[stat.TargetUserStat] = index;
+                        }
+                        else
+                        {
+                            m_StatIndices.Add(stat.TargetUserStat, index);
+                        }
                     }
                 }
             }

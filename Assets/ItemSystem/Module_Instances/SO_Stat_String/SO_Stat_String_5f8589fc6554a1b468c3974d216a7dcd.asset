@@ -12,8 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 033c0ad1eb7eecd4089c5fc63502a879, type: 3}
   m_Name: SO_Stat_String_5f8589fc6554a1b468c3974d216a7dcd
   m_EditorClassIdentifier: 
-  m_StatName: RangeType/Melee
+  m_StatName: RangeType
   m_TargetUserStat: RangeType
+  m_ToolTips: []
   m_Tags:
   - {fileID: 11400000, guid: c48d569b4f305ca4eb7142e57194f32f, type: 2}
-  m_Value: Melee
+  m_Value:
+  - Melee
+  - Ranged

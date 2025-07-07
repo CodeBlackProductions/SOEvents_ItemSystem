@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79797c57697e7ac4581a9d85b13dd973, type: 3}
   m_Name: SO_Stat_Color_924c2dbedb598ae4d9a392463c2fe14a
   m_EditorClassIdentifier: 
-  m_StatName: Color/White
+  m_StatName: ColorStat
   m_TargetUserStat: Color
+  m_ToolTips: []
   m_Tags: []
-  m_Value: {r: 1, g: 1, b: 1, a: 1}
+  m_Value:
+  - {r: 1, g: 1, b: 1, a: 1}

@@ -14,7 +14,7 @@ namespace ItemSystem.MainModule
     {
         public List<SO_Item> Items { get; set; }
 
-        public List<SO_Stat> Stats { get; set; }
+        public List<SO_Stat_Base> Stats { get; set; }
 
         public GameObject ImplementingUser { get; }
         public int Team { get; }

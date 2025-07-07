@@ -8,7 +8,7 @@ using System;
 
 namespace ItemSystem.SubModules
 {
-    public class SO_Stat_Collection : SO_Stat, IItemModule
+    public class SO_Stat_Collection : SO_Stat_StaticValue, IItemModule
     {
         [SerializeField] private SO_Stat[] m_Value = new SO_Stat[] { };
 

@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0ae490fe454ca842b63a8498d277dba, type: 3}
   m_Name: SO_Stat_Integer_ab738a054e42d16499bce17209d7c304
   m_EditorClassIdentifier: 
-  m_StatName: Hands/1
+  m_StatName: Hands
   m_TargetUserStat: Hands
+  m_ToolTips: []
   m_Tags: []
-  m_Value: 1
+  m_Value: 0100000002000000

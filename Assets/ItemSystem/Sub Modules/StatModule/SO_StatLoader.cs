@@ -68,23 +68,27 @@ public class SO_StatLoader : ScriptableObject
         {
             for (int i = 0; i < _User.Stats.Count; i++)
             {
-                if (_User.Stats[i] is SO_Stat_Collection)
+                if (_User.Stats[i] is SO_Stat_Collection collection)
                 {
-                    SO_Stat[] collection = _User.Stats[i].GetStatValue() as SO_Stat[];
-                    for (int c = 0; c < collection.Length; c++)
+                    SO_Stat_StaticValue[] collectionContent = collection.GetStatValue() as SO_Stat_StaticValue[];
+                    for (int c = 0; c < collectionContent.Length; c++)
                     {
-                        RegisterStat(_User, collection[c], _OverrideMode);
+                        RegisterStat(_User, collectionContent[c], _OverrideMode);
                     }
                 }
-                else
+                else if (_User.Stats[i] is SO_Stat_StaticValue staticValue)
                 {
-                    RegisterStat(_User, _User.Stats[i], _OverrideMode);
+                    RegisterStat(_User, staticValue, _OverrideMode);
+                }
+                else if (_User.Stats[i] is SO_Stat value)
+                {
+                    RegisterStat(_User, value, 0, _OverrideMode);
                 }
             }
         }
     }
 
-    private void RegisterStat(IItemUser _User, SO_Stat _Stat, bool _OverrideMode)
+    private void RegisterStat(IItemUser _User, SO_Stat_StaticValue _Stat, bool _OverrideMode)
     {
         if (!_User.UserStats.ContainsKey(_Stat.TargetUserStat))
         {
@@ -110,9 +114,40 @@ public class SO_StatLoader : ScriptableObject
         }
     }
 
-    private void RegisterStat(IItemUser _User, SO_Stat _Stat)
+    private void RegisterStat(IItemUser _User, SO_Stat_StaticValue _Stat)
     {
         RegisterStat(_User, _Stat, false);
+    }
+
+    private void RegisterStat(IItemUser _User, SO_Stat _Stat, int _Index, bool _OverrideMode)
+    {
+        if (!_User.UserStats.ContainsKey(_Stat.TargetUserStat))
+        {
+            _User.UserStats.Add(_Stat.TargetUserStat, new Runtime_Stat(_Stat.GetStatValue(_Index), _Stat.GetStatType()));
+        }
+        else if (_Stat.GetStatType().IsNumeric() && _User.UserStats.ContainsKey(_Stat.TargetUserStat))
+        {
+            if (_OverrideMode)
+            {
+                _User.UserStats[_Stat.TargetUserStat].Value = _Stat.GetStatValue(_Index);
+            }
+            else
+            {
+                _User.UserStats[_Stat.TargetUserStat].Value =
+                    (double.Parse(_User.UserStats[_Stat.TargetUserStat].Value.ToString()) +
+                     double.Parse(_Stat.GetStatValue(_Index).ToString()));
+            }
+        }
+        else
+        {
+            if (m_OverrideBehaviour == ENonAddableStatBehaviour.KeepFirst && !_OverrideMode) return;
+            _User.UserStats[_Stat.TargetUserStat].Value = _Stat.GetStatValue(_Index);
+        }
+    }
+
+    private void RegisterStat(IItemUser _User, SO_Stat _Stat, int _Index)
+    {
+        RegisterStat(_User, _Stat, _Index, false);
     }
 
     private void LoadItemStats(IItemUser _User, bool _InvertOrder)
@@ -152,22 +187,26 @@ public class SO_StatLoader : ScriptableObject
         }
     }
 
-    private void IterateOverStats(IItemUser _User, Dictionary<string, SO_Stat> _Collection)
+    private void IterateOverStats(IItemUser _User, Dictionary<string, SO_Stat_Base> _Collection)
     {
         foreach (var stat in _Collection)
         {
-            if (stat.Value is SO_Stat_Collection)
+            if (stat.Value is SO_Stat_Collection collection)
             {
-                SO_Stat[] collection = stat.Value.GetStatValue() as SO_Stat[];
-
-                for (int c = 0; c < collection.Length; c++)
+                SO_Stat_StaticValue[] collectionContent = collection.GetStatValue() as SO_Stat_StaticValue[];
+                for (int c = 0; c < collectionContent.Length; c++)
                 {
-                    RegisterStat(_User, collection[c]);
+                    RegisterStat(_User, collectionContent[c]);
                 }
             }
-            else
+            else if (stat.Value is SO_Stat_StaticValue staticValue)
             {
-                RegisterStat(_User, stat.Value);
+                RegisterStat(_User, staticValue);
+            }
+            else if (stat.Value is SO_Stat value)
+            {
+                Debug.LogWarning("StatLoader: Still missing a way to determine correct Stat from non static stats!");
+                RegisterStat(_User, value, 0);
             }
         }
     }

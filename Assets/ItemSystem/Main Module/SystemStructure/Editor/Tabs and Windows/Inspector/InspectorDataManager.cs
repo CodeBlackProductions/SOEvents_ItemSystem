@@ -18,20 +18,9 @@ namespace ItemSystem.Editor
     /// </summary>
     public static class InspectorDataManager
     {
-        private enum ETypes
+        private static List<System.Type> m_BasicDataTypes = new List<System.Type>()
         {
-            String, Int, Float, Bool, Vector2, Vector3, Color
-        }
-
-        private static Dictionary<System.Type, ETypes> m_Typedictionary = new Dictionary<System.Type, ETypes>()
-        {
-            { typeof(string), ETypes.String },
-            { typeof(int), ETypes.Int },
-            { typeof(float), ETypes.Float },
-            { typeof(bool), ETypes.Bool },
-            { typeof(Vector2), ETypes.Vector2 },
-            { typeof(Vector3), ETypes.Vector3 },
-            { typeof(Color), ETypes.Color }
+            typeof(string), typeof(int), typeof(float), typeof(bool), typeof(Vector2), typeof(Vector3), typeof(Color)
         };
 
         public static VisualElement CreateEntry(
@@ -73,7 +62,7 @@ namespace ItemSystem.Editor
                     {
                         return CreateUIforProjectiles(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, uiParent);
                     }
-                    else if (m_Typedictionary.ContainsKey(_Property.PropertyType) && _Property.Name != "TypeIndex")
+                    else if (m_BasicDataTypes.Contains(_Property.PropertyType) && _Property.Name != "TypeIndex")
                     {
                         return CreateUIforBasicDataTypes(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, uiParent);
                     }
@@ -206,27 +195,27 @@ namespace ItemSystem.Editor
         {
             object dict = _Property.GetValue(_ParentSO);
 
-            if (_Property.PropertyType == typeof(Dictionary<string, SO_Stat>))
+            if (_Property.PropertyType == typeof(Dictionary<string, SO_Stat_Base>))
             {
-                List<SO_Stat> allStats = ItemEditor_AssetLoader.LoadAssetsByType<SO_Stat>();
+                List<SO_Stat_Base> allStats = ItemEditor_AssetLoader.LoadAssetsByType<SO_Stat_Base>();
                 List<string> allTargetUserStats = new List<string>();
 
                 allStats.ForEach(so =>
                 {
-                    if (so.GetType().IsSubclassOf(typeof(SO_Stat)) && !allTargetUserStats.Contains(so.TargetUserStat))
+                    if (so.GetType().IsSubclassOf(typeof(SO_Stat_Base)) && !allTargetUserStats.Contains(so.TargetUserStat))
                     {
                         allTargetUserStats.Add(so.TargetUserStat);
                     }
                 });
 
-                Dictionary<string, SO_Stat> statDictionary = dict as Dictionary<string, SO_Stat>;
+                Dictionary<string, SO_Stat_Base> statDictionary = dict as Dictionary<string, SO_Stat_Base>;
                 if (statDictionary == null)
                 {
-                    statDictionary = new Dictionary<string, SO_Stat>();
+                    statDictionary = new Dictionary<string, SO_Stat_Base>();
                 }
 
                 List<string> selectedStats = new List<string>();
-                foreach (KeyValuePair<string, SO_Stat> entry in statDictionary)
+                foreach (KeyValuePair<string, SO_Stat_Base> entry in statDictionary)
                 {
                     if (!selectedStats.Contains(entry.Value.TargetUserStat))
                     {
@@ -259,21 +248,81 @@ namespace ItemSystem.Editor
                         var row = new VisualElement { style = { flexDirection = FlexDirection.Row } };
                         row.Add(new Label(stat));
 
-                        var matchingStats = allStats
-                            .Where(s => s.TargetUserStat == stat)
-                            .ToList();
+                        List<SO_Stat_StaticValue> matchingStaticStats = new List<SO_Stat_StaticValue>();
+                        List<SO_Stat> matchingDynamicStats = new List<SO_Stat>();
 
-                        List<string> soNames = matchingStats
-                            .Select(s => $"{s.ModuleName} ({s.GetType().Name})")
-                            .ToList();
+                        foreach (var s in allStats)
+                        {
+                            if (s.TargetUserStat == stat)
+                            {
+                                if (s is SO_Stat_StaticValue)
+                                {
+                                    matchingStaticStats.Add(s as SO_Stat_StaticValue);
+                                }
+                                else if (s is SO_Stat)
+                                {
+                                    matchingDynamicStats.Add(s as SO_Stat);
+                                }
+                                else
+                                {
+                                    Debug.LogWarning($"Stat {s.ModuleName} ({s.GetType().Name}) does not match expected types for TargetUserStat: {stat}");
+                                }
+                            }
+                        }
 
-                        SO_Stat current = statDictionary.FirstOrDefault(x => x.Value.TargetUserStat == stat).Value;
-                        string currentName = current != null ? $"{current.ModuleName} ({current.GetType().Name})" : soNames.FirstOrDefault();
+                        List<string> soNames = new List<string>();
+
+                        foreach (var staticStat in matchingStaticStats)
+                        {
+                            soNames.Add($"{staticStat.ModuleName} ({staticStat.GetType().Name})");
+                        }
+
+                        foreach (var dynStat in matchingDynamicStats)
+                        {
+                            int count = dynStat.GetStatCount();
+
+                            if (count <= 0)
+                            {
+                                continue;
+                            }
+
+                            for (int i = 0; i < count; i++)
+                            {
+                                soNames.Add($"{dynStat.ModuleName}/{dynStat.GetStatValue(i)} ({dynStat.GetType().Name})");
+                            }
+                        }
+
+                        if (soNames == null || soNames.Count == 0)
+                        {
+                            selectedStats.Remove(stat);
+                            return;
+                        }
+
+                        SO_Stat_Base current = statDictionary.FirstOrDefault(x => x.Value.TargetUserStat == stat).Value;
+
+                        string currentName = string.Empty;
+                        if (current != null)
+                        {
+                            if (current is SO_Stat_StaticValue staticVal)
+                            {
+                                currentName = $"{staticVal.ModuleName} ({staticVal.GetType().Name})";
+                            }
+                            else if (current is SO_Stat val)
+                            {
+                                currentName = $"{val.ModuleName}/{val.GetStatValue(0)} ({val.GetType().Name})";
+                            }
+                            else
+                            {
+                                Debug.LogWarning($"Stat {current.ModuleName} ({current.GetType().Name}) does not match expected types for TargetUserStat: {stat}");
+                            }
+                        }
+
+                        currentName = currentName != string.Empty && currentName != null ? currentName : soNames.FirstOrDefault();
 
                         DropdownField statDropdown = new DropdownField("", soNames, currentName);
                         statDropdown.RegisterValueChangedCallback(c =>
                         {
-                            SO_Stat selectedSO = matchingStats.FirstOrDefault(s => $"{s.ModuleName} ({s.GetType().Name})" == c.newValue);
+                            SO_Stat_Base selectedSO = matchingStaticStats.FirstOrDefault(s => $"{s.ModuleName} ({s.GetType().Name})" == c.newValue);
                             if (selectedSO != null)
                             {
                                 string oldKey = statDictionary.FirstOrDefault(x => x.Value.TargetUserStat == stat).Key;
@@ -327,7 +376,7 @@ namespace ItemSystem.Editor
                         dropdown.value = dropdown.choices.FirstOrDefault();
                         updateUI();
 
-                        SO_Stat newItem = allStats.FirstOrDefault(so => so.TargetUserStat == selected);
+                        SO_Stat_Base newItem = allStats.FirstOrDefault(so => so.TargetUserStat == selected);
                         statDictionary.Add(newItem.StatName, newItem);
                         _Property.SetValue(_ParentSO, statDictionary);
                         EditorUtility.SetDirty(_ParentSO);
@@ -415,6 +464,14 @@ namespace ItemSystem.Editor
                 return _UIParent;
             }
 
+            if (m_BasicDataTypes.Contains(_Property.PropertyType.GetElementType()))
+            {
+                System.Type elementType = _Property.PropertyType.GetElementType();
+                VisualElement basicArrayUI = CreateUIforBasicDataTypeArray(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, elementType);
+                _UIParent.Add(basicArrayUI);
+                return _UIParent;
+            }
+
             Debug.LogWarning($"Could not generate InspectorList for Array {_ParentSO} : {_Property.Name}");
             return null;
         }
@@ -477,305 +534,304 @@ namespace ItemSystem.Editor
         }
 
         private static VisualElement CreateUIforBasicDataTypes(
-           ScriptableObject _ParentSO,
-           PropertyInfo _Property,
-           InspectorPanel _ParentPanel,
-           Action<bool> _InspectorValueChangeCallback,
-           VisualElement _UIParent)
+             ScriptableObject _ParentSO,
+             PropertyInfo _Property,
+             InspectorPanel _ParentPanel,
+             Action<bool> _InspectorValueChangeCallback,
+             VisualElement _UIParent)
         {
-            TextField field = new TextField();
-            TextField field2 = new TextField();
-            TextField field3 = new TextField();
-
             _UIParent.tooltip = _Property.GetAttribute<TooltipAttribute>()?.tooltip;
+            System.Type type = _Property.PropertyType;
 
-            switch (m_Typedictionary[_Property.PropertyType])
+            VisualElement valueField = CreateFieldForType(
+                type,
+                _Property.GetValue(_ParentSO),
+                newValue =>
+                {
+                    _Property.SetValue(_ParentSO, newValue);
+                    EditorUtility.SetDirty(_ParentSO);
+                    AssetDatabase.SaveAssets();
+                    _InspectorValueChangeCallback?.Invoke(true);
+                },
+                () =>
+                {
+                    _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
+                });
+
+            if (valueField != null)
+                _UIParent.Add(valueField);
+
+            return _UIParent;
+        }
+
+        private static VisualElement CreateUIforBasicDataTypeArray(
+            ScriptableObject _ParentSO,
+            PropertyInfo _Property,
+            InspectorPanel _ParentPanel,
+            Action<bool> _InspectorValueChangeCallback,
+            System.Type _ElementType)
+        {
+            Array currentArray = _Property.GetValue(_ParentSO) as Array ?? Array.CreateInstance(_ElementType, 0);
+            VisualElement listRoot = new VisualElement { style = { flexDirection = FlexDirection.Column, marginBottom = 10 } };
+
+            if (_ElementType == typeof(bool))
             {
-                case ETypes.String:
-
-                    field.value = _Property.GetValue(_ParentSO)?.ToString() ?? string.Empty;
-                    _UIParent.Add(field);
-
-                    field.RegisterValueChangedCallback(t =>
+                for (int i = 0; i < currentArray.Length; i++)
+                {
+                    bool value = (bool)currentArray.GetValue(i);
+                    Label label = new Label($"Value {i}: {value}")
                     {
-                        _Property.SetValue(_ParentSO, t.newValue);
-                        EditorUtility.SetDirty(_ParentSO);
-                        AssetDatabase.SaveAssets();
-                        _InspectorValueChangeCallback?.Invoke(true);
-                    });
-
-                    field.RegisterCallback<FocusOutEvent>(t =>
-                    _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback)
-                    );
-
-                    return _UIParent;
-
-                case ETypes.Int:
-
-                    field.value = _Property.GetValue(_ParentSO)?.ToString() ?? string.Empty;
-                    _UIParent.Add(field);
-
-                    field.RegisterValueChangedCallback(t =>
-                    {
-                        if (int.TryParse(t.newValue, out int result))
+                        style =
                         {
-                            _Property.SetValue(_ParentSO, result);
-                            EditorUtility.SetDirty(_ParentSO);
-                            AssetDatabase.SaveAssets();
+                            unityFontStyleAndWeight = FontStyle.Bold,
+                            marginBottom = 2,
+                            marginLeft = 4
                         }
-                        else
-                        {
-                            Debug.LogWarning("Invalid input");
-                        }
-                    });
-
-                    field.RegisterCallback<FocusOutEvent>(t =>
-                   _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback)
-                   );
-
-                    return _UIParent;
-
-                case ETypes.Float:
-
-                    field.value = _Property.GetValue(_ParentSO)?.ToString() ?? string.Empty;
-                    _UIParent.Add(field);
-
-                    field.RegisterValueChangedCallback(t =>
-                    {
-                        if (float.TryParse(t.newValue, out float result))
-                        {
-                            _Property.SetValue(_ParentSO, result);
-                            EditorUtility.SetDirty(_ParentSO);
-                            AssetDatabase.SaveAssets();
-                        }
-                        else
-                        {
-                            Debug.LogWarning("Invalid input");
-                        }
-                    });
-
-                    field.RegisterCallback<FocusOutEvent>(t =>
-                   _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback)
-                   );
-
-                    return _UIParent;
-
-                case ETypes.Bool:
-
-                    Toggle boolField = new Toggle();
-                    boolField.value = (bool)_Property.GetValue(_ParentSO);
-
-                    _UIParent.Add(boolField);
-
-                    boolField.RegisterValueChangedCallback(t =>
-                    {
-                        _Property.SetValue(_ParentSO, t.newValue);
-                        EditorUtility.SetDirty(_ParentSO);
-                        AssetDatabase.SaveAssets();
-                        _InspectorValueChangeCallback?.Invoke(true);
-                        _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
-                    });
-
-                    return _UIParent;
-
-                case ETypes.Vector2:
-
-                    field.value = ((Vector2)_Property.GetValue(_ParentSO)).x.ToString() ?? string.Empty;
-
-                    field2.value = ((Vector2)_Property.GetValue(_ParentSO)).y.ToString() ?? string.Empty;
-
-                    _UIParent.Add(field);
-                    _UIParent.Add(field2);
-
-                    field.RegisterValueChangedCallback(t =>
-                    {
-                        if (float.TryParse(t.newValue, out float result))
-                        {
-                            if (float.TryParse(field2.value, out float result2))
-                            {
-                                Vector2 newValue = new Vector2(result, result2);
-                                _Property.SetValue(_ParentSO, newValue);
-                                EditorUtility.SetDirty(_ParentSO);
-                                AssetDatabase.SaveAssets();
-                            }
-                            else
-                            {
-                                Debug.LogWarning("Invalid input");
-                            }
-                        }
-                        else
-                        {
-                            Debug.LogWarning("Invalid input");
-                        }
-                    });
-
-                    field2.RegisterValueChangedCallback(t =>
-                    {
-                        if (float.TryParse(t.newValue, out float result2))
-                        {
-                            if (float.TryParse(field.value, out float result))
-                            {
-                                Vector2 newValue = new Vector2(result, result2);
-                                _Property.SetValue(_ParentSO, newValue);
-                                EditorUtility.SetDirty(_ParentSO);
-                                AssetDatabase.SaveAssets();
-                            }
-                            else
-                            {
-                                Debug.LogWarning("Invalid input");
-                            }
-                        }
-                        else
-                        {
-                            Debug.LogWarning("Invalid input");
-                        }
-                    });
-
-                    field.RegisterCallback<FocusOutEvent>(t =>
-                   _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback)
-                   );
-
-                    field2.RegisterCallback<FocusOutEvent>(t =>
-                 _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback)
-                 );
-
-                    return _UIParent;
-
-                case ETypes.Vector3:
-
-                    field.value = ((Vector3)_Property.GetValue(_ParentSO)).x.ToString() ?? string.Empty;
-
-                    field2.value = ((Vector3)_Property.GetValue(_ParentSO)).y.ToString() ?? string.Empty;
-
-                    field3.value = ((Vector3)_Property.GetValue(_ParentSO)).z.ToString() ?? string.Empty;
-
-                    _UIParent.Add(field);
-                    _UIParent.Add(field2);
-                    _UIParent.Add(field3);
-
-                    field.RegisterValueChangedCallback(t =>
-                    {
-                        if (float.TryParse(t.newValue, out float result))
-                        {
-                            if (float.TryParse(field2.value, out float result2))
-                            {
-                                if (float.TryParse(field3.value, out float result3))
-                                {
-                                    Vector3 newValue = new Vector3(result, result2, result3);
-                                    _Property.SetValue(_ParentSO, newValue);
-                                    EditorUtility.SetDirty(_ParentSO);
-                                    AssetDatabase.SaveAssets();
-                                }
-                                else
-                                {
-                                    Debug.LogWarning("Invalid input");
-                                }
-                            }
-                            else
-                            {
-                                Debug.LogWarning("Invalid input");
-                            }
-                        }
-                        else
-                        {
-                            Debug.LogWarning("Invalid input");
-                        }
-                    });
-
-                    field2.RegisterValueChangedCallback(t =>
-                    {
-                        if (float.TryParse(t.newValue, out float result2))
-                        {
-                            if (float.TryParse(field.value, out float result))
-                            {
-                                if (float.TryParse(field3.value, out float result3))
-                                {
-                                    Vector3 newValue = new Vector3(result, result2, result3);
-                                    _Property.SetValue(_ParentSO, newValue);
-                                    EditorUtility.SetDirty(_ParentSO);
-                                    AssetDatabase.SaveAssets();
-                                }
-                                else
-                                {
-                                    Debug.LogWarning("Invalid input");
-                                }
-                            }
-                            else
-                            {
-                                Debug.LogWarning("Invalid input");
-                            }
-                        }
-                        else
-                        {
-                            Debug.LogWarning("Invalid input");
-                        }
-                    });
-
-                    field3.RegisterValueChangedCallback(t =>
-                    {
-                        if (float.TryParse(t.newValue, out float result3))
-                        {
-                            if (float.TryParse(field.value, out float result))
-                            {
-                                if (float.TryParse(field2.value, out float result2))
-                                {
-                                    Vector3 newValue = new Vector3(result, result2, result3);
-                                    _Property.SetValue(_ParentSO, newValue);
-                                    EditorUtility.SetDirty(_ParentSO);
-                                    AssetDatabase.SaveAssets();
-                                }
-                                else
-                                {
-                                    Debug.LogWarning("Invalid input");
-                                }
-                            }
-                            else
-                            {
-                                Debug.LogWarning("Invalid input");
-                            }
-                        }
-                        else
-                        {
-                            Debug.LogWarning("Invalid input");
-                        }
-                    });
-
-                    field.RegisterCallback<FocusOutEvent>(t =>
-                   _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback)
-                   );
-
-                    field2.RegisterCallback<FocusOutEvent>(t =>
-                    _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback)
-                    );
-
-                    field3.RegisterCallback<FocusOutEvent>(t =>
-                    _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback)
-                    );
-
-                    return _UIParent;
-
-                case ETypes.Color:
-
-                    ColorField colorField = new ColorField();
-                    colorField.value = (Color)_Property.GetValue(_ParentSO);
-
-                    _UIParent.Add(colorField);
-
-                    colorField.RegisterCallback<FocusOutEvent>(t =>
-                    {
-                        _Property.SetValue(_ParentSO, colorField.value);
-                        EditorUtility.SetDirty(_ParentSO);
-                        AssetDatabase.SaveAssets();
-                        _InspectorValueChangeCallback?.Invoke(true);
-
-                        _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
-                    });
-
-                    return _UIParent;
-
-                default:
-                    return null;
+                    };
+                    listRoot.Add(label);
+                }
+                return listRoot;
             }
+
+            Button addButton = new Button(() =>
+            {
+                int oldLength = currentArray.Length;
+                Array newArray = Array.CreateInstance(_ElementType, oldLength + 1);
+                currentArray.CopyTo(newArray, 0);
+                object defaultValue = _ElementType.IsValueType ? Activator.CreateInstance(_ElementType) : null;
+                newArray.SetValue(defaultValue, oldLength);
+
+                _Property.SetValue(_ParentSO, newArray);
+                EditorUtility.SetDirty(_ParentSO);
+                AssetDatabase.SaveAssets();
+                _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
+            })
+            { text = $"Add" };
+
+            listRoot.Add(addButton);
+
+            for (int i = 0; i < currentArray.Length; i++)
+            {
+                int index = i;
+                VisualElement row = new VisualElement
+                {
+                    style =
+                    {
+                    flexDirection = FlexDirection.Row,
+                    alignItems = Align.Center,
+                    marginBottom = 2
+                    }
+                };
+
+                object currentValue = currentArray.GetValue(index);
+                VisualElement field = CreateFieldForType(
+                    _ElementType,
+                    currentValue,
+                    newValue =>
+                    {
+                        currentArray.SetValue(newValue, index);
+                        _Property.SetValue(_ParentSO, currentArray);
+                        EditorUtility.SetDirty(_ParentSO);
+                        AssetDatabase.SaveAssets();
+                        _InspectorValueChangeCallback?.Invoke(true);
+                    },
+                    () =>
+                    {
+                        _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
+                    });
+
+                Button removeButton = new Button(() =>
+                {
+                    List<object> tempList = new List<object>(currentArray.Length);
+                    for (int j = 0; j < currentArray.Length; j++)
+                        if (j != index) tempList.Add(currentArray.GetValue(j));
+
+                    Array newArray = Array.CreateInstance(_ElementType, tempList.Count);
+                    for (int k = 0; k < tempList.Count; k++)
+                        newArray.SetValue(tempList[k], k);
+
+                    _Property.SetValue(_ParentSO, newArray);
+                    EditorUtility.SetDirty(_ParentSO);
+                    AssetDatabase.SaveAssets();
+                    _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
+                })
+                {
+                    text = "Remove",
+                    style = { width = 60 }
+                };
+
+                row.Add(field);
+                row.Add(removeButton);
+                listRoot.Add(row);
+            }
+
+            return listRoot;
+        }
+
+        private static VisualElement CreateFieldForType(System.Type _Type, object _Value, Action<object> _OnChange, Action _OnFocusOut)
+        {
+            if (_Type == typeof(string))
+            {
+                TextField field = new TextField
+                {
+                    value = (string)_Value,
+                    style =
+                    {
+                        flexGrow = 0,
+                        flexShrink = 1,
+                        width = StyleKeyword.Auto,
+                        minWidth = 40,
+                        marginRight = 6
+                    }
+                };
+
+                var textInput = field.Q("unity-text-input");
+                if (textInput != null)
+                {
+                    textInput.style.flexGrow = 0;
+                    textInput.style.flexShrink = 1;
+                    textInput.style.width = StyleKeyword.Auto;
+                    textInput.style.minWidth = 40;
+                }
+
+                field.RegisterCallback<FocusOutEvent>(evt =>
+                {
+                    _OnChange(field.value);
+                    _OnFocusOut?.Invoke();
+                });
+                return field;
+            }
+            if (_Type == typeof(int))
+            {
+                IntegerField field = new IntegerField
+                {
+                    value = (int)_Value,
+                    style =
+                    {
+                        flexGrow = 0,
+                        flexShrink = 1,
+                        width = StyleKeyword.Auto,
+                        minWidth = 40,
+                        marginRight = 6
+                    }
+                };
+
+                var textInput = field.Q("unity-text-input");
+                if (textInput != null)
+                {
+                    textInput.style.flexGrow = 0;
+                    textInput.style.flexShrink = 1;
+                    textInput.style.width = StyleKeyword.Auto;
+                    textInput.style.minWidth = 40;
+                }
+
+                field.RegisterCallback<FocusOutEvent>(evt =>
+                {
+                    _OnChange(field.value);
+                    _OnFocusOut?.Invoke();
+                });
+                return field;
+            }
+            if (_Type == typeof(float))
+            {
+                FloatField field = new FloatField
+                {
+                    value = (float)_Value,
+                    style =
+                    {
+                        flexGrow = 0,
+                        flexShrink = 1,
+                        width = StyleKeyword.Auto,
+                        minWidth = 40,
+                        marginRight = 6
+                    }
+                };
+
+                var textInput = field.Q("unity-text-input");
+                if (textInput != null)
+                {
+                    textInput.style.flexGrow = 0;
+                    textInput.style.flexShrink = 1;
+                    textInput.style.width = StyleKeyword.Auto;
+                    textInput.style.minWidth = 40;
+                }
+
+                field.RegisterCallback<FocusOutEvent>(evt =>
+                {
+                    _OnChange(field.value);
+                    _OnFocusOut?.Invoke();
+                });
+                return field;
+            }
+            if (_Type == typeof(bool))
+            {
+                Toggle toggle = new Toggle { value = (bool)_Value };
+                toggle.RegisterValueChangedCallback(evt => _OnChange(evt.newValue));
+                return toggle;
+            }
+            if (_Type == typeof(Vector2))
+            {
+                Vector2Field field = new Vector2Field
+                {
+                    value = (Vector2)_Value,
+                    style =
+                    {
+                        flexGrow = 0,
+                        flexShrink = 1,
+                        width = StyleKeyword.Auto,
+                        minWidth = 40,
+                        marginRight = 6
+                    }
+                };
+
+                foreach (var floatField in field.Query<FloatField>().ToList())
+                {
+                    floatField.style.flexGrow = 0;
+                    floatField.style.flexShrink = 1;
+                    floatField.style.width = StyleKeyword.Auto;
+                    floatField.style.minWidth = 40;
+                }
+
+                field.RegisterValueChangedCallback(evt => _OnChange(evt.newValue));
+                return field;
+            }
+
+            if (_Type == typeof(Vector3))
+            {
+                Vector3Field field = new Vector3Field
+                {
+                    value = (Vector3)_Value,
+                    style =
+                    {
+                        flexGrow = 0,
+                        flexShrink = 1,
+                        width = StyleKeyword.Auto,
+                        minWidth = 40,
+                        marginRight = 6
+                    }
+                };
+
+                foreach (var floatField in field.Query<FloatField>().ToList())
+                {
+                    floatField.style.flexGrow = 0;
+                    floatField.style.flexShrink = 1;
+                    floatField.style.width = StyleKeyword.Auto;
+                    floatField.style.minWidth = 40;
+                }
+
+                field.RegisterValueChangedCallback(evt => _OnChange(evt.newValue));
+                return field;
+            }
+
+            if (_Type == typeof(Color))
+            {
+                ColorField field = new ColorField { value = (Color)_Value, style = { width = 140, marginRight = 6 } };
+                field.RegisterValueChangedCallback(evt => _OnChange(evt.newValue));
+                return field;
+            }
+
+            Debug.LogWarning($"Unsupported field type: {_Type.Name}");
+            return null;
         }
 
         private static VisualElement CreateUIforTypeSelection(

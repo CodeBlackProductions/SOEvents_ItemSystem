@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_StatName: StatCollection/UserBaseStats
   m_TargetUserStat: StatCollection
+  m_ToolTips: []
   m_Tags: []
   m_Value:
-  - {fileID: 11400000, guid: c064723c839f86c48978972438a239ac, type: 2}
   - {fileID: 11400000, guid: 5bbc965438cdaff4f80091ccc56c254a, type: 2}
   - {fileID: 11400000, guid: 09a030ec89f36d346bb3215cc6923497, type: 2}
   - {fileID: 11400000, guid: ebc19d1a8099c8241aec0c91b2fc8efb, type: 2}

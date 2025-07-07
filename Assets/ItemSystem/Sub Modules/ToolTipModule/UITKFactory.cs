@@ -160,6 +160,15 @@ public static class UITKFactory
         return window;
     }
 
+    public static string ParseRichText(string _Text, Color _HyperlinColor, Color _ValueColor)
+    {
+        string result = _Text;
+        result = CreateHyperlink(result, _HyperlinColor);
+        result = ImportValues(result, _ValueColor);
+
+        return result;
+    }
+
     #region Internal Methods
 
     private static VisualElement CreateMainWindow(string _UIName, Vector2 _ScreenPos, Texture2D _WindowBGImage = null)
@@ -366,15 +375,6 @@ public static class UITKFactory
         return resizeHandle;
     }
 
-    private static string ParseRichText(string _Text, Color _HyperlinColor, Color _ValueColor)
-    {
-        string result = _Text;
-        result = CreateHyperlink(result, _HyperlinColor);
-        result = ImportValues(result, _ValueColor);
-
-        return result;
-    }
-
     private static string CreateHyperlink(string _Text, Color _Color)
     {
         string text = _Text;
@@ -436,13 +436,37 @@ public static class UITKFactory
                 var propInfo = item.GetType().GetProperty("Stats", BindingFlags.Public | BindingFlags.Instance);
                 if (propInfo != null)
                 {
-                    SO_Stat stat;
-                    Dictionary<string, SO_Stat> propValue = propInfo.GetValue(item) as Dictionary<string, SO_Stat>;
+                    SO_Stat_Base stat;
+                    Dictionary<string, SO_Stat_Base> propValue = propInfo.GetValue(item) as Dictionary<string, SO_Stat_Base>;
                     propValue.TryGetValue(statName, out stat);
 
                     if (stat != null)
                     {
-                        text = text.Replace("[" + subTTID + "]", $"<color=#{UnityEngine.ColorUtility.ToHtmlStringRGBA(_ValueColor)}>{stat.GetStatValue()?.ToString() ?? string.Empty}</color>");
+                        if (stat is SO_Stat_StaticValue staticValue)
+                        {
+                            text = text.Replace("[" + subTTID + "]", $"<color=#{UnityEngine.ColorUtility.ToHtmlStringRGBA(_ValueColor)}>{staticValue.GetStatValue()?.ToString() ?? string.Empty}</color>");
+                        }
+                        else if (stat is SO_Stat value)
+                        {
+                            int index = 0;
+                            var indexPropInfo = item.GetType().GetProperty("StatIndices", BindingFlags.Public | BindingFlags.Instance);
+                            if (indexPropInfo != null)
+                            {
+                                Dictionary<string, int> indexPropValue = indexPropInfo.GetValue(item) as Dictionary<string, int>;
+                                indexPropValue.TryGetValue(statName, out index);
+
+                                text = text.Replace("[" + subTTID + "]", $"<color=#{UnityEngine.ColorUtility.ToHtmlStringRGBA(_ValueColor)}>{propValue?.ToString() ?? string.Empty}</color>");
+                            }
+                            else
+                            {
+                                Debug.LogWarning($"Property '{propName}' not found in item '{item.name}'.");
+                            }
+                            text = text.Replace("[" + subTTID + "]", $"<color=#{UnityEngine.ColorUtility.ToHtmlStringRGBA(_ValueColor)}>{value.GetStatValue(index)?.ToString() ?? string.Empty}</color>");
+                        }
+                        else
+                        {
+                            Debug.LogWarning($"Stat '{statName}' not found in item '{item.name}'.");
+                        }
                     }
                     else
                     {

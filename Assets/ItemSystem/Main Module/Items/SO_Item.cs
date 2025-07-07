@@ -24,10 +24,12 @@ namespace ItemSystem.MainModule
         [SerializeField] private ERarity m_Rarity;
         [SerializeField] private SO_Item_Effect[] m_Effects;
         [SerializeField] private SO_Tag[] m_Tags;
-        [SerializeField] private List<SO_Stat> m_ItemStats = new List<SO_Stat>();
+        [SerializeField] private List<SO_Stat_Base> m_ItemStats = new List<SO_Stat_Base>();
+        [SerializeField] private List<int> m_ItemStatIndices = new List<int>();
         [SerializeField] private int m_TypeIndex;
 
-        private Dictionary<string, SO_Stat> m_Stats = new Dictionary<string, SO_Stat>();
+        private Dictionary<string, SO_Stat_Base> m_Stats = new Dictionary<string, SO_Stat_Base>();
+        private Dictionary<string, int> m_StatIndices = new Dictionary<string, int>();
 
         [ItemToolkitAccess] public string ItemName { get => m_ItemName; set => m_ItemName = value; }
         [ItemToolkitAccess] public SO_Item_Class Class { get => m_Class; set => m_Class = value; }
@@ -36,7 +38,7 @@ namespace ItemSystem.MainModule
         [ItemToolkitAccess] public SO_Item_Effect[] Effects { get => m_Effects; set => m_Effects = value; }
 
         [ItemToolkitAccess]
-        public Dictionary<string, SO_Stat> Stats
+        public Dictionary<string, SO_Stat_Base> Stats
         {
             get => m_Stats; set
             {
@@ -44,11 +46,13 @@ namespace ItemSystem.MainModule
                 foreach (var stat in value)
                 {
                     m_ItemStats.Add(stat.Value);
+                    m_ItemStatIndices.Add(m_StatIndices.ContainsKey(stat.Key) ? m_StatIndices[stat.Key] : 0);
                 }
                 m_Stats = value;
             }
         }
 
+        public Dictionary<string, int> StatIndices { get => m_StatIndices; set => m_StatIndices = value; }
         [ItemToolkitAccess] public SO_ToolTip[] ToolTips { get => m_ToolTips; set => m_ToolTips = value; }
         [ItemToolkitAccess] public SO_Tag[] Tags { get => m_Tags; set => m_Tags = value; }
 
@@ -60,11 +64,15 @@ namespace ItemSystem.MainModule
             if (m_ItemStats != null && m_ItemStats.Count > 0)
             {
                 m_Stats.Clear();
-                foreach (SO_Stat stat in m_ItemStats)
+
+                for (int i = 0; i < m_ItemStats.Count; i++)
                 {
+                    var stat = m_ItemStats[i];
+                    int index = i < m_ItemStatIndices.Count ? m_ItemStatIndices[i] : 0;
                     if (stat != null && !m_Stats.ContainsKey(stat.TargetUserStat))
                     {
                         m_Stats.Add(stat.TargetUserStat, stat);
+                        m_StatIndices.Add(stat.TargetUserStat, index);
                     }
                 }
             }

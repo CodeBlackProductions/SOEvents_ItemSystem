@@ -12,7 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 404835ad023f4f54695e09be8ca06718, type: 3}
   m_Name: SO_Stat_Vector2_b9098a1d79105ca408ffa6838aac7a91
   m_EditorClassIdentifier: 
-  m_StatName: Vector2/Zero
+  m_StatName: Vector2Stat
   m_TargetUserStat: Vector2
+  m_ToolTips: []
   m_Tags: []
-  m_Value: {x: 0, y: 0}
+  m_Value:
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
