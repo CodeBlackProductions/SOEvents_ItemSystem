@@ -116,6 +116,8 @@ namespace ItemSystem.Editor
                     _InspectorValueChangeCallback?.Invoke(true);
                 });
 
+                dropdownField.style.minHeight = 20;
+
                 _UIParent.Add(dropdownField);
 
                 return _UIParent;
@@ -176,6 +178,8 @@ namespace ItemSystem.Editor
                     _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
                     _InspectorValueChangeCallback?.Invoke(true);
                 });
+
+                dropdownField.style.minHeight = 20;
 
                 _UIParent.Add(dropdownField);
 
@@ -243,6 +247,10 @@ namespace ItemSystem.Editor
                 updateUI = () =>
                 {
                     selectedList.Clear();
+
+                    ScrollView scrollview = new ScrollView();
+                    selectedList.Add(scrollview);
+
                     foreach (var stat in selectedStats)
                     {
                         var row = new VisualElement { style = { flexDirection = FlexDirection.Row } };
@@ -283,7 +291,7 @@ namespace ItemSystem.Editor
 
                             if (count <= 0)
                             {
-                                continue;
+                                soNames.Add($"No Values Found for {dynStat.ModuleName} ({dynStat.GetType().Name})");
                             }
 
                             for (int i = 0; i < count; i++)
@@ -309,7 +317,14 @@ namespace ItemSystem.Editor
                             }
                             else if (current is SO_Stat val)
                             {
-                                currentName = $"{val.ModuleName}/{val.GetStatValue(0)} ({val.GetType().Name})";
+                                if (val.GetStatCount() > 0)
+                                {
+                                    currentName = $"{val.ModuleName}/{val.GetStatValue(0)} ({val.GetType().Name})";
+                                }
+                                else
+                                {
+                                    currentName = $"No Values Found for {val.ModuleName} ({val.GetType().Name})";
+                                }
                             }
                             else
                             {
@@ -362,7 +377,8 @@ namespace ItemSystem.Editor
                         { text = "Remove" };
                         row.Add(removeButton);
 
-                        selectedList.Add(row);
+                        scrollview.style.maxHeight = 300;
+                        scrollview.Add(row);
                     }
                 };
 
@@ -392,16 +408,20 @@ namespace ItemSystem.Editor
                     addButton.SetEnabled(false);
                 }
 
-                VisualElement SelectionContainer = new VisualElement { style = { flexDirection = FlexDirection.Row } };
-                SelectionContainer.Add(dropdown);
-                SelectionContainer.Add(addButton);
+                VisualElement selectionContainer = new VisualElement { style = { flexDirection = FlexDirection.Row } };
+                selectionContainer.Add(dropdown);
+                selectionContainer.Add(addButton);
+                selectionContainer.style.minHeight = 20;
 
-                container.Add(SelectionContainer);
+                container.Add(selectionContainer);
                 container.Add(selectedList);
 
                 updateUI();
 
+                container.style.minHeight = 20;
+
                 _UIParent.Add(container);
+
                 return _UIParent;
             }
 
@@ -467,8 +487,16 @@ namespace ItemSystem.Editor
             if (m_BasicDataTypes.Contains(_Property.PropertyType.GetElementType()))
             {
                 System.Type elementType = _Property.PropertyType.GetElementType();
-                VisualElement basicArrayUI = CreateUIforBasicDataTypeArray(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, elementType);
+                VisualElement basicArrayUI = CreateUIforDataTypeArray(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, elementType);
                 _UIParent.Add(basicArrayUI);
+                return _UIParent;
+            }
+
+            if (_Property.PropertyType == typeof(GameObject[]))
+            {
+                System.Type elementType = _Property.PropertyType.GetElementType();
+                VisualElement projectileArrayUI = CreateUIforDataTypeArray(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, elementType);
+                _UIParent.Add(projectileArrayUI);
                 return _UIParent;
             }
 
@@ -524,6 +552,8 @@ namespace ItemSystem.Editor
                     _InspectorValueChangeCallback?.Invoke(true);
                 });
 
+                dropdownField.style.minHeight = 20;
+
                 _UIParent.Add(dropdownField);
 
                 return _UIParent;
@@ -559,12 +589,14 @@ namespace ItemSystem.Editor
                 });
 
             if (valueField != null)
+            {
                 _UIParent.Add(valueField);
+            }
 
             return _UIParent;
         }
 
-        private static VisualElement CreateUIforBasicDataTypeArray(
+        private static VisualElement CreateUIforDataTypeArray(
             ScriptableObject _ParentSO,
             PropertyInfo _Property,
             InspectorPanel _ParentPanel,
@@ -693,6 +725,7 @@ namespace ItemSystem.Editor
                         flexShrink = 1,
                         width = StyleKeyword.Auto,
                         minWidth = 40,
+                        minHeight = 20,
                         marginRight = 6
                     }
                 };
@@ -724,6 +757,7 @@ namespace ItemSystem.Editor
                         flexShrink = 1,
                         width = StyleKeyword.Auto,
                         minWidth = 40,
+                        minHeight = 20,
                         marginRight = 6
                     }
                 };
@@ -755,6 +789,7 @@ namespace ItemSystem.Editor
                         flexShrink = 1,
                         width = StyleKeyword.Auto,
                         minWidth = 40,
+                        minHeight = 20,
                         marginRight = 6
                     }
                 };
@@ -779,6 +814,7 @@ namespace ItemSystem.Editor
             {
                 Toggle toggle = new Toggle { value = (bool)_Value };
                 toggle.RegisterValueChangedCallback(evt => _OnChange(evt.newValue));
+                toggle.style.minHeight = 20;
                 return toggle;
             }
             if (_Type == typeof(Vector2))
@@ -836,7 +872,6 @@ namespace ItemSystem.Editor
 
                 return vectorRow;
             }
-
             if (_Type == typeof(Vector3))
             {
                 VisualElement vectorRow = new VisualElement
@@ -910,14 +945,54 @@ namespace ItemSystem.Editor
 
                 return vectorRow;
             }
-
             if (_Type == typeof(Color))
             {
-                ColorField field = new ColorField { value = (Color)_Value, style = { width = 140, marginRight = 6 } };
+                ColorField field = new ColorField { value = (Color)_Value, style = { width = 140, marginRight = 6, minHeight = 20 } };
                 field.RegisterValueChangedCallback(evt => _OnChange(evt.newValue));
                 return field;
             }
+            if (_Type == typeof(GameObject))
+            {
+                List<GameObject> projectileList = ItemEditor_AssetLoader.LoadAssetsByType<GameObject>().Where(asset => asset.GetComponent<IProjectile>() != null).ToList();
+                if (projectileList == null)
+                {
+                    projectileList = new List<GameObject>();
+                }
+                List<string> projectileNames = new List<string>();
+                for (int i = 0; i < projectileList.Count; i++)
+                {
+                    projectileNames.Add(projectileList[i].GetComponent<IProjectile>()?.ProjectileName);
+                }
 
+                if (projectileNames.Count > 0)
+                {
+                    string currentEntry;
+                    if (_Value == null)
+                    {
+                        currentEntry = "Select Projectile";
+                        projectileNames.Insert(0, currentEntry);
+                    }
+                    else
+                    {
+                        currentEntry = (_Value as GameObject).GetComponent<IProjectile>()?.ProjectileName;
+                    }
+
+                    DropdownField dropdownField = new DropdownField(projectileNames, currentEntry);
+
+                    dropdownField.RegisterValueChangedCallback(evt =>
+                    _OnChange(
+                        projectileList.Find(obj => obj.GetComponent<IProjectile>() != null && obj.GetComponent<IProjectile>()?.ProjectileName == evt.newValue)
+                    ));
+                    dropdownField.style.minHeight = 20;
+                    return dropdownField;
+                }
+                else
+                {
+                    Label label = new Label("No projectiles available");
+                    label.style.minHeight = 20;
+                    return label;
+                }
+            }
             Debug.LogWarning($"Unsupported field type: {_Type.Name}");
             return null;
         }
@@ -973,6 +1048,7 @@ namespace ItemSystem.Editor
                 string currentEntryName = soNames[currentEntry];
 
                 DropdownField dropdownField = new DropdownField(soNames, currentEntryName);
+                dropdownField.style.minHeight = 20;
 
                 dropdownField.RegisterValueChangedCallback(c =>
                 {
@@ -993,6 +1069,8 @@ namespace ItemSystem.Editor
             else
             {
                 Label noTypes = new Label("No types declared in class");
+                noTypes.style.minHeight = 20;
+
                 _UIParent.Add(noTypes);
                 return _UIParent;
             }

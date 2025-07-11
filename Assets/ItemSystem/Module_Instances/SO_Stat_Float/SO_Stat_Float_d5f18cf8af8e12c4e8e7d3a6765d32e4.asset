@@ -10,10 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6aefc8afd4fecee41ae829fec1a6f0e8, type: 3}
-  m_Name: SO_Stat_Float_b65391d4af84eec4088a08a7c33ffb9a
+  m_Name: SO_Stat_Float_d5f18cf8af8e12c4e8e7d3a6765d32e4
   m_EditorClassIdentifier: 
-  m_StatName: AttackRange/10
-  m_TargetUserStat: AttackRange
-  m_Tags:
-  - {fileID: 11400000, guid: c48d569b4f305ca4eb7142e57194f32f, type: 2}
-  m_Value: 10
+  m_StatName: AttackMinRange
+  m_TargetUserStat: AttackMinRange
+  m_ToolTips: []
+  m_Tags: []
+  m_Value:
+  - 0
+  - 25

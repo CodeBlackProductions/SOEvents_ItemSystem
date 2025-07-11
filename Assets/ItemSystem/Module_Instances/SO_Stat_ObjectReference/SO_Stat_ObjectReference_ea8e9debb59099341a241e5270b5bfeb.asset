@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc08b58f8d8aa294bafd4b4e9b22c3a5, type: 3}
+  m_Name: SO_Stat_ObjectReference_ea8e9debb59099341a241e5270b5bfeb
+  m_EditorClassIdentifier: 
+  m_StatName: ProjectileTest
+  m_TargetUserStat: Projectile
+  m_ToolTips: []
+  m_Tags: []
+  m_Value:
+  - {fileID: 2900508419396136528, guid: 096d4ed837b8b71468c0af90d21b6c3e, type: 3}
+  - {fileID: 2900508419396136528, guid: 5861af21226a8184799d1ed29a83f6cd, type: 3}

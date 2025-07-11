@@ -10,10 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6aefc8afd4fecee41ae829fec1a6f0e8, type: 3}
-  m_Name: SO_Stat_Float_60437251d988f7146840bdb90e420613
+  m_Name: SO_Stat_Float_6a8ffb73e70b23640933d64ce66eaeb3
   m_EditorClassIdentifier: 
-  m_StatName: MaxHealth/UserBase
-  m_TargetUserStat: MaxHealth
-  m_Tags:
-  - {fileID: 11400000, guid: c48d569b4f305ca4eb7142e57194f32f, type: 2}
-  m_Value: 100
+  m_StatName: AttackRange
+  m_TargetUserStat: AttackRange
+  m_ToolTips: []
+  m_Tags: []
+  m_Value:
+  - 10
+  - 75

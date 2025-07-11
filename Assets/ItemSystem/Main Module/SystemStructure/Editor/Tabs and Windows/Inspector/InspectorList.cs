@@ -92,8 +92,8 @@ namespace ItemSystem.Editor
 
             var buttonContainer = new VisualElement { style = { flexDirection = FlexDirection.Row } };
 
-            Button addButton = new Button(() => ChooseNewItem()) { text = "Add" };
-            Button removeButton = new Button(() => RemoveSelectedItem()) { text = "Remove" };
+            Button addButton = new Button(() => ChooseNewItem()) { text = "Add", style = { minHeight = 20 } };
+            Button removeButton = new Button(() => RemoveSelectedItem()) { text = "Remove", style = { minHeight = 20 } };
 
             buttonContainer.Add(addButton);
             buttonContainer.Add(removeButton);

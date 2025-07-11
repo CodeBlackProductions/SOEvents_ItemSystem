@@ -34,6 +34,7 @@ namespace ItemSystem.Editor
             m_SubTabContent?.Clear();
 
             List<System.Type> statTypes = ItemEditor_AssetLoader.LoadDerivedTypes(typeof(SO_Stat)).ToList();
+            statTypes.AddRange(ItemEditor_AssetLoader.LoadDerivedTypes(typeof(SO_Stat_StaticValue)).ToList());
             List<KeyValuePair<string, System.Type>> statTypePairs = new List<KeyValuePair<string, System.Type>>();
 
             foreach (System.Type type in statTypes)

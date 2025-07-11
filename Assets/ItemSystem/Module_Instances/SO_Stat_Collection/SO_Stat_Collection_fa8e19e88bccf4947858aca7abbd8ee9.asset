@@ -16,10 +16,4 @@ MonoBehaviour:
   m_TargetUserStat: StatCollection
   m_ToolTips: []
   m_Tags: []
-  m_Value:
-  - {fileID: 11400000, guid: 5bbc965438cdaff4f80091ccc56c254a, type: 2}
-  - {fileID: 11400000, guid: 09a030ec89f36d346bb3215cc6923497, type: 2}
-  - {fileID: 11400000, guid: ebc19d1a8099c8241aec0c91b2fc8efb, type: 2}
-  - {fileID: 11400000, guid: 9710fd439be214247b38b036a32a8f15, type: 2}
-  - {fileID: 11400000, guid: 743173eec8b3307459fc346ffdb077c1, type: 2}
-  - {fileID: 11400000, guid: acec1c01ee6ce774abf3268cc2a0a453, type: 2}
+  m_Value: []
