@@ -610,6 +610,16 @@ namespace ItemSystem.Editor
 
             listRoot.Add(addButton);
 
+            ScrollView scrollView = new ScrollView
+            {
+                style =
+                {
+                    flexGrow = 1,
+                    flexShrink = 1,
+                    maxHeight = 300
+                }
+            };
+
             for (int i = 0; i < currentArray.Length; i++)
             {
                 int index = i;
@@ -662,8 +672,10 @@ namespace ItemSystem.Editor
 
                 row.Add(field);
                 row.Add(removeButton);
-                listRoot.Add(row);
+                scrollView.Add(row);
             }
+
+            listRoot.Add(scrollView);
 
             return listRoot;
         }
@@ -771,9 +783,23 @@ namespace ItemSystem.Editor
             }
             if (_Type == typeof(Vector2))
             {
-                Vector2Field field = new Vector2Field
+                VisualElement vectorRow = new VisualElement
                 {
-                    value = (Vector2)_Value,
+                    style =
+                    {
+                        flexDirection = FlexDirection.Column,
+                        alignItems = Align.FlexStart,
+                        flexGrow = 0,
+                        flexShrink = 1,
+                        width = StyleKeyword.Auto,
+                        minWidth = 50,
+                        borderBottomWidth = 2,
+                        borderBottomColor = new Color(0.8f, 0.8f, 0.8f, 1)
+                    }
+                };
+                FloatField Xfield = new FloatField("X")
+                {
+                    value = ((Vector2)_Value).x,
                     style =
                     {
                         flexGrow = 0,
@@ -783,24 +809,53 @@ namespace ItemSystem.Editor
                         marginRight = 6
                     }
                 };
+                VisualElement ve = Xfield;
+                ve.ElementAt(0).style.minWidth = 10;
 
-                foreach (var floatField in field.Query<FloatField>().ToList())
+                FloatField Yfield = new FloatField("Y")
                 {
-                    floatField.style.flexGrow = 0;
-                    floatField.style.flexShrink = 1;
-                    floatField.style.width = StyleKeyword.Auto;
-                    floatField.style.minWidth = 40;
-                }
+                    value = ((Vector2)_Value).y,
+                    style =
+                    {
+                        flexGrow = 0,
+                        flexShrink = 1,
+                        width = StyleKeyword.Auto,
+                        minWidth = 40,
+                        marginRight = 6
+                    }
+                };
+                ve = Yfield;
+                ve.ElementAt(0).style.minWidth = 10;
 
-                field.RegisterValueChangedCallback(evt => _OnChange(evt.newValue));
-                return field;
+                Xfield.RegisterCallback<FocusOutEvent>(evt => _OnChange(new Vector2(Xfield.value, Yfield.value)));
+
+                Yfield.RegisterCallback<FocusOutEvent>(evt => _OnChange(new Vector2(Xfield.value, Yfield.value)));
+
+                vectorRow.Add(Xfield);
+                vectorRow.Add(Yfield);
+
+                return vectorRow;
             }
 
             if (_Type == typeof(Vector3))
             {
-                Vector3Field field = new Vector3Field
+                VisualElement vectorRow = new VisualElement
                 {
-                    value = (Vector3)_Value,
+                    style =
+                    {
+                        flexDirection = FlexDirection.Column,
+                        alignItems = Align.FlexStart,
+                        flexGrow = 0,
+                        flexShrink = 1,
+                        width = StyleKeyword.Auto,
+                        minWidth = 50,
+                        borderBottomWidth = 2,
+                        borderBottomColor = new Color(0.8f, 0.8f, 0.8f, 1)
+                    }
+                };
+                FloatField Xfield = new FloatField("X")
+                {
+                    value = ((Vector3)_Value).x,
                     style =
                     {
                         flexGrow = 0,
@@ -810,17 +865,50 @@ namespace ItemSystem.Editor
                         marginRight = 6
                     }
                 };
+                VisualElement ve = Xfield;
+                ve.ElementAt(0).style.minWidth = 10;
 
-                foreach (var floatField in field.Query<FloatField>().ToList())
+                FloatField Yfield = new FloatField("Y")
                 {
-                    floatField.style.flexGrow = 0;
-                    floatField.style.flexShrink = 1;
-                    floatField.style.width = StyleKeyword.Auto;
-                    floatField.style.minWidth = 40;
-                }
+                    value = ((Vector3)_Value).y,
+                    style =
+                    {
+                        flexGrow = 0,
+                        flexShrink = 1,
+                        width = StyleKeyword.Auto,
+                        minWidth = 40,
+                        marginRight = 6
+                    }
+                };
+                ve = Yfield;
+                ve.ElementAt(0).style.minWidth = 10;
 
-                field.RegisterValueChangedCallback(evt => _OnChange(evt.newValue));
-                return field;
+                FloatField Zfield = new FloatField("Z")
+                {
+                    value = ((Vector3)_Value).z,
+                    style =
+                    {
+                        flexGrow = 0,
+                        flexShrink = 1,
+                        width = StyleKeyword.Auto,
+                        minWidth = 40,
+                        marginRight = 6
+                    }
+                };
+                ve = Zfield;
+                ve.ElementAt(0).style.minWidth = 10;
+
+                Xfield.RegisterCallback<FocusOutEvent>(evt => _OnChange(new Vector3(Xfield.value, Yfield.value, Zfield.value)));
+
+                Yfield.RegisterCallback<FocusOutEvent>(evt => _OnChange(new Vector3(Xfield.value, Yfield.value, Zfield.value)));
+
+                Zfield.RegisterCallback<FocusOutEvent>(evt => _OnChange(new Vector3(Xfield.value, Yfield.value, Zfield.value)));
+
+                vectorRow.Add(Xfield);
+                vectorRow.Add(Yfield);
+                vectorRow.Add(Zfield);
+
+                return vectorRow;
             }
 
             if (_Type == typeof(Color))
