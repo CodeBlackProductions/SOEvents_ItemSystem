@@ -23,5 +23,5 @@ MonoBehaviour:
   m_Tags:
   - {fileID: 11400000, guid: 1eec9bb9542239543a199e615d19d62d, type: 2}
   m_ItemStats: []
-  m_ItemStatIndices: 0000000000000000
+  m_ItemStatIndices: 
   m_TypeIndex: 0

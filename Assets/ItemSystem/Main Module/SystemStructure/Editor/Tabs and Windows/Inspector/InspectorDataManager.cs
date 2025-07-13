@@ -199,6 +199,9 @@ namespace ItemSystem.Editor
         {
             object dict = _Property.GetValue(_ParentSO);
 
+            PropertyInfo indexProp = _ParentSO.GetType().GetProperty("StatIndices");
+            object indexDict = indexProp?.GetValue(_ParentSO);
+
             if (_Property.PropertyType == typeof(Dictionary<string, SO_Stat_Base>))
             {
                 List<SO_Stat_Base> allStats = ItemEditor_AssetLoader.LoadAssetsByType<SO_Stat_Base>();
@@ -216,6 +219,11 @@ namespace ItemSystem.Editor
                 if (statDictionary == null)
                 {
                     statDictionary = new Dictionary<string, SO_Stat_Base>();
+                }
+                Dictionary<string, int> statIndexDictionary = indexDict as Dictionary<string, int>;
+                if (statIndexDictionary == null)
+                {
+                    statIndexDictionary = new Dictionary<string, int>();
                 }
 
                 List<string> selectedStats = new List<string>();
@@ -296,7 +304,7 @@ namespace ItemSystem.Editor
 
                             for (int i = 0; i < count; i++)
                             {
-                                soNames.Add($"{dynStat.ModuleName}/{dynStat.GetStatValue(i)} ({dynStat.GetType().Name})");
+                                soNames.Add($"{dynStat.ModuleName}/{dynStat.GetStatValue(i).ToString().ToLowerInvariant()} ({dynStat.GetType().Name})");
                             }
                         }
 
@@ -319,7 +327,9 @@ namespace ItemSystem.Editor
                             {
                                 if (val.GetStatCount() > 0)
                                 {
-                                    currentName = $"{val.ModuleName}/{val.GetStatValue(0)} ({val.GetType().Name})";
+                                    int index = statIndexDictionary.ContainsKey(val.TargetUserStat) ? statIndexDictionary[val.TargetUserStat] : 0;
+
+                                    currentName = $"{val.ModuleName}/{val.GetStatValue(index).ToString().ToLowerInvariant()} ({val.GetType().Name})";
                                 }
                                 else
                                 {
@@ -337,17 +347,51 @@ namespace ItemSystem.Editor
                         DropdownField statDropdown = new DropdownField("", soNames, currentName);
                         statDropdown.RegisterValueChangedCallback(c =>
                         {
-                            SO_Stat_Base selectedSO = matchingStaticStats.FirstOrDefault(s => $"{s.ModuleName} ({s.GetType().Name})" == c.newValue);
+                            SO_Stat_Base selectedSO = null;
+                            int selectedIndex = 0;
+
+                            selectedSO = matchingStaticStats.FirstOrDefault(s => $"{s.ModuleName} ({s.GetType().Name})" == c.newValue);
+
+                            if (selectedSO == null)
+                            {
+                                foreach (var dynStat in matchingDynamicStats)
+                                {
+                                    for (int i = 0; i < dynStat.GetStatCount(); i++)
+                                    {
+                                        string formatted = $"{dynStat.ModuleName}/{dynStat.GetStatValue(i).ToString().ToLowerInvariant()} ({dynStat.GetType().Name})";
+                                        if (formatted.Equals(c.newValue, StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            selectedSO = dynStat;
+                                            selectedIndex = i;
+                                            break;
+                                        }
+                                    }
+                                    if (selectedSO != null) break;
+                                }
+                            }
+
                             if (selectedSO != null)
                             {
                                 string oldKey = statDictionary.FirstOrDefault(x => x.Value.TargetUserStat == stat).Key;
                                 if (!string.IsNullOrEmpty(oldKey))
                                 {
+                                    statIndexDictionary.Remove(oldKey);
                                     statDictionary.Remove(oldKey);
                                 }
 
-                                statDictionary[selectedSO.StatName] = selectedSO;
+                                statDictionary[selectedSO.TargetUserStat] = selectedSO;
+
+                                if (selectedSO is SO_Stat dyn)
+                                {
+                                    statIndexDictionary[selectedSO.TargetUserStat] = selectedIndex;
+                                }
+                                else
+                                {
+                                    statIndexDictionary[selectedSO.TargetUserStat] = 0;
+                                }
+
                                 _Property.SetValue(_ParentSO, statDictionary);
+                                indexProp.SetValue(_ParentSO, statIndexDictionary);
                                 EditorUtility.SetDirty(_ParentSO);
                                 AssetDatabase.SaveAssets();
                                 _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
@@ -368,7 +412,9 @@ namespace ItemSystem.Editor
 
                             string toRemove = statDictionary.FirstOrDefault(x => x.Value.TargetUserStat == stat).Key;
                             statDictionary.Remove(toRemove);
+                            statIndexDictionary.Remove(toRemove);
                             _Property.SetValue(_ParentSO, statDictionary);
+                            indexProp.SetValue(_ParentSO, statIndexDictionary);
                             EditorUtility.SetDirty(_ParentSO);
                             AssetDatabase.SaveAssets();
                             _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
@@ -393,8 +439,10 @@ namespace ItemSystem.Editor
                         updateUI();
 
                         SO_Stat_Base newItem = allStats.FirstOrDefault(so => so.TargetUserStat == selected);
-                        statDictionary.Add(newItem.StatName, newItem);
+                        statDictionary.Add(newItem.TargetUserStat, newItem);
+                        statIndexDictionary.Add(newItem.TargetUserStat, 0);
                         _Property.SetValue(_ParentSO, statDictionary);
+                        indexProp.SetValue(_ParentSO, statIndexDictionary);
                         EditorUtility.SetDirty(_ParentSO);
                         AssetDatabase.SaveAssets();
                         _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);

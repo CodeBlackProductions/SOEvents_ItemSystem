@@ -43,6 +43,7 @@ namespace ItemSystem.MainModule
             get => m_Stats; set
             {
                 m_ItemStats.Clear();
+                m_ItemStatIndices.Clear();
                 foreach (var stat in value)
                 {
                     m_ItemStats.Add(stat.Value);
@@ -64,7 +65,7 @@ namespace ItemSystem.MainModule
             if (m_ItemStats != null && m_ItemStats.Count > 0)
             {
                 m_Stats.Clear();
-
+                m_StatIndices.Clear();
                 for (int i = 0; i < m_ItemStats.Count; i++)
                 {
                     var stat = m_ItemStats[i];
