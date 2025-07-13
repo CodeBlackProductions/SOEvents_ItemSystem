@@ -62,6 +62,7 @@ public class UIController : MonoBehaviour
             Color.red,
             30,
             m_UiDocument,
+            true,
             OnHyperlinkClicked,
             OnHyperlinkHovered,
             OnHyperlinkStopHovered,
@@ -97,6 +98,7 @@ public class UIController : MonoBehaviour
                 Color.red,
                 30,
                 m_UiDocument,
+                true,
                 OnHyperlinkClicked,
                 OnHyperlinkHovered,
                 OnHyperlinkStopHovered,
@@ -127,7 +129,7 @@ public class UIController : MonoBehaviour
 
             Vector3 pos = evt.position + new Vector3(5, 5, 0);
 
-            m_TempPopup = UITKFactory.CreateNewUIPopup(
+            m_TempPopup = UITKFactory.CreateNewUIWindow(
                 evt.linkID,
                 pos,
                 evt.linkText,

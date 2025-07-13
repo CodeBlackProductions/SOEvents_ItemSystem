@@ -66,23 +66,35 @@ public class SO_StatLoader : ScriptableObject
     {
         if (_User.Stats != null && _User.Stats.Count > 0)
         {
-            for (int i = 0; i < _User.Stats.Count; i++)
+            foreach (var stat in _User.Stats)
             {
-                if (_User.Stats[i] is SO_Stat_Collection collection)
+                switch (stat)
                 {
-                    SO_Stat_StaticValue[] collectionContent = collection.GetStatValue() as SO_Stat_StaticValue[];
-                    for (int c = 0; c < collectionContent.Length; c++)
-                    {
-                        RegisterStat(_User, collectionContent[c], _OverrideMode);
-                    }
-                }
-                else if (_User.Stats[i] is SO_Stat_StaticValue staticValue)
-                {
-                    RegisterStat(_User, staticValue, _OverrideMode);
-                }
-                else if (_User.Stats[i] is SO_Stat value)
-                {
-                    RegisterStat(_User, value, 0, _OverrideMode);
+                    case SO_Stat_Collection collection:
+                        Dictionary<string, SO_Stat_Base> collectionContent = collection.GetStatValue() as Dictionary<string, SO_Stat_Base>;
+                        Dictionary<string, int> collectionIndices = collection.GetStatIndices() as Dictionary<string, int>;
+
+                        foreach (var (subKey, subStat) in collectionContent)
+                        {
+                            if (subStat is SO_Stat dyn)
+                            {
+                                RegisterStat(_User, dyn, collectionIndices.TryGetValue(subKey, out var subIndex) ? subIndex : 0);
+                            }
+                            else if (subStat is SO_Stat_StaticValue staticVal)
+                            {
+                                RegisterStat(_User, staticVal);
+                            }
+                        }
+                        break;
+
+                    case SO_Stat_StaticValue staticValue:
+                        RegisterStat(_User, staticValue);
+                        break;
+
+                    case SO_Stat dynamicStat:
+                        Debug.LogWarning("StatLoader: Non-static stats should not directly be added to the user as you can not define a specifix index this way. Registered index 0 as default value.");
+                        RegisterStat(_User, dynamicStat, 0);
+                        break;
                 }
             }
         }
@@ -164,49 +176,68 @@ public class SO_StatLoader : ScriptableObject
                 if (_InvertOrder)
                 {
                     if (itemStats != null && itemStats.Count > 0)
-                        IterateOverStats(_User, itemStats);
+                        IterateOverStats(_User, itemStats, item);
 
                     if (classStats != null && classStats.Count > 0)
-                        IterateOverStats(_User, classStats);
+                        IterateOverStats(_User, classStats, item.Class);
 
                     if (typeStats != null && typeStats.Count > 0)
-                        IterateOverStats(_User, typeStats);
+                        IterateOverStats(_User, typeStats, item.Class.Types[item.TypeIndex]);
                 }
                 else
                 {
                     if (typeStats != null && typeStats.Count > 0)
-                        IterateOverStats(_User, typeStats);
+                        IterateOverStats(_User, typeStats, item.Class.Types[item.TypeIndex]);
 
                     if (classStats != null && classStats.Count > 0)
-                        IterateOverStats(_User, classStats);
+                        IterateOverStats(_User, classStats, item.Class);
 
                     if (itemStats != null && itemStats.Count > 0)
-                        IterateOverStats(_User, itemStats);
+                        IterateOverStats(_User, itemStats, item);
                 }
             }
         }
     }
 
-    private void IterateOverStats(IItemUser _User, Dictionary<string, SO_Stat_Base> _Collection)
+    private void IterateOverStats(IItemUser _User, Dictionary<string, SO_Stat_Base> _Collection, object _Source)
     {
-        foreach (var stat in _Collection)
+        Dictionary<string, int> indices = _Source switch
         {
-            if (stat.Value is SO_Stat_Collection collection)
+            SO_Item item => item.StatIndices,
+            SO_Item_Class itemClass => itemClass.StatIndices,
+            SO_Class_Type classType => classType.StatIndices,
+            _ => null
+        };
+
+        foreach (var (key, stat) in _Collection)
+        {
+            switch (stat)
             {
-                SO_Stat_StaticValue[] collectionContent = collection.GetStatValue() as SO_Stat_StaticValue[];
-                for (int c = 0; c < collectionContent.Length; c++)
-                {
-                    RegisterStat(_User, collectionContent[c]);
-                }
-            }
-            else if (stat.Value is SO_Stat_StaticValue staticValue)
-            {
-                RegisterStat(_User, staticValue);
-            }
-            else if (stat.Value is SO_Stat value)
-            {
-                Debug.LogWarning("StatLoader: Still missing a way to determine correct Stat from non static stats!");
-                RegisterStat(_User, value, 0);
+                case SO_Stat_Collection collection:
+                    Dictionary<string, SO_Stat_Base> collectionContent = collection.GetStatValue() as Dictionary<string, SO_Stat_Base>;
+                    Dictionary<string, int> collectionIndices = collection.GetStatIndices() as Dictionary<string, int>;
+
+                    foreach (var (subKey, subStat) in collectionContent)
+                    {
+                        if (subStat is SO_Stat dyn)
+                        {
+                            RegisterStat(_User, dyn, collectionIndices.TryGetValue(subKey, out var subIndex) ? subIndex : 0);
+                        }
+                        else if (subStat is SO_Stat_StaticValue staticVal)
+                        {
+                            RegisterStat(_User, staticVal);
+                        }
+                    }
+                    break;
+
+                case SO_Stat_StaticValue staticValue:
+                    RegisterStat(_User, staticValue);
+                    break;
+
+                case SO_Stat dynamicStat:
+                    int index = indices?.TryGetValue(key, out var i) == true ? i : 0;
+                    RegisterStat(_User, dynamicStat, index);
+                    break;
             }
         }
     }

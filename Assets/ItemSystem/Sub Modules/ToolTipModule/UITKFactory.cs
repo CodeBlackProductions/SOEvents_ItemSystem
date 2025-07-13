@@ -20,11 +20,12 @@ public static class UITKFactory
         Color _ValueColor,
         int _FontSize,
         UIDocument _UiDocument,
-        System.Action<PointerUpLinkTagEvent> _HyplerinkClickedCallback,
-        System.Action<PointerOverLinkTagEvent> _HyplerinkHoveredCallback,
-        System.Action<PointerOutLinkTagEvent> _HyplerinkStopHoveredCallback,
-        string _LinkID,
-        System.Action<string> _WindowClosedCallback,
+        bool _AddControlElements = false,
+        System.Action<PointerUpLinkTagEvent> _HyplerinkClickedCallback = null,
+        System.Action<PointerOverLinkTagEvent> _HyplerinkHoveredCallback = null,
+        System.Action<PointerOutLinkTagEvent> _HyplerinkStopHoveredCallback = null,
+        string _LinkID = null,
+        System.Action<string> _WindowClosedCallback = null,
         Texture2D _HeaderBGImage = null,
         Texture2D _WindowBGImage = null,
         Texture2D _CloseWindowButtonImage = null
@@ -35,7 +36,7 @@ public static class UITKFactory
         VisualElement window = CreateMainWindow(_UIName, _ScreenPos, _WindowBGImage);
 
         VisualElement header = CreateHeader(
-            true,
+            _AddControlElements,
             window,
             _HeaderText,
             _TextColor,
@@ -53,7 +54,7 @@ public static class UITKFactory
         window.Add(header);
 
         VisualElement body = CreateBody(
-             true,
+            _AddControlElements,
             window,
             _BodyText,
             _TextColor,
@@ -67,93 +68,19 @@ public static class UITKFactory
 
         window.Add(body);
 
-        VisualElement resizeHandle_BL = CreateResizeHandle(window, new Vector2(0, 0));
-        window.Add(resizeHandle_BL);
+        RegisterMinSizeSnapshot(window);
 
-        VisualElement resizeHandle_BR = CreateResizeHandle(window, new Vector2(0.9f, 0));
-        window.Add(resizeHandle_BR);
-
-        EventCallback<GeometryChangedEvent> callback = null;
-
-        callback = evt =>
+        if (_AddControlElements)
         {
-            window.UnregisterCallback<GeometryChangedEvent>(callback);
+            VisualElement resizeHandle_BL = CreateResizeHandle(window, new Vector2(0, 0));
+            window.Add(resizeHandle_BL);
 
-            float width = evt.newRect.width;
-            float height = evt.newRect.height;
+            VisualElement resizeHandle_BR = CreateResizeHandle(window, new Vector2(0.9f, 0));
+            window.Add(resizeHandle_BR);
 
-            window.style.minWidth = new Length(width, LengthUnit.Pixel);
-            window.style.minHeight = new Length(height, LengthUnit.Pixel);
-        };
-
-        window.RegisterCallback<GeometryChangedEvent>(callback);
-
-        var scaler = new ResponsiveScaler();
-        scaler.Setup(window);
-
-        root.Add(window);
-
-        return window;
-    }
-
-    public static VisualElement CreateNewUIPopup(
-       string _UIName,
-       Vector2 _ScreenPos,
-       string _HeaderText,
-       string _BodyText,
-       Color _TextColor,
-       Color _HyperlinkColor,
-       Color _ValueColor,
-       int _FontSize,
-       UIDocument _UiDocument,
-       Texture2D _HeaderBGImage = null,
-       Texture2D _WindowBGImage = null
-       )
-    {
-        VisualElement root = _UiDocument.rootVisualElement;
-
-        VisualElement window = CreateMainWindow(_UIName, _ScreenPos, _WindowBGImage);
-
-        VisualElement headerRow = CreateHeader(false, window, _HeaderText, _TextColor, _HyperlinkColor, _ValueColor, _FontSize, _HeaderBGImage);
-
-        window.Add(headerRow);
-
-        Label bodyText = new Label(ParseRichText(_BodyText, _HyperlinkColor, _ValueColor));
-        bodyText.style.whiteSpace = WhiteSpace.Normal;
-        bodyText.style.unityTextAlign = TextAnchor.UpperLeft;
-        bodyText.style.fontSize = _FontSize;
-        bodyText.style.color = _TextColor;
-        bodyText.style.flexShrink = 0;
-        bodyText.style.flexGrow = 0;
-        bodyText.style.marginLeft = 10;
-        bodyText.style.marginRight = 10;
-        bodyText.style.marginTop = 10;
-        bodyText.style.marginBottom = 10;
-
-        ScrollView scrollView = new ScrollView();
-        scrollView.style.maxHeight = Length.Percent(80);
-        scrollView.style.flexGrow = 0;
-        scrollView.style.flexShrink = 1;
-        scrollView.style.height = StyleKeyword.Auto;
-        scrollView.style.unityOverflowClipBox = OverflowClipBox.ContentBox;
-
-        scrollView.Add(bodyText);
-        window.Add(scrollView);
-
-        EventCallback<GeometryChangedEvent> callback = null;
-
-        callback = evt =>
-        {
-            window.UnregisterCallback<GeometryChangedEvent>(callback);
-
-            float width = evt.newRect.width;
-            float height = evt.newRect.height;
-
-            window.style.minWidth = new Length(width, LengthUnit.Pixel);
-            window.style.minHeight = new Length(height, LengthUnit.Pixel);
-        };
-
-        window.RegisterCallback<GeometryChangedEvent>(callback);
+            var scaler = new ResponsiveScaler();
+            scaler.Setup(window);
+        }
 
         root.Add(window);
 
@@ -170,6 +97,8 @@ public static class UITKFactory
     }
 
     #region Internal Methods
+
+    #region BaseElementCreation
 
     private static VisualElement CreateMainWindow(string _UIName, Vector2 _ScreenPos, Texture2D _WindowBGImage = null)
     {
@@ -248,13 +177,7 @@ public static class UITKFactory
 
         headerRow.style.flexShrink = 0;
 
-        Label headerText = new Label(ParseRichText(_HeaderText, _HyperlinkColor, _ValueColor));
-        headerText.style.unityFontStyleAndWeight = FontStyle.Bold;
-        headerText.style.fontSize = _FontSize * 1.2f;
-        headerText.style.color = _TextColor;
-        headerText.style.flexGrow = 1;
-        headerText.style.flexShrink = 1;
-        headerText.style.marginRight = 6;
+        Label headerText = CreateLabel(_HeaderText, _TextColor, _HyperlinkColor, _ValueColor, _FontSize, 1.2f, FontStyle.Bold);
 
         headerRow.Add(headerText);
 
@@ -262,53 +185,11 @@ public static class UITKFactory
         {
             headerRow.AddManipulator(new DragManipulator(() => _MainWindow));
 
-            if (_HyplerinkClickedCallback != null)
-            {
-                headerText.RegisterCallback<PointerUpLinkTagEvent>(_HyplerinkClickedCallback.Invoke);
-            }
-            if (_HyplerinkHoveredCallback != null)
-            {
-                headerText.RegisterCallback<PointerOverLinkTagEvent>(_HyplerinkHoveredCallback.Invoke);
-            }
-            if (_HyplerinkStopHoveredCallback != null)
-            {
-                headerText.RegisterCallback<PointerOutLinkTagEvent>(_HyplerinkStopHoveredCallback.Invoke);
-            }
+            RegisterLinkCallbacks(headerText, _HyplerinkClickedCallback, _HyplerinkHoveredCallback, _HyplerinkStopHoveredCallback);
 
             if (_WindowClosedCallback != null && _LinkID != null)
             {
-                Button btn_CloseWindow = new Button(() =>
-                {
-                    _WindowClosedCallback.Invoke(_LinkID);
-                    _MainWindow.RemoveFromHierarchy();
-                })
-                {
-                    text = "X"
-                };
-                btn_CloseWindow.style.alignSelf = Align.Stretch;
-                btn_CloseWindow.style.flexShrink = 0;
-
-                if (_CloseWindowButtonImage == null)
-                {
-                    btn_CloseWindow.style.backgroundColor = Color.red;
-                    btn_CloseWindow.style.borderBottomColor = Color.black;
-                    btn_CloseWindow.style.borderTopColor = Color.black;
-                    btn_CloseWindow.style.borderLeftColor = Color.black;
-                    btn_CloseWindow.style.borderRightColor = Color.black;
-                }
-                else
-                {
-                    btn_CloseWindow.style.backgroundImage = _CloseWindowButtonImage;
-                    btn_CloseWindow.text = "";
-                }
-
-                btn_CloseWindow.RegisterCallback<GeometryChangedEvent>(evt =>
-                {
-                    float width = btn_CloseWindow.resolvedStyle.width;
-                    btn_CloseWindow.style.height = width;
-                });
-
-                headerRow.Add(btn_CloseWindow);
+                headerRow.Add(CreateCloseButton(_MainWindow, _CloseWindowButtonImage, _LinkID, _WindowClosedCallback));
             }
         }
 
@@ -328,35 +209,132 @@ public static class UITKFactory
         System.Action<PointerOutLinkTagEvent> _HyplerinkStopHoveredCallback = null
         )
     {
-        Label bodyText = new Label(ParseRichText(_BodyText, _HyperlinkColor, _ValueColor));
-        bodyText.style.whiteSpace = WhiteSpace.Normal;
-        bodyText.style.unityTextAlign = TextAnchor.UpperLeft;
-        bodyText.style.fontSize = _FontSize;
-        bodyText.style.color = _TextColor;
-        bodyText.style.flexShrink = 0;
-        bodyText.style.flexGrow = 0;
-        bodyText.style.marginLeft = 10;
-        bodyText.style.marginRight = 10;
-        bodyText.style.marginTop = 10;
-        bodyText.style.marginBottom = 10;
+        Label bodyText = CreateLabel(_BodyText, _TextColor, _HyperlinkColor, _ValueColor, _FontSize);
 
-        ScrollView scrollView = new ScrollView();
-        scrollView.style.maxHeight = Length.Percent(80);
-        scrollView.style.flexGrow = 0;
-        scrollView.style.flexShrink = 1;
-        scrollView.style.height = StyleKeyword.Auto;
-        scrollView.style.unityOverflowClipBox = OverflowClipBox.ContentBox;
-
-        scrollView.Add(bodyText);
+        ScrollView scrollView = CreateScrollView(bodyText);
 
         if (_AddControlElements)
         {
-            bodyText.RegisterCallback<PointerUpLinkTagEvent>(_HyplerinkClickedCallback.Invoke);
-            bodyText.RegisterCallback<PointerOverLinkTagEvent>(_HyplerinkHoveredCallback.Invoke);
-            bodyText.RegisterCallback<PointerOutLinkTagEvent>(_HyplerinkStopHoveredCallback.Invoke);
+            RegisterLinkCallbacks(bodyText, _HyplerinkClickedCallback, _HyplerinkHoveredCallback, _HyplerinkStopHoveredCallback);
         }
 
         return scrollView;
+    }
+
+    private static Label CreateLabel(string _Text, Color _TextColor, Color _HyperlinkColor, Color _ValueColor, float _FontSize, float _FontsizeFactor = 1, FontStyle _FontStyle = FontStyle.Normal)
+    {
+        return new Label(ParseRichText(_Text, _HyperlinkColor, _ValueColor))
+        {
+            style =
+            {
+                whiteSpace = WhiteSpace.Normal,
+                unityTextAlign = TextAnchor.UpperLeft,
+                fontSize = _FontSize * _FontsizeFactor,
+                color = _TextColor,
+                flexShrink = 0,
+                flexGrow = 0,
+                marginLeft = 10,
+                marginRight = 10,
+                marginTop = 10,
+                marginBottom = 10
+            }
+        };
+    }
+
+    private static ScrollView CreateScrollView(Label _Label)
+    {
+        var scrollView = new ScrollView
+        {
+            style =
+            {
+                maxHeight = Length.Percent(80),
+                flexGrow = 0,
+                flexShrink = 1,
+                height = StyleKeyword.Auto,
+                unityOverflowClipBox = OverflowClipBox.ContentBox
+            }
+        };
+        scrollView.Add(_Label);
+        return scrollView;
+    }
+
+    #endregion BaseElementCreation
+
+    #region FunctionalElementCreation
+
+    private static void RegisterLinkCallbacks(
+        Label _Text,
+        System.Action<PointerUpLinkTagEvent> _HyplerinkClickedCallback = null,
+        System.Action<PointerOverLinkTagEvent> _HyplerinkHoveredCallback = null,
+        System.Action<PointerOutLinkTagEvent> _HyplerinkStopHoveredCallback = null
+        )
+    {
+        if (_HyplerinkClickedCallback != null)
+        {
+            _Text.RegisterCallback<PointerUpLinkTagEvent>(_HyplerinkClickedCallback.Invoke);
+        }
+        if (_HyplerinkHoveredCallback != null)
+        {
+            _Text.RegisterCallback<PointerOverLinkTagEvent>(_HyplerinkHoveredCallback.Invoke);
+        }
+        if (_HyplerinkStopHoveredCallback != null)
+        {
+            _Text.RegisterCallback<PointerOutLinkTagEvent>(_HyplerinkStopHoveredCallback.Invoke);
+        }
+    }
+
+    private static Button CreateCloseButton(VisualElement _MainWindow, Texture2D _CloseWindowButtonImage = null, string _LinkID = null, System.Action<string> _WindowClosedCallback = null)
+    {
+        Button btn_CloseWindow = new Button(() =>
+        {
+            _WindowClosedCallback.Invoke(_LinkID);
+            _MainWindow.RemoveFromHierarchy();
+        })
+        {
+            text = "X"
+        };
+        btn_CloseWindow.style.alignSelf = Align.Stretch;
+        btn_CloseWindow.style.flexShrink = 0;
+
+        if (_CloseWindowButtonImage == null)
+        {
+            btn_CloseWindow.style.backgroundColor = Color.red;
+            btn_CloseWindow.style.borderBottomColor = Color.black;
+            btn_CloseWindow.style.borderTopColor = Color.black;
+            btn_CloseWindow.style.borderLeftColor = Color.black;
+            btn_CloseWindow.style.borderRightColor = Color.black;
+        }
+        else
+        {
+            btn_CloseWindow.style.backgroundImage = _CloseWindowButtonImage;
+            btn_CloseWindow.text = "";
+        }
+
+        btn_CloseWindow.RegisterCallback<GeometryChangedEvent>(evt =>
+        {
+            float width = btn_CloseWindow.resolvedStyle.width;
+            btn_CloseWindow.style.height = width;
+        });
+
+        return btn_CloseWindow;
+    }
+
+    private static void RegisterMinSizeSnapshot(VisualElement _Window)
+    {
+        EventCallback<GeometryChangedEvent> callback = null;
+
+        callback = evt =>
+        {
+            _Window.UnregisterCallback(callback);
+
+            float width = evt.newRect.width;
+            float height = evt.newRect.height;
+
+            _Window.style.minWidth = new Length(width, LengthUnit.Pixel);
+            _Window.style.minHeight = new Length(height, LengthUnit.Pixel);
+        };
+
+        _Window.RegisterCallback<GeometryChangedEvent>(callback);
     }
 
     private static VisualElement CreateResizeHandle(VisualElement _MainWindow, Vector2 _RelativePosition)
@@ -374,6 +352,10 @@ public static class UITKFactory
 
         return resizeHandle;
     }
+
+    #endregion FunctionalElementCreation
+
+    #region ItemSystemLoading
 
     private static string CreateHyperlink(string _Text, Color _Color)
     {
@@ -455,13 +437,12 @@ public static class UITKFactory
                                 Dictionary<string, int> indexPropValue = indexPropInfo.GetValue(item) as Dictionary<string, int>;
                                 indexPropValue.TryGetValue(statName, out index);
 
-                                text = text.Replace("[" + subTTID + "]", $"<color=#{UnityEngine.ColorUtility.ToHtmlStringRGBA(_ValueColor)}>{propValue?.ToString() ?? string.Empty}</color>");
+                                text = text.Replace("[" + subTTID + "]", $"<color=#{UnityEngine.ColorUtility.ToHtmlStringRGBA(_ValueColor)}>{value.GetStatValue(index) ?? string.Empty}</color>");
                             }
                             else
                             {
                                 Debug.LogWarning($"Property '{propName}' not found in item '{item.name}'.");
                             }
-                            text = text.Replace("[" + subTTID + "]", $"<color=#{UnityEngine.ColorUtility.ToHtmlStringRGBA(_ValueColor)}>{value.GetStatValue(index)?.ToString() ?? string.Empty}</color>");
                         }
                         else
                         {
@@ -521,284 +502,7 @@ public static class UITKFactory
         return null;
     }
 
+    #endregion ItemSystemLoading
+
     #endregion Internal Methods
-}
-
-public class DragManipulator : PointerManipulator
-{
-    private Vector2 m_StartMousePosition;
-    private Vector2 m_StartElementPosition;
-    private VisualElement m_Window;
-    private System.Func<VisualElement> m_GetWindow;
-
-    public DragManipulator(System.Func<VisualElement> _GetWindow)
-    {
-        m_GetWindow = _GetWindow;
-        activators.Add(new ManipulatorActivationFilter { button = MouseButton.LeftMouse });
-    }
-
-    protected override void RegisterCallbacksOnTarget()
-    {
-        target.RegisterCallback<PointerDownEvent>(OnPointerDown);
-        target.RegisterCallback<PointerMoveEvent>(OnPointerMove);
-        target.RegisterCallback<PointerUpEvent>(OnPointerUp);
-    }
-
-    protected override void UnregisterCallbacksFromTarget()
-    {
-        target.UnregisterCallback<PointerDownEvent>(OnPointerDown);
-        target.UnregisterCallback<PointerMoveEvent>(OnPointerMove);
-        target.UnregisterCallback<PointerUpEvent>(OnPointerUp);
-    }
-
-    private void OnPointerDown(PointerDownEvent _Event)
-    {
-        m_Window = m_GetWindow.Invoke();
-        if (m_Window == null)
-        {
-            return;
-        }
-
-        m_StartMousePosition = _Event.position;
-
-        m_StartElementPosition = new Vector2(
-            m_Window.resolvedStyle.left,
-            m_Window.resolvedStyle.top
-        );
-
-        target.CapturePointer(_Event.pointerId);
-        _Event.StopPropagation();
-    }
-
-    private void OnPointerMove(PointerMoveEvent _Event)
-    {
-        if (target.HasPointerCapture(_Event.pointerId))
-        {
-            m_Window = m_GetWindow.Invoke();
-            if (m_Window == null)
-            {
-                return;
-            }
-
-            Vector2 delta = (Vector2)_Event.position - m_StartMousePosition;
-
-            float newX = m_StartElementPosition.x + delta.x;
-            float newY = m_StartElementPosition.y + delta.y;
-
-            m_Window.style.left = newX;
-            m_Window.style.top = newY;
-
-            _Event.StopPropagation();
-        }
-    }
-
-    private void OnPointerUp(PointerUpEvent _Event)
-    {
-        if (target.HasPointerCapture(_Event.pointerId))
-        {
-            target.ReleasePointer(_Event.pointerId);
-            _Event.StopPropagation();
-        }
-    }
-}
-
-public class ResizeManipulator : PointerManipulator
-{
-    private VisualElement m_Window;
-    private Vector2 m_StartMousePosition;
-    private Vector2 m_StartWindowPosition;
-    private Vector2 m_StartSize;
-    private Vector2 m_ResizeDir;
-    private System.Func<VisualElement> m_GetWindow;
-
-    public ResizeManipulator(System.Func<VisualElement> _GetWindow)
-    {
-        m_GetWindow = _GetWindow;
-        activators.Add(new ManipulatorActivationFilter { button = MouseButton.LeftMouse });
-    }
-
-    protected override void RegisterCallbacksOnTarget()
-    {
-        target.RegisterCallback<PointerDownEvent>(OnPointerDown);
-        target.RegisterCallback<PointerMoveEvent>(OnPointerMove);
-        target.RegisterCallback<PointerUpEvent>(OnPointerUp);
-    }
-
-    protected override void UnregisterCallbacksFromTarget()
-    {
-        target.UnregisterCallback<PointerDownEvent>(OnPointerDown);
-        target.UnregisterCallback<PointerMoveEvent>(OnPointerMove);
-        target.UnregisterCallback<PointerUpEvent>(OnPointerUp);
-    }
-
-    private void OnPointerDown(PointerDownEvent _Event)
-    {
-        m_Window = m_GetWindow.Invoke();
-        if (m_Window == null)
-        {
-            return;
-        }
-
-        m_StartMousePosition = _Event.position;
-        m_StartSize = new Vector2(m_Window.resolvedStyle.width, m_Window.resolvedStyle.height);
-        m_StartWindowPosition = new Vector2(
-           m_Window.resolvedStyle.left,
-           m_Window.resolvedStyle.top
-        );
-
-        Rect windowRect = m_Window.worldBound;
-        Rect handleRect = target.worldBound;
-
-        Vector2 handleCenter = new Vector2(
-            handleRect.center.x,
-            handleRect.center.y
-        );
-
-        Vector2 windowCenter = new Vector2(
-            windowRect.center.x,
-            windowRect.center.y
-        );
-
-        Vector2 dir = handleCenter - windowCenter;
-
-        m_ResizeDir = new Vector2(
-            Mathf.Abs(dir.x) < 1f ? 0 : Mathf.Sign(dir.x),
-            Mathf.Abs(dir.y) < 1f ? 0 : Mathf.Sign(dir.y)
-        );
-
-        target.CapturePointer(_Event.pointerId);
-        _Event.StopPropagation();
-    }
-
-    private void OnPointerMove(PointerMoveEvent _Event)
-    {
-        if (target.HasPointerCapture(_Event.pointerId))
-        {
-            m_Window = m_GetWindow.Invoke();
-            if (m_Window == null)
-            {
-                return;
-            }
-
-            Vector2 mouseDelta = (Vector2)_Event.position - m_StartMousePosition;
-
-            Vector2 deltaSize = new Vector2(
-                mouseDelta.x * m_ResizeDir.x,
-                mouseDelta.y * m_ResizeDir.y
-            );
-
-            Vector2 newSize = m_StartSize + deltaSize;
-
-            newSize.x = Mathf.Max(newSize.x, m_Window.style.minWidth.value.value);
-            newSize.y = Mathf.Max(newSize.y, m_Window.style.minHeight.value.value);
-
-            Vector2 actualChange = newSize - m_StartSize;
-
-            if (actualChange.x != 0 || actualChange.y != 0)
-            {
-                Vector2 offset = new Vector2(
-               (m_ResizeDir.x < 0) ? actualChange.x : 0,
-               (m_ResizeDir.y < 0) ? actualChange.y : 0
-                );
-
-                m_Window.style.width = newSize.x;
-                m_Window.style.height = newSize.y;
-
-                m_Window.style.left = m_StartWindowPosition.x - offset.x;
-                m_Window.style.top = m_StartWindowPosition.y - offset.y;
-            }
-
-            _Event.StopPropagation();
-        }
-    }
-
-    private void OnPointerUp(PointerUpEvent _Event)
-    {
-        if (target.HasPointerCapture(_Event.pointerId))
-        {
-            target.ReleasePointer(_Event.pointerId);
-            _Event.StopPropagation();
-        }
-    }
-}
-
-public class ResponsiveScaler
-{
-    private Vector2? m_InitialSize = null;
-    private Dictionary<VisualElement, ElementBaseStyle> m_OriginalStyles = new();
-
-    public void Setup(VisualElement window)
-    {
-        window.RegisterCallback<GeometryChangedEvent>(evt =>
-        {
-            float width = window.resolvedStyle.width;
-            float height = window.resolvedStyle.height;
-
-            if (m_InitialSize == null)
-                m_InitialSize = new Vector2(width, height);
-
-            Vector2 initial = m_InitialSize.Value;
-            float scaleX = width / initial.x;
-            float scaleY = height / initial.y;
-            float scale = Mathf.Min(scaleX, scaleY);
-
-            ApplyScale(window, scale);
-        });
-    }
-
-    private void ApplyScale(VisualElement element, float scale)
-    {
-        // Cache original styles once
-        if (!m_OriginalStyles.ContainsKey(element))
-        {
-            m_OriginalStyles[element] = new ElementBaseStyle
-            {
-                fontSize = element.resolvedStyle.fontSize,
-                paddingTop = element.resolvedStyle.paddingTop,
-                paddingBottom = element.resolvedStyle.paddingBottom,
-                paddingLeft = element.resolvedStyle.paddingLeft,
-                paddingRight = element.resolvedStyle.paddingRight,
-                width = element.resolvedStyle.width,
-                height = element.resolvedStyle.height
-            };
-        }
-
-        var baseStyle = m_OriginalStyles[element];
-
-        // Apply to Label
-        if (element is Label label)
-        {
-            label.style.fontSize = baseStyle.fontSize * scale;
-        }
-
-        // Apply to Button
-        if (element is Button button)
-        {
-            button.style.fontSize = baseStyle.fontSize * scale;
-            button.style.paddingTop = baseStyle.paddingTop * scale;
-            button.style.paddingBottom = baseStyle.paddingBottom * scale;
-            button.style.paddingLeft = baseStyle.paddingLeft * scale;
-            button.style.paddingRight = baseStyle.paddingRight * scale;
-        }
-
-        // Apply to Image
-        if (element is Image image)
-        {
-            image.style.width = baseStyle.width * scale;
-            image.style.height = baseStyle.height * scale;
-        }
-
-        // Recursively scale children
-        foreach (var child in element.Children())
-        {
-            ApplyScale(child, scale);
-        }
-    }
-
-    private class ElementBaseStyle
-    {
-        public float fontSize;
-        public float paddingTop, paddingBottom, paddingLeft, paddingRight;
-        public float width, height;
-    }
 }

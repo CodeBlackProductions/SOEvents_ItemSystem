@@ -516,9 +516,9 @@ namespace ItemSystem.Editor
                 return _UIParent;
             }
 
-            if (_Property.PropertyType == typeof(SO_Stat[]))
+            if (_Property.PropertyType == typeof(SO_Stat_Base[]))
             {
-                InspectorList<SO_Stat> statList = ConvertArrayToInspectorList<SO_Stat>(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, "Stats", true);
+                InspectorList<SO_Stat_Base> statList = ConvertArrayToInspectorList<SO_Stat_Base>(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, "Stats", true);
 
                 _UIParent.Add(statList);
                 return _UIParent;
