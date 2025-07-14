@@ -1,6 +1,7 @@
 using ItemSystem.MainModule;
 using ItemSystem.SubModules;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -35,6 +36,9 @@ public class UIController : MonoBehaviour
     private VisualElement m_Root;
     private List<string> m_LinksOpenAsFixedWindow = new List<string>();
 
+    private string m_OriginalText = "";
+    private string m_HoverColor = UnityEngine.ColorUtility.ToHtmlStringRGBA(Color.yellow);
+
     private void Start()
     {
         if (m_UiDocument == null)
@@ -46,7 +50,7 @@ public class UIController : MonoBehaviour
         m_Root = m_UiDocument.rootVisualElement;
     }
 
-    public void LoadTooltip(SO_Item _Item) 
+    public void LoadTooltip(SO_Item _Item)
     {
         string header = UIToolTipRegistry.Instance.RetrieveTooltip(_Item.ItemName + "/Header");
 
@@ -123,6 +127,16 @@ public class UIController : MonoBehaviour
             return;
         }
 
+        if (evt.currentTarget is Label label)
+        {
+            string linkID = evt.linkID;
+            string linkText = evt.linkText;
+            m_OriginalText = label.text;
+            string pattern = $@"<link=""{Regex.Escape(linkID)}""><color=#[0-9A-Fa-f]+>{Regex.Escape(linkText)}</color></link>";
+            string highlighted = Regex.Replace(m_OriginalText, pattern, $"<link=\"{linkID}\"><color=#{m_HoverColor}>{linkText}</color></link>");
+            label.text = highlighted;
+        }
+
         if (m_TempPopup.IsUnityNull())
         {
             string content = UIToolTipRegistry.Instance.RetrieveTooltip(evt.linkID);
@@ -146,6 +160,11 @@ public class UIController : MonoBehaviour
 
     private void OnHyperlinkStopHovered(PointerOutLinkTagEvent evt)
     {
+        if (evt.currentTarget is Label label)
+        {
+            label.text = m_OriginalText;
+        }
+
         if (!m_TempPopup.IsUnityNull())
         {
             m_Root.Remove(m_TempPopup);
@@ -160,4 +179,5 @@ public class UIController : MonoBehaviour
             m_LinksOpenAsFixedWindow.Remove(_LinkID);
         }
     }
+
 }

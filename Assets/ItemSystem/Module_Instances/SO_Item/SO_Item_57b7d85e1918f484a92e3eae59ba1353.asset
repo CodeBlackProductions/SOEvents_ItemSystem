@@ -22,5 +22,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 1eec9bb9542239543a199e615d19d62d, type: 2}
   m_ItemStats:
   - {fileID: 11400000, guid: 15eda8ca333740c4a9dc4ac95cf050b7, type: 2}
-  m_ItemStatIndices: 01000000
+  - {fileID: 11400000, guid: 9710fd439be214247b38b036a32a8f15, type: 2}
+  - {fileID: 11400000, guid: 0126566c3c841914fb61577b4cb6784d, type: 2}
+  m_ItemStatIndices: 010000000100000000000000
   m_TypeIndex: 1
