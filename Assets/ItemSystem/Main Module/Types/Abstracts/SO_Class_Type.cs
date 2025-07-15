@@ -30,6 +30,7 @@ namespace ItemSystem.MainModule
             get => m_Stats; set
             {
                 m_TypeStats.Clear();
+                m_TypeStatIndices.Clear();
                 foreach (var stat in value)
                 {
                     m_TypeStats.Add(stat.Value);
@@ -52,7 +53,7 @@ namespace ItemSystem.MainModule
             if (m_TypeStats != null && m_TypeStats.Count > 0)
             {
                 m_Stats.Clear();
-
+                m_StatIndices.Clear();
                 for (int i = 0; i < m_TypeStats.Count; i++)
                 {
                     var stat = m_TypeStats[i];
@@ -60,15 +61,7 @@ namespace ItemSystem.MainModule
                     if (stat != null && !m_Stats.ContainsKey(stat.TargetUserStat))
                     {
                         m_Stats.Add(stat.TargetUserStat, stat);
-
-                        if (m_StatIndices.ContainsKey(stat.TargetUserStat))
-                        {
-                            m_StatIndices[stat.TargetUserStat] = index;
-                        }
-                        else
-                        {
-                            m_StatIndices.Add(stat.TargetUserStat, index);
-                        }
+                        m_StatIndices.Add(stat.TargetUserStat, index);
                     }
                 }
             }

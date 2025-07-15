@@ -1,5 +1,6 @@
 using ItemSystem.MainModule;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Unity.VisualScripting;
@@ -72,7 +73,7 @@ namespace ItemSystem.Editor
                     {
                         value = null;
                     }
-                    property.SetValue(temporarySOInstance, value);
+                    property.SetValue(temporarySOInstance, DeepCopyValue(value));
                 }
             }
 
@@ -134,6 +135,69 @@ namespace ItemSystem.Editor
                     }
                 }
             }
+        }
+
+        private static object DeepCopyValue(object _Value)
+        {
+            if (_Value == null)
+                return null;
+
+            var type = _Value.GetType();
+
+            if (type.IsPrimitive || type.IsEnum || type == typeof(string) || type == typeof(decimal) || type == typeof(GUID))
+                return _Value;
+
+            if (typeof(UnityEngine.Object).IsAssignableFrom(type))
+                return _Value;
+
+            if (type.IsArray)
+            {
+                var elementType = type.GetElementType();
+                var array = _Value as Array;
+                var copied = Array.CreateInstance(elementType, array.Length);
+                for (int i = 0; i < array.Length; i++)
+                    copied.SetValue(DeepCopyValue(array.GetValue(i)), i);
+                return copied;
+            }
+
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>))
+            {
+                var listType = typeof(List<>).MakeGenericType(type.GetGenericArguments());
+                var list = (System.Collections.IList)Activator.CreateInstance(listType);
+                foreach (var item in (System.Collections.IEnumerable)_Value)
+                    list.Add(DeepCopyValue(item));
+                return list;
+            }
+
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>))
+            {
+                var args = type.GetGenericArguments();
+                var dictType = typeof(Dictionary<,>).MakeGenericType(args);
+                var dict = (System.Collections.IDictionary)Activator.CreateInstance(dictType);
+                var original = (System.Collections.IDictionary)_Value;
+                foreach (var key in original.Keys)
+                    dict.Add(DeepCopyValue(key), DeepCopyValue(original[key]));
+                return dict;
+            }
+
+            var clone = Activator.CreateInstance(type);
+            foreach (var prop in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            {
+                if (prop.CanRead && prop.CanWrite)
+                {
+                    var propValue = prop.GetValue(_Value);
+                    prop.SetValue(clone, DeepCopyValue(propValue));
+                }
+            }
+            foreach (var field in type.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic))
+            {
+                if (!field.IsInitOnly)
+                {
+                    var fieldValue = field.GetValue(_Value);
+                    field.SetValue(clone, DeepCopyValue(fieldValue));
+                }
+            }
+            return clone;
         }
     }
 }

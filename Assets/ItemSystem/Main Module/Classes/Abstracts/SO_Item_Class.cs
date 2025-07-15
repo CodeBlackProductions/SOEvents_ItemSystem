@@ -32,6 +32,7 @@ namespace ItemSystem.MainModule
             get => m_Stats; set
             {
                 m_ClassStats.Clear();
+                m_ClassStatIndices.Clear();
                 foreach (var stat in value)
                 {
                     m_ClassStats.Add(stat.Value);
@@ -55,7 +56,7 @@ namespace ItemSystem.MainModule
             if (m_ClassStats != null && m_ClassStats.Count > 0)
             {
                 m_Stats.Clear();
-
+                m_StatIndices.Clear();
                 for (int i = 0; i < m_ClassStats.Count; i++)
                 {
                     var stat = m_ClassStats[i];

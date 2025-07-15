@@ -16,7 +16,7 @@ MonoBehaviour:
   m_ToolTips: []
   m_TypeStats:
   - {fileID: 11400000, guid: c6c5ff2088dda084ebd51bc5f39a86b7, type: 2}
-  m_TypeStatIndices: 
+  - {fileID: 11400000, guid: 9710fd439be214247b38b036a32a8f15, type: 2}
+  - {fileID: 11400000, guid: 15eda8ca333740c4a9dc4ac95cf050b7, type: 2}
+  m_TypeStatIndices: 000000000100000000000000
   m_Tags: []
-  m_Projectile: {fileID: 2900508419396136528, guid: 096d4ed837b8b71468c0af90d21b6c3e,
-    type: 3}
