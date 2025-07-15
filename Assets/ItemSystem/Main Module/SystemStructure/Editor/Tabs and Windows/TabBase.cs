@@ -30,16 +30,23 @@ namespace ItemSystem.Editor
 
         protected abstract void LoadHierarchy();
 
-        protected void LoadFilterPanel()
+        protected void LoadFilterPanel(System.Type _ObjectType)
         {
-            m_FilterPanel = new FilterPanel();
+            m_FilterPanel = new FilterPanel(_ObjectType);
 
             m_Root.Add(m_FilterPanel);
         }
 
         protected void LoadSubTabHierarchy<T>(bool _ShowAddAndRemove, bool _ShowInspectorPanel, bool _LoadSubtypes, bool _LoadLocalFiles) where T : ScriptableObject
         {
+            if (m_FilterPanel != null)
+            {
+                m_FilterPanel.ClearFilter();
+                m_FilterPanel.ChangeSortModeType(typeof(T));
+            }
+
             m_TreeviewSelectionChangeCallback += OnTreeViewSelectionChanged;
+
             CreateTreeview<T>(_ShowAddAndRemove, _LoadSubtypes, _ShowInspectorPanel, _LoadLocalFiles);
 
             if (_LoadLocalFiles)
@@ -62,6 +69,7 @@ namespace ItemSystem.Editor
             if (m_FilterPanel != null)
             {
                 m_FilterPanel.OnFilterChangedCallback += treeView.SetTreeviewFilter;
+                m_FilterPanel.OnSortModeChangedCallback += treeView.SetTreeviewSortMode;
             }
 
             treeView.style.flexGrow = 1;

@@ -49,7 +49,7 @@ namespace ItemSystem.Editor
 
             m_Root.Add(m_SubTabMenu);
 
-            LoadFilterPanel();
+            LoadFilterPanel(typeof(SO_Item));
             LoadSubTabHierarchy<SO_Item>(true, true, true, false);
             OnSubTabChanged(typeof(SO_Item), true, true, true, false);
 

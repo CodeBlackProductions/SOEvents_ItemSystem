@@ -1,7 +1,11 @@
+using Codice.CM.Common;
+using ItemSystem.MainModule;
 using ItemSystem.SubModules;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.UIElements;
 
 namespace ItemSystem.Editor
@@ -25,12 +29,31 @@ namespace ItemSystem.Editor
         private Func<object, bool> containsAll;
         private Func<object, bool> containsAny;
 
-        public Action<Func<object, bool>, List<ScriptableObject>> OnFilterChangedCallback;
+        private TreeViewSortMode m_SortMode = TreeViewSortMode.None;
+        private System.Type m_ObjectType;
+        private DropdownField m_SortingTypeDropdown;
 
-        public FilterPanel()
+        private static readonly Dictionary<System.Type, List<TreeViewSortMode>> m_SortOptionsPerType = new()
+        {
+            { typeof(SO_Item), new List<TreeViewSortMode> { TreeViewSortMode.None, TreeViewSortMode.Alphabetical, TreeViewSortMode.ItemClass, TreeViewSortMode.ClassType, TreeViewSortMode.Rarity } },
+            { typeof(SO_Item_Effect), new List<TreeViewSortMode> { TreeViewSortMode.None, TreeViewSortMode.Alphabetical, TreeViewSortMode.AllowedTargets, TreeViewSortMode.Target, TreeViewSortMode.Trigger } }
+        };
+
+        private static readonly List<TreeViewSortMode> m_DefaultSortOptions = new List<TreeViewSortMode>
+        {
+            TreeViewSortMode.None,
+            TreeViewSortMode.Alphabetical
+        };
+
+        public Action<Func<object, bool>, List<ScriptableObject>> OnFilterChangedCallback;
+        public Action<TreeViewSortMode> OnSortModeChangedCallback;
+
+        public FilterPanel(System.Type _ObjectType)
         {
             m_Root = new VisualElement();
             m_FilterPanelContent = new VisualElement();
+
+            m_ObjectType = _ObjectType;
 
             containsAll = obj => Filter_ModuleChecker.ContainsAllObjects(obj, m_ModulesToCheck);
             containsAny = obj => Filter_ModuleChecker.ContainsAnyObjects(obj, m_ModulesToCheck);
@@ -55,6 +78,7 @@ namespace ItemSystem.Editor
             LoadFilterOptions();
             LoadFilterTypes();
             LoadFilterTags();
+            LoadSortingOptions(_ObjectType);
 
             m_FilterPanelContent.style.flexDirection = FlexDirection.Row;
             m_FilterPanelContent.style.flexGrow = 1;
@@ -114,10 +138,10 @@ namespace ItemSystem.Editor
             m_FilterPanelContent.Add(filterTypeList);
         }
 
-        private void LoadFilterTags() 
+        private void LoadFilterTags()
         {
             List<SO_Tag> empty = new List<SO_Tag>();
-            InspectorList<SO_Tag> filterTagList = new InspectorList<SO_Tag>(empty,null, "Filter tags", true);
+            InspectorList<SO_Tag> filterTagList = new InspectorList<SO_Tag>(empty, null, "Filter tags", true);
 
             filterTagList.ItemAddCallback += (item) =>
             {
@@ -129,6 +153,32 @@ namespace ItemSystem.Editor
             };
 
             m_FilterPanelContent.Add(filterTagList);
+        }
+
+        private void LoadSortingOptions(System.Type _Type)
+        {
+            List<TreeViewSortMode> allowedSortModes;
+            if (!m_SortOptionsPerType.TryGetValue(_Type, out allowedSortModes))
+                allowedSortModes = m_DefaultSortOptions;
+
+            m_SortingTypeDropdown = new DropdownField(
+                "Sort by",
+                allowedSortModes.Select(m => m.ToString()).ToList(),
+                allowedSortModes[0].ToString()
+            );
+            m_SortingTypeDropdown.RegisterValueChangedCallback(evt =>
+            {
+                OnSortModeChanged((TreeViewSortMode)Enum.Parse(typeof(TreeViewSortMode), evt.newValue));
+            });
+            m_FilterPanelContent.Add(m_SortingTypeDropdown);
+
+            OnSortModeChanged(allowedSortModes[0]);
+        }
+
+        private void OnSortModeChanged(TreeViewSortMode _SortMode)
+        {
+            m_SortMode = _SortMode;
+            OnSortModeChangedCallback?.Invoke(_SortMode);
         }
 
         private void OnFilterOptionsChanged(Func<object, bool> _Filter)
@@ -159,6 +209,25 @@ namespace ItemSystem.Editor
             LoadFilterOptions();
             LoadFilterTypes();
             LoadFilterTags();
+            LoadSortingOptions(m_ObjectType);
         }
+
+        public void ChangeSortModeType(System.Type _Type) 
+        {
+            m_FilterPanelContent.Remove(m_SortingTypeDropdown);
+            LoadSortingOptions(_Type);
+        }
+    }
+
+    public enum TreeViewSortMode
+    {
+        None,
+        Alphabetical,
+        ItemClass,
+        ClassType,
+        Rarity,
+        Target,
+        AllowedTargets,
+        Trigger
     }
 }

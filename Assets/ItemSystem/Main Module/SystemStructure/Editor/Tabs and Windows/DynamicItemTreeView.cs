@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -25,6 +24,7 @@ namespace ItemSystem.Editor
         private Func<object, bool> m_Filter = null;
         private List<ScriptableObject> m_FilterObjects = new List<ScriptableObject>();
         private bool m_LoadSubTypes = false;
+        private TreeViewSortMode m_SortMode = TreeViewSortMode.None;
 
         public DynamicItemTreeView(Action<IEnumerable<System.Object>, bool, bool> _OnSelectionChangedCallback, bool _ShowAddAndRemove, bool _LoadSubTypes, bool _ShowInspectorPanel, bool _ShowSaveToFile)
         {
@@ -146,6 +146,13 @@ namespace ItemSystem.Editor
             RefreshTreeView(m_LoadSubTypes);
         }
 
+        public void SetTreeviewSortMode(TreeViewSortMode _Mode)
+        {
+            m_SortMode = _Mode;
+
+            RefreshTreeView(m_LoadSubTypes);
+        }
+
         private void LoadHierarchy(bool _LoadSubTypes)
         {
             List<TreeViewItemData<TreeViewEntryData>> treeItems = LoadModules(typeof(T), _LoadSubTypes);
@@ -157,22 +164,82 @@ namespace ItemSystem.Editor
         {
             List<TreeViewItemData<TreeViewEntryData>> treeItems = new List<TreeViewItemData<TreeViewEntryData>>();
 
-            var items = ItemEditor_AssetLoader.LoadAssetsByTypeReference(_BaseType);
+            var items = ItemEditor_AssetLoader.LoadAssetsByTypeReference(_BaseType)
+                .Where(item => item is IItemModule && (item as IItemModule).ModuleName != "EditorSettings")
+                .ToList();
+
+            switch (m_SortMode)
+            {
+                case TreeViewSortMode.None:
+                    break;
+
+                case TreeViewSortMode.Alphabetical:
+                    items = items.OrderBy(item => (item as IItemModule)?.ModuleName, StringComparer.OrdinalIgnoreCase).ToList();
+                    break;
+
+                case TreeViewSortMode.ItemClass:
+                    items = items.OrderBy(item =>
+                    {
+                        var soItem = item as SO_Item;
+                        return soItem != null ? soItem.Class?.ModuleName : "";
+                    }, StringComparer.OrdinalIgnoreCase).ToList();
+                    break;
+
+                case TreeViewSortMode.ClassType:
+                    items = items.OrderBy(item =>
+                    {
+                        var soItem = item as SO_Item;
+                        return soItem != null ? soItem.Class.Types[soItem.TypeIndex]?.ModuleName : "";
+                    }, StringComparer.OrdinalIgnoreCase).ToList();
+                    break;
+
+                case TreeViewSortMode.Rarity:
+                    items = items.OrderBy(item =>
+                    {
+                        var soItem = item as SO_Item;
+                        return soItem != null ? (int)soItem.Rarity : int.MaxValue;
+                    }).ToList();
+                    break;
+
+                case TreeViewSortMode.Target:
+                    items = items.OrderBy(item =>
+                    {
+                        var effect = item as SO_Item_Effect;
+                        return effect != null ? effect.EffectTarget.ToString() : "";
+                    }, StringComparer.OrdinalIgnoreCase).ToList();
+                    break;
+
+                case TreeViewSortMode.AllowedTargets:
+                    items = items.OrderBy(item =>
+                    {
+                        var effect = item as SO_Item_Effect;
+                        return effect != null ? effect.AllowedEffectTargets.ToString() : "";
+                    }, StringComparer.OrdinalIgnoreCase).ToList();
+                    break;
+
+                case TreeViewSortMode.Trigger:
+                    items = items.OrderBy(item =>
+                    {
+                        var effect = item as SO_Item_Effect;
+                        return effect != null ? effect.Trigger?.ModuleName : "";
+                    }, StringComparer.OrdinalIgnoreCase).ToList();
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(m_SortMode), m_SortMode, null);
+            }
+
             foreach (var item in items)
             {
-                if (item is IItemModule && (item as IItemModule).ModuleName != "EditorSettings")
+                if (m_Filter != null && !m_Filter(item) && m_FilterObjects.Count > 0)
                 {
-                    List<TreeViewItemData<TreeViewEntryData>> itemChildren = _LoadSubtypes ? LoadSubModules(item) : new List<TreeViewItemData<TreeViewEntryData>>();
-
-                    if (m_Filter != null && !m_Filter(item) && m_FilterObjects.Count > 0)
-                    {
-                        continue;
-                    }
-
-                    string fileName = item.name;
-                    string itemName = (item as IItemModule).ModuleName;
-                    treeItems.Add(new TreeViewItemData<TreeViewEntryData>(GetNextId(), new TreeViewEntryData(itemName, fileName), itemChildren));
+                    continue;
                 }
+
+                List<TreeViewItemData<TreeViewEntryData>> itemChildren = _LoadSubtypes ? LoadSubModules(item) : new List<TreeViewItemData<TreeViewEntryData>>();
+                string fileName = item.name;
+                string itemName = (item as IItemModule).ModuleName;
+                treeItems.Add(new TreeViewItemData<TreeViewEntryData>(GetNextId(), new TreeViewEntryData(itemName, fileName), itemChildren));
             }
 
             return treeItems;

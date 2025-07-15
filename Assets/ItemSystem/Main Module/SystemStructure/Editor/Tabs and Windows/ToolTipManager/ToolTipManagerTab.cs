@@ -37,7 +37,7 @@ namespace ItemSystem.Editor
             m_SubTabContent.style.flexDirection = FlexDirection.Row;
             m_SubTabContent.style.flexGrow = 1;
 
-            LoadFilterPanel();
+            LoadFilterPanel(typeof(SO_ToolTip));
             LoadSubTabHierarchy<SO_ToolTip>(true, true, false, false);
 
             m_Root.Add(m_SubTabContent);
