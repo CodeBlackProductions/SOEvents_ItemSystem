@@ -13,8 +13,12 @@ MonoBehaviour:
   m_Name: SO_Effect_Basic_2417d6c28e651d346b78a97c163badd9
   m_EditorClassIdentifier: 
   m_EffectName: Effect/BasicOnHit2
+  m_ToolTips: []
   m_Trigger: {fileID: 11400000, guid: 1ff893bccaef2d94b9a464013ebd7f20, type: 2}
   m_EffectTarget: 1
   m_AllowedEffectTargets: 2
   m_TargetRange: 0
   m_Tags: []
+  m_SingularStatExample:
+    Key: {fileID: 11400000, guid: 7740eeba7aaa22640913b3468224b6f6, type: 2}
+    Value: 0

@@ -70,6 +70,10 @@ namespace ItemSystem.Editor
                     {
                         return CreateUIforTypeSelection(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, uiParent);
                     }
+                    else if (typeof(SerializableKeyValuePair<SO_Stat_Base, int>).IsAssignableFrom(_Property.PropertyType))
+                    {
+                        return CreateUIforStat(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, uiParent);
+                    }
                     else
                     {
                         return null;
@@ -85,6 +89,128 @@ namespace ItemSystem.Editor
         }
 
         #region InternalMethods
+
+        private static VisualElement CreateUIforStat(
+        ScriptableObject _ParentSO,
+        PropertyInfo _Property,
+        InspectorPanel _ParentPanel,
+        Action<bool> _InspectorValueChangeCallback,
+        VisualElement _UIParent)
+        {
+            List<SO_Stat_Base> soList = ItemEditor_AssetLoader.LoadAssetsByType<SO_Stat_Base>();
+            if (soList == null)
+            {
+                soList = new List<SO_Stat_Base>();
+            }
+            else
+            {
+                soList = AttributeFilterHelper.FilterEntries(_Property, soList);
+            }
+            List<string> soNames = new List<string>();
+            for (int i = 0; i < soList.Count; i++)
+            {
+                if (soList[i] is SO_Stat dyn)
+                {
+                    for (int c = 0; c < dyn.GetStatCount(); c++)
+                    {
+                        soNames.Add($"{dyn.TargetUserStat}/{dyn.GetStatValue(c).ToString().ToLowerInvariant()} ({dyn.GetType().Name})");
+                    }
+                }
+                else
+                {
+                    soNames.Add($"{(soList[i] as SO_Stat_StaticValue).TargetUserStat} ({soList[i].GetType().Name})");
+                }
+            }
+
+            if (soNames.Count > 0)
+            {
+                SerializableKeyValuePair<SO_Stat_Base, int> statPair = (SerializableKeyValuePair<SO_Stat_Base, int>)_Property.GetValue(_ParentSO);
+                string currentEntry = null;
+
+                if (statPair?.Key != null && AttributeFilterHelper.EntryFitsFilters(_Property, statPair.Key))
+                {
+                    if (statPair.Key is SO_Stat stat)
+                    {
+                        currentEntry = $"{stat.TargetUserStat}/{stat.GetStatValue(statPair.Value).ToString().ToLowerInvariant()} ({stat.GetType().Name})";
+                    }
+                    else
+                    {
+                        currentEntry = $"{statPair.Key.TargetUserStat} ({statPair.Key.GetType().Name})";
+                    }
+                }
+                else
+                {
+                    currentEntry = soNames.FirstOrDefault();
+                }
+
+                if (currentEntry == null)
+                {
+                    currentEntry = $"Could not find values for {_Property.Name}";
+                    soNames.Insert(0, currentEntry);
+                }
+
+                DropdownField dropdownField = new DropdownField(soNames, currentEntry);
+
+                dropdownField.RegisterValueChangedCallback(c =>
+                {
+                    string selected = c.newValue;
+
+                    SO_Stat_Base selectedStat = null;
+                    int selectedIndex = 0;
+
+                    bool found = false;
+                    foreach (var stat in soList)
+                    {
+                        if (stat is SO_Stat dyn)
+                        {
+                            for (int i = 0; i < dyn.GetStatCount(); i++)
+                            {
+                                string label = $"{dyn.TargetUserStat}/{dyn.GetStatValue(i).ToString().ToLowerInvariant()} ({dyn.GetType().Name})";
+                                if (label == selected)
+                                {
+                                    selectedStat = dyn;
+                                    selectedIndex = i;
+                                    found = true;
+                                    break;
+                                }
+                            }
+                        }
+                        else if (stat is SO_Stat_StaticValue statValue)
+                        {
+                            string label = $"{statValue.TargetUserStat} ({statValue.GetType().Name})";
+                            if (label == selected)
+                            {
+                                selectedStat = statValue;
+                                selectedIndex = 0;
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (found) break;
+                    }
+
+                    if (selectedStat != null)
+                    {
+                        var newPair = new SerializableKeyValuePair<SO_Stat_Base, int>(selectedStat, selectedIndex);
+                        _Property.SetValue(_ParentSO, newPair);
+
+                        EditorUtility.SetDirty(_ParentSO);
+                        AssetDatabase.SaveAssets();
+                        _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
+                        _InspectorValueChangeCallback?.Invoke(true);
+                    }
+                });
+
+                dropdownField.style.minHeight = 20;
+
+                _UIParent.Add(dropdownField);
+
+                return _UIParent;
+            }
+
+            Debug.LogWarning($"ScriptableObject entries could not be found for {_ParentSO} : {_Property.Name}");
+            return null;
+        }
 
         private static VisualElement CreateUIforEnum(
            ScriptableObject _ParentSO,
@@ -139,6 +265,10 @@ namespace ItemSystem.Editor
             {
                 soList = new List<ScriptableObject>();
             }
+            else
+            {
+                soList = AttributeFilterHelper.FilterEntries(_Property, soList);
+            }
             List<string> soNames = new List<string>();
             for (int i = 0; i < soList.Count; i++)
             {
@@ -153,7 +283,7 @@ namespace ItemSystem.Editor
                 var propertyVal = _Property.GetValue(_ParentSO);
                 string currentEntry = null;
 
-                if (propertyVal != null)
+                if (propertyVal != null && AttributeFilterHelper.EntryFitsFilters(_Property,propertyVal))
                 {
                     currentEntry = $"{(_Property.GetValue(_ParentSO) as IItemModule).ModuleName} ({_Property.GetValue(_ParentSO).GetType().Name})";
                 }
@@ -205,6 +335,8 @@ namespace ItemSystem.Editor
             if (_Property.PropertyType == typeof(Dictionary<string, SO_Stat_Base>))
             {
                 List<SO_Stat_Base> allStats = ItemEditor_AssetLoader.LoadAssetsByType<SO_Stat_Base>();
+                allStats = AttributeFilterHelper.FilterEntries(_Property, allStats);
+
                 List<string> allTargetUserStats = new List<string>();
 
                 allStats.ForEach(so =>
@@ -229,7 +361,7 @@ namespace ItemSystem.Editor
                 List<string> selectedStats = new List<string>();
                 foreach (KeyValuePair<string, SO_Stat_Base> entry in statDictionary)
                 {
-                    if (!selectedStats.Contains(entry.Value.TargetUserStat))
+                    if (!selectedStats.Contains(entry.Value.TargetUserStat) && AttributeFilterHelper.EntryFitsFilters(_Property, entry.Value))
                     {
                         selectedStats.Add(entry.Value.TargetUserStat);
                     }
@@ -1137,7 +1269,31 @@ namespace ItemSystem.Editor
             {
                 array = new T[0];
             }
-            InspectorList<T> list = new InspectorList<T>(array, null, _Title, _ShowAddAndRemove);
+
+            List<T> filteredList = null;
+            bool canFilter = false;
+
+            var filters = _Property.GetCustomAttributes(typeof(ItemToolkitFilter), false);
+            if (filters != null && filters.Length > 0)
+            {
+                var hasModuleName = typeof(T).GetProperty("ModuleName") != null;
+                var hasTypeFilter = filters.Cast<ItemToolkitFilter>().Any(f => f.Types != null && f.Types.Length > 0);
+                if (hasModuleName || hasTypeFilter)
+                {
+                    canFilter = true;
+                }
+            }
+
+            if (canFilter)
+            {
+                filteredList = AttributeFilterHelper.FilterEntries(_Property, array.ToList());
+            }
+            else
+            {
+                filteredList = array.ToList();
+            }
+
+            InspectorList<T> list = new InspectorList<T>(filteredList, null, _Title, _ShowAddAndRemove);
 
             list.ItemAddCallback += (newItem) =>
             {
