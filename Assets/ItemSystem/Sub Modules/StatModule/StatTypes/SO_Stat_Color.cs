@@ -4,7 +4,7 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public class SO_Stat_Color : SO_Stat
+public class SO_Stat_Color : SO_Stat_DynamicValue
 {
     [SerializeField] private Color[] m_Value = new Color[] { Color.white };
 

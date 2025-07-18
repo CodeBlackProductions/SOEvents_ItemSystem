@@ -128,7 +128,7 @@ namespace ItemSystem.MainModule
         /// <param name="_Source"><see cref="IItemUser"/> that called the trigger</param>
         /// <param name="_Target"><see cref="IItemUser"/> that should get targeted by the effects</param>
         /// <returns>Return true if you want to call registered listeners. Return false if you do so manually in here. Or do both if you're a madman.</returns>
-        protected virtual bool CustomFunctionality(IItemUser source, IItemUser target)
+        protected virtual bool CustomFunctionality(IItemUser _Source, IItemUser _Target)
         {
             return true;
         }

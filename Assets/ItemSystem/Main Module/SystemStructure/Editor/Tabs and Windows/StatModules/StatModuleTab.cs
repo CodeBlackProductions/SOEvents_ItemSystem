@@ -33,7 +33,7 @@ namespace ItemSystem.Editor
             m_SubTabMenu?.Clear();
             m_SubTabContent?.Clear();
 
-            List<System.Type> statTypes = ItemEditor_AssetLoader.LoadDerivedTypes(typeof(SO_Stat)).ToList();
+            List<System.Type> statTypes = ItemEditor_AssetLoader.LoadDerivedTypes(typeof(SO_Stat_DynamicValue)).ToList();
             statTypes.AddRange(ItemEditor_AssetLoader.LoadDerivedTypes(typeof(SO_Stat_StaticValue)).ToList());
             List<KeyValuePair<string, System.Type>> statTypePairs = new List<KeyValuePair<string, System.Type>>();
 
@@ -53,8 +53,8 @@ namespace ItemSystem.Editor
 
             m_Root.Add(m_SubTabMenu);
 
-            LoadFilterPanel(typeof(SO_Stat));
-            LoadSubTabHierarchy<SO_Stat>(true, true, true, false);
+            LoadFilterPanel(typeof(SO_Stat_DynamicValue));
+            LoadSubTabHierarchy<SO_Stat_DynamicValue>(true, true, true, false);
             OnSubTabChanged(typeof(SO_Stat_Integer), true, true, true, false);
 
             m_Root.Add(m_SubTabContent);

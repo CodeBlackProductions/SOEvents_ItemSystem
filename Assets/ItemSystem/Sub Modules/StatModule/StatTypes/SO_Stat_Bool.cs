@@ -5,7 +5,7 @@ using UnityEngine;
 using static UnityEngine.Rendering.DebugUI;
 
 [Serializable]
-public class SO_Stat_Bool : SO_Stat
+public class SO_Stat_Bool : SO_Stat_DynamicValue
 {
     [SerializeField] private bool[] m_Value = new bool[] { true, false };
 

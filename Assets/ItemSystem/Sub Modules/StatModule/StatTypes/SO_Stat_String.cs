@@ -4,7 +4,7 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public class SO_Stat_String : SO_Stat
+public class SO_Stat_String : SO_Stat_DynamicValue
 {
     [SerializeField] private string[] m_Value = new string[] { "NewStat" };
 

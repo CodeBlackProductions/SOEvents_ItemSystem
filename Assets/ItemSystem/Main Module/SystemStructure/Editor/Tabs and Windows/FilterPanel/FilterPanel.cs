@@ -170,6 +170,10 @@ namespace ItemSystem.Editor
             {
                 OnSortModeChanged((TreeViewSortMode)Enum.Parse(typeof(TreeViewSortMode), evt.newValue));
             });
+
+            VisualElement ve = m_SortingTypeDropdown;
+            ve.ElementAt(0).style.minWidth = 10;
+
             m_FilterPanelContent.Add(m_SortingTypeDropdown);
 
             OnSortModeChanged(allowedSortModes[0]);

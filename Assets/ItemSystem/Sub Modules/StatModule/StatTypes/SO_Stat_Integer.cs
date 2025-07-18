@@ -4,7 +4,7 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public class SO_Stat_Integer : SO_Stat
+public class SO_Stat_Integer : SO_Stat_DynamicValue
 {
     [SerializeField] private int[] m_Value = new int[] { 0 };
 

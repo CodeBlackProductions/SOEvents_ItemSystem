@@ -16,18 +16,18 @@ namespace ItemSystem.MainModule
         [SerializeField] private GUID m_ClassGUID;
         [SerializeField] private SO_ToolTip[] m_ToolTips;
         [SerializeField] private SO_Class_Type[] m_Types;
-        [SerializeField] private List<SO_Stat_Base> m_ClassStats = new List<SO_Stat_Base>();
+        [SerializeField] private List<SO_Stat> m_ClassStats = new List<SO_Stat>();
         [SerializeField] private List<int> m_ClassStatIndices = new List<int>();
         [SerializeField] private SO_Tag[] m_Tags;
 
-        private Dictionary<string, SO_Stat_Base> m_Stats = new Dictionary<string, SO_Stat_Base>();
+        private Dictionary<string, SO_Stat> m_Stats = new Dictionary<string, SO_Stat>();
         private Dictionary<string, int> m_StatIndices = new Dictionary<string, int>();
 
         [ItemToolkitAccess] public string ClassName { get => m_ClassName; set => m_ClassName = value; }
         [ItemToolkitAccess] public SO_Class_Type[] Types { get => m_Types; set => m_Types = value; }
 
         [ItemToolkitAccess]
-        public Dictionary<string, SO_Stat_Base> Stats
+        public Dictionary<string, SO_Stat> Stats
         {
             get => m_Stats; set
             {

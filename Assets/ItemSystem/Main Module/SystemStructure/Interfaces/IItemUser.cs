@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using static Unity.VisualScripting.Member;
 using static UnityEditor.Progress;
 
 namespace ItemSystem.MainModule
@@ -14,7 +15,7 @@ namespace ItemSystem.MainModule
     {
         public List<SO_Item> Items { get; set; }
 
-        public List<SO_Stat_Base> Stats { get; set; }
+        public List<SO_Stat> Stats { get; set; }
 
         public GameObject ImplementingUser { get; }
         public int Team { get; }

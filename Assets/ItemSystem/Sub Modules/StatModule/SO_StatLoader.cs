@@ -71,12 +71,12 @@ public class SO_StatLoader : ScriptableObject
                 switch (stat)
                 {
                     case SO_Stat_Collection collection:
-                        Dictionary<string, SO_Stat_Base> collectionContent = collection.GetStatValue() as Dictionary<string, SO_Stat_Base>;
+                        Dictionary<string, SO_Stat> collectionContent = collection.GetStatValue() as Dictionary<string, SO_Stat>;
                         Dictionary<string, int> collectionIndices = collection.GetStatIndices() as Dictionary<string, int>;
 
                         foreach (var (subKey, subStat) in collectionContent)
                         {
-                            if (subStat is SO_Stat dyn)
+                            if (subStat is SO_Stat_DynamicValue dyn)
                             {
                                 RegisterStat(_User, dyn, collectionIndices.TryGetValue(subKey, out var subIndex) ? subIndex : 0);
                             }
@@ -91,7 +91,7 @@ public class SO_StatLoader : ScriptableObject
                         RegisterStat(_User, staticValue);
                         break;
 
-                    case SO_Stat dynamicStat:
+                    case SO_Stat_DynamicValue dynamicStat:
                         Debug.LogWarning("StatLoader: Non-static stats should not directly be added to the user as you can not define a specifix index this way. Registered index 0 as default value.");
                         RegisterStat(_User, dynamicStat, 0);
                         break;
@@ -131,7 +131,7 @@ public class SO_StatLoader : ScriptableObject
         RegisterStat(_User, _Stat, false);
     }
 
-    private void RegisterStat(IItemUser _User, SO_Stat _Stat, int _Index, bool _OverrideMode)
+    private void RegisterStat(IItemUser _User, SO_Stat_DynamicValue _Stat, int _Index, bool _OverrideMode)
     {
         if (!_User.UserStats.ContainsKey(_Stat.TargetUserStat))
         {
@@ -157,7 +157,7 @@ public class SO_StatLoader : ScriptableObject
         }
     }
 
-    private void RegisterStat(IItemUser _User, SO_Stat _Stat, int _Index)
+    private void RegisterStat(IItemUser _User, SO_Stat_DynamicValue _Stat, int _Index)
     {
         RegisterStat(_User, _Stat, _Index, false);
     }
@@ -199,7 +199,7 @@ public class SO_StatLoader : ScriptableObject
         }
     }
 
-    private void IterateOverStats(IItemUser _User, Dictionary<string, SO_Stat_Base> _Collection, object _Source)
+    private void IterateOverStats(IItemUser _User, Dictionary<string, SO_Stat> _Collection, object _Source)
     {
         Dictionary<string, int> indices = _Source switch
         {
@@ -214,12 +214,12 @@ public class SO_StatLoader : ScriptableObject
             switch (stat)
             {
                 case SO_Stat_Collection collection:
-                    Dictionary<string, SO_Stat_Base> collectionContent = collection.GetStatValue() as Dictionary<string, SO_Stat_Base>;
+                    Dictionary<string, SO_Stat> collectionContent = collection.GetStatValue() as Dictionary<string, SO_Stat>;
                     Dictionary<string, int> collectionIndices = collection.GetStatIndices() as Dictionary<string, int>;
 
                     foreach (var (subKey, subStat) in collectionContent)
                     {
-                        if (subStat is SO_Stat dyn)
+                        if (subStat is SO_Stat_DynamicValue dyn)
                         {
                             RegisterStat(_User, dyn, collectionIndices.TryGetValue(subKey, out var subIndex) ? subIndex : 0);
                         }
@@ -234,7 +234,7 @@ public class SO_StatLoader : ScriptableObject
                     RegisterStat(_User, staticValue);
                     break;
 
-                case SO_Stat dynamicStat:
+                case SO_Stat_DynamicValue dynamicStat:
                     int index = indices?.TryGetValue(key, out var i) == true ? i : 0;
                     RegisterStat(_User, dynamicStat, index);
                     break;

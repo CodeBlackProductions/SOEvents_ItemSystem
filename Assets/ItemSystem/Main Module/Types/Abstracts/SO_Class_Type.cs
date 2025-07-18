@@ -15,17 +15,17 @@ namespace ItemSystem.MainModule
         [SerializeField] private string m_TypeName = "NewType";
         [SerializeField] private GUID m_TypeGUID;
         [SerializeField] private SO_ToolTip[] m_ToolTips;
-        [SerializeField] private List<SO_Stat_Base> m_TypeStats = new List<SO_Stat_Base>();
+        [SerializeField] private List<SO_Stat> m_TypeStats = new List<SO_Stat>();
         [SerializeField] private List<int> m_TypeStatIndices = new List<int>();
         [SerializeField] private SO_Tag[] m_Tags;
 
-        private Dictionary<string, SO_Stat_Base> m_Stats = new Dictionary<string, SO_Stat_Base>();
+        private Dictionary<string, SO_Stat> m_Stats = new Dictionary<string, SO_Stat>();
         private Dictionary<string, int> m_StatIndices = new Dictionary<string, int>();
 
         [ItemToolkitAccess] public string TypeName { get => m_TypeName; set => m_TypeName = value; }
 
         [ItemToolkitAccess]
-        public Dictionary<string, SO_Stat_Base> Stats
+        public Dictionary<string, SO_Stat> Stats
         {
             get => m_Stats; set
             {

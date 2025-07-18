@@ -29,18 +29,22 @@ namespace ItemSystem.Editor
         {
             m_SelectedModuleType = null;
 
-            ModuleCreatorWindow window = GetWindow<ModuleCreatorWindow>("Module Creator");
+            ModuleCreatorWindow window = CreateInstance<ModuleCreatorWindow>();
+            window.titleContent = new GUIContent("Module Creator");
             window.minSize = new Vector2(700, 400);
             window.OnClose += _OnWindowClosedCallback;
+            window.Show();
         }
 
         public static void ShowWindow(Action<bool> _OnWindowClosedCallback, System.Type _SelectedType)
         {
             m_SelectedModuleType = _SelectedType;
 
-            ModuleCreatorWindow window = GetWindow<ModuleCreatorWindow>("Module Creator");
+            ModuleCreatorWindow window = CreateInstance<ModuleCreatorWindow>();
+            window.titleContent = new GUIContent("Module Creator");
             window.minSize = new Vector2(700, 400);
             window.OnClose += _OnWindowClosedCallback;
+            window.Show();
         }
 
         private void CreateGUI()

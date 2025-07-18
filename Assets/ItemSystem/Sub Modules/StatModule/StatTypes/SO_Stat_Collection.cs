@@ -7,14 +7,14 @@ namespace ItemSystem.SubModules
 {
     public class SO_Stat_Collection : SO_Stat_StaticValue, IItemModule
     {
-        [SerializeField] private List<SO_Stat_Base> m_ValueSerialized = new List<SO_Stat_Base>();
+        [SerializeField] private List<SO_Stat> m_ValueSerialized = new List<SO_Stat>();
         [SerializeField] private List<int> m_IndicesSerialized =new List<int>();
 
-        private Dictionary<string, SO_Stat_Base> m_Value = new Dictionary<string, SO_Stat_Base>();
+        private Dictionary<string, SO_Stat> m_Value = new Dictionary<string, SO_Stat>();
         private Dictionary<string, int> m_Indices = new Dictionary<string, int>();
 
         [ItemToolkitAccess]
-        public Dictionary<string, SO_Stat_Base> Stats
+        public Dictionary<string, SO_Stat> Stats
         {
             get => m_Value; set
             {
@@ -48,9 +48,9 @@ namespace ItemSystem.SubModules
 
         public override void SetStatValue(object _Value)
         {
-            if (_Value is SO_Stat_Base[])
+            if (_Value is SO_Stat[])
             {
-                m_Value = (_Value as Dictionary<string, SO_Stat_Base>);
+                m_Value = (_Value as Dictionary<string, SO_Stat>);
             }
         }
 

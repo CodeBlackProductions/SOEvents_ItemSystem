@@ -4,7 +4,7 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public class SO_Stat_Vector2 : SO_Stat
+public class SO_Stat_Vector2 : SO_Stat_DynamicValue
 {
     [SerializeField] private Vector2[] m_Value = new Vector2[] { Vector2.zero };
 

@@ -24,11 +24,11 @@ namespace ItemSystem.MainModule
         [SerializeField] private ERarity m_Rarity;
         [SerializeField] private SO_Item_Effect[] m_Effects;
         [SerializeField] private SO_Tag[] m_Tags;
-        [SerializeField] private List<SO_Stat_Base> m_ItemStats = new List<SO_Stat_Base>();
+        [SerializeField] private List<SO_Stat> m_ItemStats = new List<SO_Stat>();
         [SerializeField] private List<int> m_ItemStatIndices = new List<int>();
         [SerializeField] private int m_TypeIndex;
 
-        private Dictionary<string, SO_Stat_Base> m_Stats = new Dictionary<string, SO_Stat_Base>();
+        private Dictionary<string, SO_Stat> m_Stats = new Dictionary<string, SO_Stat>();
         private Dictionary<string, int> m_StatIndices = new Dictionary<string, int>();
 
         [ItemToolkitAccess] public string ItemName { get => m_ItemName; set => m_ItemName = value; }
@@ -38,7 +38,7 @@ namespace ItemSystem.MainModule
         [ItemToolkitAccess] public SO_Item_Effect[] Effects { get => m_Effects; set => m_Effects = value; }
 
         [ItemToolkitAccess]
-        public Dictionary<string, SO_Stat_Base> Stats
+        public Dictionary<string, SO_Stat> Stats
         {
             get => m_Stats; set
             {

@@ -418,8 +418,8 @@ public static class UITKFactory
                 var propInfo = item.GetType().GetProperty("Stats", BindingFlags.Public | BindingFlags.Instance);
                 if (propInfo != null)
                 {
-                    SO_Stat_Base stat;
-                    Dictionary<string, SO_Stat_Base> propValue = propInfo.GetValue(item) as Dictionary<string, SO_Stat_Base>;
+                    SO_Stat stat;
+                    Dictionary<string, SO_Stat> propValue = propInfo.GetValue(item) as Dictionary<string, SO_Stat>;
                     propValue.TryGetValue(statName, out stat);
 
                     if (stat != null)
@@ -428,7 +428,7 @@ public static class UITKFactory
                         {
                             text = text.Replace("[" + subTTID + "]", $"<color=#{UnityEngine.ColorUtility.ToHtmlStringRGBA(_ValueColor)}>{staticValue.GetStatValue()?.ToString() ?? string.Empty}</color>");
                         }
-                        else if (stat is SO_Stat value)
+                        else if (stat is SO_Stat_DynamicValue value)
                         {
                             int index = 0;
                             var indexPropInfo = item.GetType().GetProperty("StatIndices", BindingFlags.Public | BindingFlags.Instance);

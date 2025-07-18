@@ -12,7 +12,7 @@ public class UnitController : MonoBehaviour, IItemUser
     private Dictionary<SO_Effect_Trigger, List<SO_Item_Effect>> m_effectRegistry = new Dictionary<SO_Effect_Trigger, List<SO_Item_Effect>>();
     private Dictionary<string, Runtime_Stat> m_UserStats = new Dictionary<string, Runtime_Stat>();
 
-    [SerializeField] private List<SO_Stat_Base> m_unitStats;
+    [SerializeField] private List<SO_Stat> m_unitStats;
     [SerializeField] private SO_ItemSlot m_TestSlot;
     [SerializeField] private SO_Item m_TestItem1;
     [SerializeField] private SO_Item m_TestItem2;
@@ -24,7 +24,7 @@ public class UnitController : MonoBehaviour, IItemUser
     private List<SO_Item> m_Items = new List<SO_Item>();
 
     public List<SO_Item> Items { get => m_Items; set => m_Items = value; }
-    public List<SO_Stat_Base> Stats { get => m_unitStats; set => m_unitStats = value; }
+    public List<SO_Stat> Stats { get => m_unitStats; set => m_unitStats = value; }
 
     public Dictionary<string, Runtime_Stat> UserStats { get => m_UserStats; }
 

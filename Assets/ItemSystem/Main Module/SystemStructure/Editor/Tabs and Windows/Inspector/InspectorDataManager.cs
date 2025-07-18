@@ -70,7 +70,7 @@ namespace ItemSystem.Editor
                     {
                         return CreateUIforTypeSelection(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, uiParent);
                     }
-                    else if (typeof(SerializableKeyValuePair<SO_Stat_Base, int>).IsAssignableFrom(_Property.PropertyType))
+                    else if (typeof(SerializableKeyValuePair<SO_Stat, int>).IsAssignableFrom(_Property.PropertyType))
                     {
                         return CreateUIforStat(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, uiParent);
                     }
@@ -97,10 +97,10 @@ namespace ItemSystem.Editor
         Action<bool> _InspectorValueChangeCallback,
         VisualElement _UIParent)
         {
-            List<SO_Stat_Base> soList = ItemEditor_AssetLoader.LoadAssetsByType<SO_Stat_Base>();
+            List<SO_Stat> soList = ItemEditor_AssetLoader.LoadAssetsByType<SO_Stat>();
             if (soList == null)
             {
-                soList = new List<SO_Stat_Base>();
+                soList = new List<SO_Stat>();
             }
             else
             {
@@ -109,7 +109,7 @@ namespace ItemSystem.Editor
             List<string> soNames = new List<string>();
             for (int i = 0; i < soList.Count; i++)
             {
-                if (soList[i] is SO_Stat dyn)
+                if (soList[i] is SO_Stat_DynamicValue dyn)
                 {
                     for (int c = 0; c < dyn.GetStatCount(); c++)
                     {
@@ -124,12 +124,12 @@ namespace ItemSystem.Editor
 
             if (soNames.Count > 0)
             {
-                SerializableKeyValuePair<SO_Stat_Base, int> statPair = (SerializableKeyValuePair<SO_Stat_Base, int>)_Property.GetValue(_ParentSO);
+                SerializableKeyValuePair<SO_Stat, int> statPair = (SerializableKeyValuePair<SO_Stat, int>)_Property.GetValue(_ParentSO);
                 string currentEntry = null;
 
                 if (statPair?.Key != null && AttributeFilterHelper.EntryFitsFilters(_Property, statPair.Key))
                 {
-                    if (statPair.Key is SO_Stat stat)
+                    if (statPair.Key is SO_Stat_DynamicValue stat)
                     {
                         currentEntry = $"{stat.TargetUserStat}/{stat.GetStatValue(statPair.Value).ToString().ToLowerInvariant()} ({stat.GetType().Name})";
                     }
@@ -155,13 +155,13 @@ namespace ItemSystem.Editor
                 {
                     string selected = c.newValue;
 
-                    SO_Stat_Base selectedStat = null;
+                    SO_Stat selectedStat = null;
                     int selectedIndex = 0;
 
                     bool found = false;
                     foreach (var stat in soList)
                     {
-                        if (stat is SO_Stat dyn)
+                        if (stat is SO_Stat_DynamicValue dyn)
                         {
                             for (int i = 0; i < dyn.GetStatCount(); i++)
                             {
@@ -191,7 +191,7 @@ namespace ItemSystem.Editor
 
                     if (selectedStat != null)
                     {
-                        var newPair = new SerializableKeyValuePair<SO_Stat_Base, int>(selectedStat, selectedIndex);
+                        var newPair = new SerializableKeyValuePair<SO_Stat, int>(selectedStat, selectedIndex);
                         _Property.SetValue(_ParentSO, newPair);
 
                         EditorUtility.SetDirty(_ParentSO);
@@ -332,25 +332,25 @@ namespace ItemSystem.Editor
             PropertyInfo indexProp = _ParentSO.GetType().GetProperty("StatIndices");
             object indexDict = indexProp?.GetValue(_ParentSO);
 
-            if (_Property.PropertyType == typeof(Dictionary<string, SO_Stat_Base>))
+            if (_Property.PropertyType == typeof(Dictionary<string, SO_Stat>))
             {
-                List<SO_Stat_Base> allStats = ItemEditor_AssetLoader.LoadAssetsByType<SO_Stat_Base>();
+                List<SO_Stat> allStats = ItemEditor_AssetLoader.LoadAssetsByType<SO_Stat>();
                 allStats = AttributeFilterHelper.FilterEntries(_Property, allStats);
 
                 List<string> allTargetUserStats = new List<string>();
 
                 allStats.ForEach(so =>
                 {
-                    if (so.GetType().IsSubclassOf(typeof(SO_Stat_Base)) && !allTargetUserStats.Contains(so.TargetUserStat))
+                    if (so.GetType().IsSubclassOf(typeof(SO_Stat)) && !allTargetUserStats.Contains(so.TargetUserStat))
                     {
                         allTargetUserStats.Add(so.TargetUserStat);
                     }
                 });
 
-                Dictionary<string, SO_Stat_Base> statDictionary = dict as Dictionary<string, SO_Stat_Base>;
+                Dictionary<string, SO_Stat> statDictionary = dict as Dictionary<string, SO_Stat>;
                 if (statDictionary == null)
                 {
-                    statDictionary = new Dictionary<string, SO_Stat_Base>();
+                    statDictionary = new Dictionary<string, SO_Stat>();
                 }
                 Dictionary<string, int> statIndexDictionary = indexDict as Dictionary<string, int>;
                 if (statIndexDictionary == null)
@@ -359,7 +359,7 @@ namespace ItemSystem.Editor
                 }
 
                 List<string> selectedStats = new List<string>();
-                foreach (KeyValuePair<string, SO_Stat_Base> entry in statDictionary)
+                foreach (KeyValuePair<string, SO_Stat> entry in statDictionary)
                 {
                     if (!selectedStats.Contains(entry.Value.TargetUserStat) && AttributeFilterHelper.EntryFitsFilters(_Property, entry.Value))
                     {
@@ -397,7 +397,7 @@ namespace ItemSystem.Editor
                         row.Add(new Label(stat));
 
                         List<SO_Stat_StaticValue> matchingStaticStats = new List<SO_Stat_StaticValue>();
-                        List<SO_Stat> matchingDynamicStats = new List<SO_Stat>();
+                        List<SO_Stat_DynamicValue> matchingDynamicStats = new List<SO_Stat_DynamicValue>();
 
                         foreach (var s in allStats)
                         {
@@ -407,9 +407,9 @@ namespace ItemSystem.Editor
                                 {
                                     matchingStaticStats.Add(s as SO_Stat_StaticValue);
                                 }
-                                else if (s is SO_Stat)
+                                else if (s is SO_Stat_DynamicValue)
                                 {
-                                    matchingDynamicStats.Add(s as SO_Stat);
+                                    matchingDynamicStats.Add(s as SO_Stat_DynamicValue);
                                 }
                                 else
                                 {
@@ -446,7 +446,7 @@ namespace ItemSystem.Editor
                             return;
                         }
 
-                        SO_Stat_Base current = statDictionary.FirstOrDefault(x => x.Value.TargetUserStat == stat).Value;
+                        SO_Stat current = statDictionary.FirstOrDefault(x => x.Value.TargetUserStat == stat).Value;
 
                         string currentName = string.Empty;
                         if (current != null)
@@ -455,7 +455,7 @@ namespace ItemSystem.Editor
                             {
                                 currentName = $"{staticVal.ModuleName} ({staticVal.GetType().Name})";
                             }
-                            else if (current is SO_Stat val)
+                            else if (current is SO_Stat_DynamicValue val)
                             {
                                 if (val.GetStatCount() > 0)
                                 {
@@ -479,7 +479,7 @@ namespace ItemSystem.Editor
                         DropdownField statDropdown = new DropdownField("", soNames, currentName);
                         statDropdown.RegisterValueChangedCallback(c =>
                         {
-                            SO_Stat_Base selectedSO = null;
+                            SO_Stat selectedSO = null;
                             int selectedIndex = 0;
 
                             selectedSO = matchingStaticStats.FirstOrDefault(s => $"{s.ModuleName} ({s.GetType().Name})" == c.newValue);
@@ -513,7 +513,7 @@ namespace ItemSystem.Editor
 
                                 statDictionary[selectedSO.TargetUserStat] = selectedSO;
 
-                                if (selectedSO is SO_Stat dyn)
+                                if (selectedSO is SO_Stat_DynamicValue dyn)
                                 {
                                     statIndexDictionary[selectedSO.TargetUserStat] = selectedIndex;
                                 }
@@ -570,7 +570,7 @@ namespace ItemSystem.Editor
                         dropdown.value = dropdown.choices.FirstOrDefault();
                         updateUI();
 
-                        SO_Stat_Base newItem = allStats.FirstOrDefault(so => so.TargetUserStat == selected);
+                        SO_Stat newItem = allStats.FirstOrDefault(so => so.TargetUserStat == selected);
                         statDictionary.Add(newItem.TargetUserStat, newItem);
                         statIndexDictionary.Add(newItem.TargetUserStat, 0);
                         _Property.SetValue(_ParentSO, statDictionary);
@@ -648,9 +648,9 @@ namespace ItemSystem.Editor
                 return _UIParent;
             }
 
-            if (_Property.PropertyType == typeof(SO_Stat_Base[]))
+            if (_Property.PropertyType == typeof(SO_Stat[]))
             {
-                InspectorList<SO_Stat_Base> statList = ConvertArrayToInspectorList<SO_Stat_Base>(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, "Stats", true);
+                InspectorList<SO_Stat> statList = ConvertArrayToInspectorList<SO_Stat>(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, "Stats", true);
 
                 _UIParent.Add(statList);
                 return _UIParent;

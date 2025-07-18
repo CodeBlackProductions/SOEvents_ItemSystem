@@ -2,7 +2,7 @@ using ItemSystem.Editor;
 using ItemSystem.SubModules;
 using UnityEngine;
 
-public class SO_Stat_ObjectReference : SO_Stat
+public class SO_Stat_ObjectReference : SO_Stat_DynamicValue
 {
     [SerializeField] private GameObject[] m_Value;
 

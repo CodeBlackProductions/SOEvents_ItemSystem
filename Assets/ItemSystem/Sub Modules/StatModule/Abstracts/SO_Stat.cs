@@ -8,18 +8,28 @@ namespace ItemSystem.SubModules
 {
     /// <summary>
     /// Base class for user stats of different types.
-    /// This class is used to define a collection of possible values for a singular stat. (e.g. multiple possible damage types, resistances, etc.)
-    /// Inherit from this when creating a new base type of stat. (e.g. <see cref="SO_Stat_Float"/> , <see cref="SO_Stat_String"/>  etc.)
+    /// Do NOT use this class directly, instead use <see cref="SO_Stat_DynamicValue"/> or <see cref="SO_Stat_StaticValue"/>.
     /// </summary>
     [Serializable]
-    public abstract class SO_Stat : SO_Stat_Base, IItemModule, IItemModuleBase
+    public abstract class SO_Stat : ScriptableObject, IItemModule, IItemModuleBase
     {
-        public abstract System.Type GetStatType();
+        [SerializeField] protected string m_StatName = "NewStat";
 
-        public abstract object GetStatValue(int _Index);
+        [Tooltip("Name of the stat it should register to when utilized on a character. (E.g: different damage modules all addig onto \"Damage\")")]
+        [SerializeField] protected string m_TargetUserStat = "NewStat";
 
-        public abstract int GetStatCount();
+        [SerializeField] private SO_ToolTip[] m_ToolTips;
 
-        public abstract void SetStatValue(object _Value, int _Index);
+        [SerializeField] private SO_Tag[] m_Tags;
+
+        [SerializeField] protected GUID m_StatGUID;
+
+        [ItemToolkitAccess] public string StatName { get => m_StatName; set => m_StatName = value; }
+        [ItemToolkitAccess] public string TargetUserStat { get => m_TargetUserStat; set => m_TargetUserStat = value; }
+        [ItemToolkitAccess] public SO_ToolTip[] ToolTips { get => m_ToolTips; set => m_ToolTips = value; }
+        [ItemToolkitAccess] public SO_Tag[] Tags { get => m_Tags; set => m_Tags = value; }
+
+        public string ModuleName { get => m_StatName; set => m_StatName = value; }
+        public GUID ModuleGUID { get => m_StatGUID; set => m_StatGUID = value; }
     }
 }
