@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace ItemSystem.Editor
@@ -12,19 +13,21 @@ namespace ItemSystem.Editor
     /// </summary>
     public class FileManagerTab : TabBase
     {
-        public FileManagerTab(Action<bool> _InspectorValueChangeCallback, Action<IEnumerable<System.Object>, bool, bool> _TreeviewSelectionChangeCallback, Action<IEnumerable<System.Object>> _LocalFileTreeviewSelectionChangeCallback)
+        public FileManagerTab(Action<bool> _InspectorValueChangeCallback, Action<IEnumerable<System.Object>, bool, bool> _TreeviewSelectionChangeCallback, Action<IEnumerable<System.Object>> _LocalFileTreeviewSelectionChangeCallback, int _BGColor)
         {
             m_Root = new VisualElement();
 
             m_Root.style.flexDirection = FlexDirection.Column;
             m_Root.style.flexGrow = 1;
 
-            LoadHierarchy();
+            LoadHierarchy(_BGColor);
+
+            SetTabBackgroundColor(_BGColor);
 
             Add(m_Root);
         }
 
-        protected override void OnSubTabChanged(System.Type _ModuleType, bool _ShowAddAndRemove, bool _LoadSubTypes, bool _ShowInspectorPanel, bool _LoadLocalFiles)
+        protected override void OnSubTabChanged(System.Type _ModuleType, bool _ShowAddAndRemove, bool _LoadSubTypes, bool _ShowInspectorPanel, bool _LoadLocalFiles, int _ButtonColor)
         {
             if (m_FilterPanel != null)
             {
@@ -34,10 +37,10 @@ namespace ItemSystem.Editor
             m_SubTabContent.Clear();
             MethodInfo method = typeof(FileManagerTab).GetMethod("LoadSubTabHierarchy", BindingFlags.NonPublic | BindingFlags.Instance);
             MethodInfo generic = method.MakeGenericMethod(_ModuleType);
-            generic.Invoke(this, new object[] { _ShowAddAndRemove, _ShowInspectorPanel, _LoadSubTypes, _LoadLocalFiles });
+            generic.Invoke(this, new object[] { _ShowAddAndRemove, _ShowInspectorPanel, _LoadSubTypes, _LoadLocalFiles, _ButtonColor });
         }
 
-        protected override void LoadHierarchy()
+        protected override void LoadHierarchy(int _ButtonColor)
         {
             m_SubTabContent?.Clear();
 
@@ -49,7 +52,7 @@ namespace ItemSystem.Editor
                 statTypePairs[i] = new KeyValuePair<string, System.Type>(baseTypes[i].Name.Substring(baseTypes[i].Name.LastIndexOf("_") + 1), baseTypes[i]);
             }
 
-            m_SubTabMenu = new TabbedMenu(statTypePairs, OnSubTabChanged, false, false, false, true);
+            m_SubTabMenu = new TabbedMenu(statTypePairs, OnSubTabChanged, false, false, false, true, _MainTabColor: _ButtonColor);
             m_SubTabContent = new VisualElement();
 
             m_SubTabContent.style.flexDirection = FlexDirection.Row;
@@ -57,9 +60,9 @@ namespace ItemSystem.Editor
 
             m_Root.Add(m_SubTabMenu);
 
-            LoadFilterPanel(typeof(SO_Item));
-            LoadSubTabHierarchy<SO_Item>(false, false, false, true);
-            OnSubTabChanged(typeof(SO_Item), false, false, false, true);
+            LoadFilterPanel(typeof(SO_Item), _ButtonColor);
+            LoadSubTabHierarchy<SO_Item>(false, false, false, true, _ButtonColor);
+            OnSubTabChanged(typeof(SO_Item), false, false, false, true, _ButtonColor);
 
             m_Root.Add(m_SubTabContent);
         }

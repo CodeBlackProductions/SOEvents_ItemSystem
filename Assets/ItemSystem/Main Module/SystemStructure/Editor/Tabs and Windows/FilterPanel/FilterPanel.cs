@@ -1,11 +1,10 @@
-using Codice.CM.Common;
 using ItemSystem.MainModule;
 using ItemSystem.SubModules;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.UIElements;
 
 namespace ItemSystem.Editor
@@ -33,6 +32,8 @@ namespace ItemSystem.Editor
         private System.Type m_ObjectType;
         private DropdownField m_SortingTypeDropdown;
 
+        private int m_ButtonColor = -1;
+
         private static readonly Dictionary<System.Type, List<TreeViewSortMode>> m_SortOptionsPerType = new()
         {
             { typeof(SO_Item), new List<TreeViewSortMode> { TreeViewSortMode.None, TreeViewSortMode.Alphabetical, TreeViewSortMode.ItemClass, TreeViewSortMode.ClassType, TreeViewSortMode.Rarity } },
@@ -48,7 +49,7 @@ namespace ItemSystem.Editor
         public Action<Func<object, bool>, List<ScriptableObject>> OnFilterChangedCallback;
         public Action<TreeViewSortMode> OnSortModeChangedCallback;
 
-        public FilterPanel(System.Type _ObjectType)
+        public FilterPanel(System.Type _ObjectType, int _ButtonColor)
         {
             m_Root = new VisualElement();
             m_FilterPanelContent = new VisualElement();
@@ -61,36 +62,36 @@ namespace ItemSystem.Editor
             m_Root.style.flexDirection = FlexDirection.Column;
             m_Root.style.flexGrow = 1;
             m_Root.style.paddingBottom = 10;
-            m_Root.style.paddingTop = 10;
+            m_Root.style.paddingTop = 5;
 
-            var topDivider = new VisualElement();
-            topDivider.style.height = 2;
-            topDivider.style.backgroundColor = new StyleColor(Color.grey);
-            topDivider.style.marginBottom = 5;
+            m_Root.style.backgroundColor = Color.clear;
 
-            var bottomDivider = new VisualElement();
-            bottomDivider.style.height = 2;
-            bottomDivider.style.backgroundColor = new StyleColor(Color.grey);
-            bottomDivider.style.marginTop = 5;
+            m_Root.style.borderBottomWidth = 2;
+            m_Root.style.borderBottomColor = new StyleColor(Color.grey);
+            m_Root.style.paddingBottom = 5;
+            m_Root.style.marginBottom = 5;
 
-            m_Root.Add(topDivider);
+            m_Root.style.borderTopWidth = 2;
+            m_Root.style.borderTopColor = new StyleColor(Color.grey);
+            m_Root.style.paddingTop = 5;
+            m_Root.style.marginTop = 5;
 
-            LoadFilterOptions();
-            LoadFilterTypes();
-            LoadFilterTags();
-            LoadSortingOptions(_ObjectType);
+            m_ButtonColor = _ButtonColor;
+
+            LoadFilterOptions(_ButtonColor);
+            LoadFilterTypes(_ButtonColor);
+            LoadFilterTags(_ButtonColor);
+            LoadSortingOptions(_ObjectType, _ButtonColor);
 
             m_FilterPanelContent.style.flexDirection = FlexDirection.Row;
             m_FilterPanelContent.style.flexGrow = 1;
 
             m_Root.Add(m_FilterPanelContent);
 
-            m_Root.Add(bottomDivider);
-
             Add(m_Root);
         }
 
-        private void LoadFilterOptions()
+        private void LoadFilterOptions(int _ButtonColor)
         {
             var filterTypeDropdown = new DropdownField("", new List<string> { "Contains All", "Contains Any", "Contains None" }, 0);
 
@@ -117,14 +118,20 @@ namespace ItemSystem.Editor
                 }
             });
 
+            StyleSheet buttonStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/ItemSystem/Main Module/SystemStructure/Editor/Tabs and Windows/TabButton.uss");
+            filterTypeDropdown.styleSheets.Add(buttonStyle);
+
+            VisualElement ve = filterTypeDropdown;
+            ve.ElementAt(0).AddToClassList($"tab-c{_ButtonColor}");
+
             m_FilterPanelContent.Add(filterTypeDropdown);
             OnFilterOptionsChanged(containsAll);
         }
 
-        private void LoadFilterTypes()
+        private void LoadFilterTypes(int _ButtonColor)
         {
             List<ScriptableObject> empty = new List<ScriptableObject>();
-            InspectorList<ScriptableObject> filterTypeList = new InspectorList<ScriptableObject>(empty, new List<System.Type>() { typeof(SO_Tag) }, "Filter types", true);
+            InspectorList<ScriptableObject> filterTypeList = new InspectorList<ScriptableObject>(empty, new List<System.Type>() { typeof(SO_Tag) }, "Filter types", true, _ButtonColor);
 
             filterTypeList.ItemAddCallback += (item) =>
             {
@@ -138,10 +145,10 @@ namespace ItemSystem.Editor
             m_FilterPanelContent.Add(filterTypeList);
         }
 
-        private void LoadFilterTags()
+        private void LoadFilterTags(int _ButtonColor)
         {
             List<SO_Tag> empty = new List<SO_Tag>();
-            InspectorList<SO_Tag> filterTagList = new InspectorList<SO_Tag>(empty, null, "Filter tags", true);
+            InspectorList<SO_Tag> filterTagList = new InspectorList<SO_Tag>(empty, null, "Filter tags", true, _ButtonColor);
 
             filterTagList.ItemAddCallback += (item) =>
             {
@@ -155,7 +162,7 @@ namespace ItemSystem.Editor
             m_FilterPanelContent.Add(filterTagList);
         }
 
-        private void LoadSortingOptions(System.Type _Type)
+        private void LoadSortingOptions(System.Type _Type, int _ButtonColor)
         {
             List<TreeViewSortMode> allowedSortModes;
             if (!m_SortOptionsPerType.TryGetValue(_Type, out allowedSortModes))
@@ -171,8 +178,12 @@ namespace ItemSystem.Editor
                 OnSortModeChanged((TreeViewSortMode)Enum.Parse(typeof(TreeViewSortMode), evt.newValue));
             });
 
+            StyleSheet buttonStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/ItemSystem/Main Module/SystemStructure/Editor/Tabs and Windows/TabButton.uss");
+            m_SortingTypeDropdown.styleSheets.Add(buttonStyle);
+
             VisualElement ve = m_SortingTypeDropdown;
             ve.ElementAt(0).style.minWidth = 10;
+            ve.ElementAt(1).AddToClassList($"tab-c{_ButtonColor}");
 
             m_FilterPanelContent.Add(m_SortingTypeDropdown);
 
@@ -210,16 +221,16 @@ namespace ItemSystem.Editor
         public void ClearFilter()
         {
             m_FilterPanelContent.Clear();
-            LoadFilterOptions();
-            LoadFilterTypes();
-            LoadFilterTags();
-            LoadSortingOptions(m_ObjectType);
+            LoadFilterOptions(m_ButtonColor);
+            LoadFilterTypes(m_ButtonColor);
+            LoadFilterTags(m_ButtonColor);
+            LoadSortingOptions(m_ObjectType, m_ButtonColor);
         }
 
-        public void ChangeSortModeType(System.Type _Type) 
+        public void ChangeSortModeType(System.Type _Type)
         {
             m_FilterPanelContent.Remove(m_SortingTypeDropdown);
-            LoadSortingOptions(_Type);
+            LoadSortingOptions(_Type, m_ButtonColor);
         }
     }
 

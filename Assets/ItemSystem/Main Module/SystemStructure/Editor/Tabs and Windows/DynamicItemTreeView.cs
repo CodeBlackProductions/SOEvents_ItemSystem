@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -26,7 +27,7 @@ namespace ItemSystem.Editor
         private bool m_LoadSubTypes = false;
         private TreeViewSortMode m_SortMode = TreeViewSortMode.None;
 
-        public DynamicItemTreeView(Action<IEnumerable<System.Object>, bool, bool> _OnSelectionChangedCallback, bool _ShowAddAndRemove, bool _LoadSubTypes, bool _ShowInspectorPanel, bool _ShowSaveToFile)
+        public DynamicItemTreeView(Action<IEnumerable<System.Object>, bool, bool> _OnSelectionChangedCallback, bool _ShowAddAndRemove, bool _LoadSubTypes, bool _ShowInspectorPanel, bool _ShowSaveToFile, int _ButtonColor)
         {
             m_TreeView = new UnityEngine.UIElements.TreeView();
             m_TreeView.selectionChanged += (s) => _OnSelectionChangedCallback?.Invoke(s, _ShowInspectorPanel, _ShowSaveToFile);
@@ -37,10 +38,13 @@ namespace ItemSystem.Editor
 
             m_TreeView.style.flexGrow = 1;
             m_TreeView.style.alignSelf = Align.Stretch;
+            m_TreeView.style.backgroundColor = Color.clear;
 
             this.style.flexDirection = FlexDirection.Column;
             this.style.flexGrow = 1;
             this.style.paddingRight = 50;
+
+            this.style.backgroundColor = Color.clear;
 
             hierarchy.Add(m_TreeView);
 
@@ -51,6 +55,9 @@ namespace ItemSystem.Editor
                 m_ButtonPanel.style.alignSelf = Align.Center;
                 m_ButtonPanel.style.flexGrow = 0;
 
+                StyleSheet ButtonStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/ItemSystem/Main Module/SystemStructure/Editor/Tabs and Windows/TabButton.uss");
+                m_ButtonPanel.styleSheets.Add(ButtonStyle);
+
                 m_BTN_AddNewSO = new Button(() => ModuleCreatorWindow.ShowWindow(RefreshTreeView, typeof(T)))
                 {
                     text = "Add",
@@ -60,6 +67,7 @@ namespace ItemSystem.Editor
                     alignSelf = Align.Center
                 }
                 };
+                m_BTN_AddNewSO.AddToClassList($".tab-c{_ButtonColor}");
 
                 m_ButtonPanel.Add(m_BTN_AddNewSO);
 
@@ -72,6 +80,7 @@ namespace ItemSystem.Editor
                     alignSelf = Align.Center
                 }
                 };
+                m_BTN_RemoveSelectedModule.AddToClassList($".tab-c{_ButtonColor}");
 
                 m_ButtonPanel.Add(m_BTN_RemoveSelectedModule);
 
@@ -94,6 +103,7 @@ namespace ItemSystem.Editor
                     alignSelf = Align.Center
                 }
                 };
+                m_BTN_CopySelectedModule.AddToClassList($".tab-c{_ButtonColor}");
 
                 m_ButtonPanel.Add(m_BTN_CopySelectedModule);
 
@@ -124,10 +134,12 @@ namespace ItemSystem.Editor
 
             m_TreeView.style.flexGrow = 1;
             m_TreeView.style.alignSelf = Align.Stretch;
+            m_TreeView.style.backgroundColor = Color.clear;
 
             this.style.flexDirection = FlexDirection.Column;
             this.style.flexGrow = 1;
             this.style.paddingRight = 50;
+            this.style.backgroundColor = Color.clear;
 
             hierarchy.Add(m_TreeView);
         }

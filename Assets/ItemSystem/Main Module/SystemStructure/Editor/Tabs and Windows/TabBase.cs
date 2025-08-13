@@ -26,18 +26,47 @@ namespace ItemSystem.Editor
         protected Button m_BTN_SaveToFile;
         protected Button m_BTN_LoadIntoAssets;
 
-        protected abstract void OnSubTabChanged(System.Type _ModuleType, bool _ShowAddAndRemove, bool _LoadSubTypes, bool _ShowInspectorPanel, bool _LoadLocalFiles);
+        protected abstract void OnSubTabChanged(System.Type _ModuleType, bool _ShowAddAndRemove, bool _LoadSubTypes, bool _ShowInspectorPanel, bool _LoadLocalFiles, int _ButtonColor);
 
-        protected abstract void LoadHierarchy();
+        protected abstract void LoadHierarchy(int _ButtonColor);
 
-        protected void LoadFilterPanel(System.Type _ObjectType)
+        protected void SetTabBackgroundColor(int _Color)
         {
-            m_FilterPanel = new FilterPanel(_ObjectType);
+            Button temp = new Button();
+            temp.AddToClassList("tab-button");
+            temp.AddToClassList($"tab-c{_Color}");
+            Color btnCol = temp.resolvedStyle.backgroundColor;
+
+            Color darkenedColor = btnCol;
+            darkenedColor *= 0.35f;
+            darkenedColor.a = 0.35f;
+
+            if (m_FilterPanel != null)
+            {
+                m_FilterPanel.style.backgroundColor = new StyleColor(darkenedColor);
+            }
+            if (m_SubTabMenu != null)
+            {
+                m_SubTabMenu.style.backgroundColor = new StyleColor(darkenedColor);
+            }
+            if (m_SubTabContent != null) 
+            {
+                m_SubTabContent.style.backgroundColor = new StyleColor(darkenedColor);
+            }
+            if (m_SubTabInspectorPanel != null)
+            {
+                m_SubTabInspectorPanel.style.backgroundColor = new StyleColor(darkenedColor);
+            }
+        }
+
+        protected void LoadFilterPanel(System.Type _ObjectType, int _ButtonColor)
+        {
+            m_FilterPanel = new FilterPanel(_ObjectType, _ButtonColor);
 
             m_Root.Add(m_FilterPanel);
         }
 
-        protected void LoadSubTabHierarchy<T>(bool _ShowAddAndRemove, bool _ShowInspectorPanel, bool _LoadSubtypes, bool _LoadLocalFiles) where T : ScriptableObject
+        protected void LoadSubTabHierarchy<T>(bool _ShowAddAndRemove, bool _ShowInspectorPanel, bool _LoadSubtypes, bool _LoadLocalFiles, int _ButtonColor) where T : ScriptableObject
         {
             if (m_FilterPanel != null)
             {
@@ -47,7 +76,7 @@ namespace ItemSystem.Editor
 
             m_TreeviewSelectionChangeCallback += OnTreeViewSelectionChanged;
 
-            CreateTreeview<T>(_ShowAddAndRemove, _LoadSubtypes, _ShowInspectorPanel, _LoadLocalFiles);
+            CreateTreeview<T>(_ShowAddAndRemove, _LoadSubtypes, _ShowInspectorPanel, _LoadLocalFiles, _ButtonColor);
 
             if (_LoadLocalFiles)
             {
@@ -62,9 +91,9 @@ namespace ItemSystem.Editor
             }
         }
 
-        protected void CreateTreeview<T>(bool _ShowAddAndRemove, bool _LoadSubTypes, bool _ShowInspectorPanel, bool _ShowSaveToFile) where T : ScriptableObject
+        protected void CreateTreeview<T>(bool _ShowAddAndRemove, bool _LoadSubTypes, bool _ShowInspectorPanel, bool _ShowSaveToFile, int _ButtonColor) where T : ScriptableObject
         {
-            DynamicItemTreeView<T> treeView = new DynamicItemTreeView<T>(m_TreeviewSelectionChangeCallback, _ShowAddAndRemove, _LoadSubTypes, _ShowInspectorPanel, _ShowSaveToFile);
+            DynamicItemTreeView<T> treeView = new DynamicItemTreeView<T>(m_TreeviewSelectionChangeCallback, _ShowAddAndRemove, _LoadSubTypes, _ShowInspectorPanel, _ShowSaveToFile, _ButtonColor);
             m_InspectorValueChangeCallback += treeView.RefreshTreeView;
             if (m_FilterPanel != null)
             {
@@ -73,13 +102,11 @@ namespace ItemSystem.Editor
             }
 
             treeView.style.flexGrow = 1;
-            m_SubTabContent.Add(treeView);
+            treeView.style.borderRightWidth = 2;
+            treeView.style.borderRightColor = new StyleColor(Color.grey);
+            treeView.style.marginRight = 5;
 
-            var divider = new VisualElement();
-            divider.style.width = 2;
-            divider.style.backgroundColor = new StyleColor(Color.grey);
-            divider.style.marginRight = 5;
-            m_SubTabContent.Add(divider);
+            m_SubTabContent.Add(treeView);
         }
 
         protected void CreateTreeview<T>(List<ScriptableObject> _Items, bool _SaveToFile) where T : ScriptableObject

@@ -283,7 +283,7 @@ namespace ItemSystem.Editor
                 var propertyVal = _Property.GetValue(_ParentSO);
                 string currentEntry = null;
 
-                if (propertyVal != null && AttributeFilterHelper.EntryFitsFilters(_Property,propertyVal))
+                if (propertyVal != null && AttributeFilterHelper.EntryFitsFilters(_Property, propertyVal))
                 {
                     currentEntry = $"{(_Property.GetValue(_ParentSO) as IItemModule).ModuleName} ({_Property.GetValue(_ParentSO).GetType().Name})";
                 }
@@ -1293,7 +1293,7 @@ namespace ItemSystem.Editor
                 filteredList = array.ToList();
             }
 
-            InspectorList<T> list = new InspectorList<T>(filteredList, null, _Title, _ShowAddAndRemove);
+            InspectorList<T> list = new InspectorList<T>(filteredList, null, _Title, _ShowAddAndRemove, -1);
 
             list.ItemAddCallback += (newItem) =>
             {

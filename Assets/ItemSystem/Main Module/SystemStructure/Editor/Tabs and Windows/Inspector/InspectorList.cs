@@ -2,6 +2,7 @@ using ItemSystem.MainModule;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -22,7 +23,7 @@ namespace ItemSystem.Editor
         public Action<T> ItemRemoveCallback;
         public Action<T> ItemSelectCallback;
 
-        public InspectorList(List<T> _SourceList, List<System.Type> _TypesToExclude, string _Title, bool _ShowAddAndRemove)
+        public InspectorList(List<T> _SourceList, List<System.Type> _TypesToExclude, string _Title, bool _ShowAddAndRemove, int _ButtonColor)
         {
             if (_SourceList == null)
             {
@@ -38,10 +39,10 @@ namespace ItemSystem.Editor
                 m_TypesToExclude = _TypesToExclude;
             }
 
-            InstantiateUI(_Title, _ShowAddAndRemove);
+            InstantiateUI(_Title, _ShowAddAndRemove, _ButtonColor);
         }
 
-        public InspectorList(T[] _SourceArray, List<System.Type> _TypesToExclude, string _Title, bool _ShowAddAndRemove)
+        public InspectorList(T[] _SourceArray, List<System.Type> _TypesToExclude, string _Title, bool _ShowAddAndRemove, int _ButtonColor)
         {
             if (_SourceArray == null)
             {
@@ -57,10 +58,10 @@ namespace ItemSystem.Editor
                 m_TypesToExclude = _TypesToExclude;
             }
 
-            InstantiateUI(_Title, _ShowAddAndRemove);
+            InstantiateUI(_Title, _ShowAddAndRemove, _ButtonColor);
         }
 
-        public InspectorList(Dictionary<string, T> _SourceDictionary, List<System.Type> _TypesToExclude, string _Title, bool _ShowAddAndRemove)
+        public InspectorList(Dictionary<string, T> _SourceDictionary, List<System.Type> _TypesToExclude, string _Title, bool _ShowAddAndRemove, int _ButtonColor)
         {
             if (_SourceDictionary == null)
             {
@@ -76,10 +77,10 @@ namespace ItemSystem.Editor
                 m_TypesToExclude = _TypesToExclude;
             }
 
-            InstantiateUI(_Title, _ShowAddAndRemove);
+            InstantiateUI(_Title, _ShowAddAndRemove, _ButtonColor);
         }
 
-        private void InstantiateUI(string _Title, bool _ShowAddAndRemove)
+        private void InstantiateUI(string _Title, bool _ShowAddAndRemove, int _ButtonColor)
         {
             Label titleLabel = new Label(_Title) { style = { unityFontStyleAndWeight = FontStyle.Bold } };
             m_ParentView.Add(titleLabel);
@@ -92,8 +93,14 @@ namespace ItemSystem.Editor
 
             var buttonContainer = new VisualElement { style = { flexDirection = FlexDirection.Row } };
 
-            Button addButton = new Button(() => ChooseNewItem()) { text = "Add", style = { minHeight = 20 } };
-            Button removeButton = new Button(() => RemoveSelectedItem()) { text = "Remove", style = { minHeight = 20 } };
+            StyleSheet buttonStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/ItemSystem/Main Module/SystemStructure/Editor/Tabs and Windows/TabButton.uss");
+            buttonContainer.styleSheets.Add(buttonStyle);
+
+            Button addButton = new Button(() => ChooseNewItem()) { text = "Add", style = { minHeight = 20} };
+            addButton.AddToClassList($"tab-c{_ButtonColor}");
+
+            Button removeButton = new Button(() => RemoveSelectedItem()) { text = "Remove", style = { minHeight = 20} };
+            removeButton.AddToClassList($"tab-c{_ButtonColor}");
 
             buttonContainer.Add(addButton);
             buttonContainer.Add(removeButton);

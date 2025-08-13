@@ -24,6 +24,9 @@ public class SO_Effect_Basic : SO_Item_Effect
     [ItemToolkitFilter("ArmorType")]
     public SerializableKeyValuePair<SO_Stat, int> SingularStatExample_FloatOrArmorTypeOnly { get => m_SingularStatExample_FloatOrArmorTypeOnly; set => m_SingularStatExample_FloatOrArmorTypeOnly = value; }
 
+    [ItemToolkitAccess]
+    public SO_Stat test {  get; set; }
+
     protected override void ItemEffect(IItemUser _Source, IItemUser _Target)
     {
         Debug.Log("This is just a " + EffectName + " Source: " + _Source + " Target: " + _Target);

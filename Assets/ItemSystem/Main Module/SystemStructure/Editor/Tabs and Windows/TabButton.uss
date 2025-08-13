@@ -1,0 +1,48 @@
+
+
+.tab-button 
+{
+    flex-grow: 1;
+	margin-left : -0.1%;
+    margin-right : -0.1%;
+    padding-left : 0%;
+    padding-right : 0%;
+    border-right-color : gray;
+    border-right-width : 2px;
+    border-left-color : gray;
+    border-left-width : 2px;
+}
+
+.tab-c-default
+{
+    background-color: #585858;
+}
+.tab-c-0
+{
+    background-color: #16a085;
+}
+.tab-c-1
+{
+    background-color: #2ecc71;
+}
+.tab-c-2
+{
+    background-color: #2980b9;
+}
+.tab-c-3
+{
+    background-color: #8e44ad;
+}
+.tab-c-4
+{
+    background-color: #f39c12;
+}
+.tab-c-5
+{
+    background-color: #d35400;
+}
+.tab-c-6
+{
+    background-color: #c0392b;
+}
+
