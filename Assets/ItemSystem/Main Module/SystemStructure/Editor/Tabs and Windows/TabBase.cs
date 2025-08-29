@@ -2,6 +2,7 @@ using ItemSystem.MainModule;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -32,31 +33,34 @@ namespace ItemSystem.Editor
 
         protected void SetTabBackgroundColor(int _Color)
         {
-            Button temp = new Button();
-            temp.AddToClassList("tab-button");
-            temp.AddToClassList($"tab-c{_Color}");
-            Color btnCol = temp.resolvedStyle.backgroundColor;
-
-            Color darkenedColor = btnCol;
-            darkenedColor *= 0.35f;
-            darkenedColor.a = 0.35f;
+            StyleSheet tabButtonStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/ItemSystem/Main Module/SystemStructure/Editor/Tabs and Windows/TabButton.uss");
 
             if (m_FilterPanel != null)
             {
-                m_FilterPanel.style.backgroundColor = new StyleColor(darkenedColor);
+                ApplyStyle(m_FilterPanel,_Color,tabButtonStyle);
             }
             if (m_SubTabMenu != null)
             {
-                m_SubTabMenu.style.backgroundColor = new StyleColor(darkenedColor);
+                ApplyStyle(m_SubTabMenu, _Color, tabButtonStyle);
             }
-            if (m_SubTabContent != null) 
+            if (m_SubTabContent != null)
             {
-                m_SubTabContent.style.backgroundColor = new StyleColor(darkenedColor);
+                ApplyStyle(m_SubTabContent, _Color, tabButtonStyle);
             }
             if (m_SubTabInspectorPanel != null)
             {
-                m_SubTabInspectorPanel.style.backgroundColor = new StyleColor(darkenedColor);
+                ApplyStyle(m_SubTabInspectorPanel, _Color, tabButtonStyle);
             }
+        }
+
+        protected void ApplyStyle(VisualElement _Element, int _Color, StyleSheet _Style)
+        {
+            if (!_Element.styleSheets.Contains(_Style))
+            {
+                _Element.styleSheets.Add(_Style);
+            }
+            _Element.ClearClassList();
+            _Element.AddToClassList($"tab-c-{_Color}-dark");
         }
 
         protected void LoadFilterPanel(System.Type _ObjectType, int _ButtonColor)

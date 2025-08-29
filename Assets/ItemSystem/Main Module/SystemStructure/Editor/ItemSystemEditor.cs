@@ -60,16 +60,15 @@ namespace ItemSystem.Editor
             m_MainTabContent.Clear();
             m_CurrentMainTab = (EMainTabType)System.Enum.Parse(typeof(EMainTabType), _TabName);
 
-            Button temp = new Button();
-            temp.AddToClassList("tab-button");
-            temp.AddToClassList($"tab-c{_BGColor}");
-            Color btnCol = temp.resolvedStyle.backgroundColor;
+            StyleSheet tabButtonStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/ItemSystem/Main Module/SystemStructure/Editor/Tabs and Windows/TabButton.uss");
 
-            Color darkenedColor = btnCol;
-            darkenedColor *= 0.35f;
-            darkenedColor.a = 0.35f;
+            if (!m_MainTabMenu.styleSheets.Contains(tabButtonStyle))
+            {
+                m_MainTabMenu.styleSheets.Add(tabButtonStyle);
+            }
+            m_MainTabMenu.ClearClassList();
+            m_MainTabMenu.AddToClassList($"tab-c-{_BGColor}-dark");
 
-            m_MainTabMenu.style.backgroundColor = new StyleColor(darkenedColor);
             LoadMainTabHierarchy(m_CurrentMainTab, _BGColor);
         }
 

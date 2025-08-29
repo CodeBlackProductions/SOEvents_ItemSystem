@@ -16,6 +16,7 @@
 .tab-c-default
 {
     background-color: #585858;
+    
 }
 .tab-c-0
 {
@@ -46,3 +47,32 @@
     background-color: #c0392b;
 }
 
+
+.tab-c-0-dark
+{
+    background-color: #194d42;
+}
+.tab-c-1-dark
+{
+    background-color: #194d2f;
+}
+.tab-c-2-dark
+{
+    background-color: #19384d;
+}
+.tab-c-3-dark
+{
+    background-color: #3d194d;
+}
+.tab-c-4-dark
+{
+    background-color: #4d3919;
+}
+.tab-c-5-dark
+{
+    background-color: #4d2e19;
+}
+.tab-c-6-dark
+{
+    background-color: #4d1f19;
+}

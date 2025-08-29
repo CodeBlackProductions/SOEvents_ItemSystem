@@ -10,7 +10,6 @@ namespace ItemSystem.Editor
     /// </summary>
     public class TabbedMenu : VisualElement
     {
-        private Button m_CurrentSelection = null;
 
         public TabbedMenu(
             KeyValuePair<string, System.Type>[] _Tabs,
@@ -24,14 +23,12 @@ namespace ItemSystem.Editor
         {
             var tabContainer = new VisualElement { style = { flexDirection = FlexDirection.Row } };
             tabContainer.style.paddingTop = 5;
-            int index = -1;
 
             StyleSheet tabButtonStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/ItemSystem/Main Module/SystemStructure/Editor/Tabs and Windows/TabButton.uss");
             tabContainer.styleSheets.Add(tabButtonStyle);
 
             foreach (KeyValuePair<string, System.Type> tab in _Tabs)
             {
-                index++;
 
                 var tabButton = new Button(() =>
                 {
@@ -40,7 +37,7 @@ namespace ItemSystem.Editor
                 { text = tab.Key };
 
                 tabButton.AddToClassList("tab-button");
-                tabButton.AddToClassList($"tab-c{index}");
+                tabButton.AddToClassList($"tab-c-{_MainTabColor}");
 
                 if (_ButtonMinHeight > 0)
                 {
@@ -75,7 +72,9 @@ namespace ItemSystem.Editor
             {
                 index++;
 
-                var tabButton = new Button(() => _OnTabChanged?.Invoke(tabName, index)) { text = tabName };
+                int tempindex = index;
+
+                var tabButton = new Button(() => _OnTabChanged?.Invoke(tabName, tempindex)) { text = tabName };
 
                 if (_ButtonMinHeight > 0)
                 {
@@ -87,7 +86,7 @@ namespace ItemSystem.Editor
                 }
 
                 tabButton.AddToClassList("tab-button");
-                tabButton.AddToClassList($"tab-c{index}");
+                tabButton.AddToClassList($"tab-c-{tempindex}");
 
                 tabContainer.Add(tabButton);
             }
