@@ -35,7 +35,7 @@ namespace ItemSystem.Editor
             m_SubTabContent?.Clear();
 
             m_SubTabContent = new VisualElement();
-            m_SubTabInspectorPanel = new InspectorPanel();
+            m_SubTabInspectorPanel = new InspectorPanel(_ButtonColor);
 
             m_SubTabContent.style.flexDirection = FlexDirection.Row;
             m_SubTabContent.style.flexGrow = 1;

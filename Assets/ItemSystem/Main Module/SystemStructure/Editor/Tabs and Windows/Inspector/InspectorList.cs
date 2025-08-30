@@ -97,10 +97,10 @@ namespace ItemSystem.Editor
             buttonContainer.styleSheets.Add(buttonStyle);
 
             Button addButton = new Button(() => ChooseNewItem()) { text = "Add", style = { minHeight = 20} };
-            addButton.AddToClassList($"tab-c{_ButtonColor}");
+            addButton.AddToClassList($"tab-c-{_ButtonColor}");
 
             Button removeButton = new Button(() => RemoveSelectedItem()) { text = "Remove", style = { minHeight = 20} };
-            removeButton.AddToClassList($"tab-c{_ButtonColor}");
+            removeButton.AddToClassList($"tab-c-{_ButtonColor}");
 
             buttonContainer.Add(addButton);
             buttonContainer.Add(removeButton);

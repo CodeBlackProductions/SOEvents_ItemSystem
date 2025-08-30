@@ -98,7 +98,7 @@ namespace ItemSystem.Editor
                 m_ModuleSelection.value = "Select Module";
             }
 
-            m_InspectorPanel = new InspectorPanel();
+            m_InspectorPanel = new InspectorPanel(0);
 
             m_FinishButton = new Button(() => this.Close());
             m_FinishButton?.Add(new Label("Finish"));

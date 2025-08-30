@@ -27,7 +27,8 @@ namespace ItemSystem.Editor
             ScriptableObject _ParentSO,
             PropertyInfo _Property,
             InspectorPanel _ParentPanel,
-            Action<bool> _InspectorValueChangeCallback)
+            Action<bool> _InspectorValueChangeCallback,
+            int _MainTabColor)
         {
             if (_Property.CanRead && _Property.CanWrite && _Property.IsDefined(typeof(ItemToolkitAccess), false))
             {
@@ -44,23 +45,23 @@ namespace ItemSystem.Editor
 
                     if (_Property.PropertyType.IsEnum)
                     {
-                        return CreateUIforEnum(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, uiParent);
+                        return CreateUIforEnum(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, uiParent, _MainTabColor);
                     }
                     else if (_Property.PropertyType.IsSubclassOf(typeof(ScriptableObject)))
                     {
-                        return CreateUIforSO(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, uiParent);
+                        return CreateUIforSO(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, uiParent, _MainTabColor);
                     }
                     else if (typeof(IDictionary).IsAssignableFrom(_Property.PropertyType))
                     {
-                        return CreateUIforDictionary(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, uiParent);
+                        return CreateUIforDictionary(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, uiParent, _MainTabColor);
                     }
                     else if (typeof(Array).IsAssignableFrom(_Property.PropertyType))
                     {
-                        return CreateUIforArray(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, uiParent);
+                        return CreateUIforArray(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, uiParent, _MainTabColor);
                     }
                     else if (typeof(GameObject).IsAssignableFrom(_Property.PropertyType))
                     {
-                        return CreateUIforProjectiles(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, uiParent);
+                        return CreateUIforProjectiles(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, uiParent, _MainTabColor);
                     }
                     else if (m_BasicDataTypes.Contains(_Property.PropertyType) && _Property.Name != "TypeIndex")
                     {
@@ -68,11 +69,11 @@ namespace ItemSystem.Editor
                     }
                     else if (_Property.Name == "TypeIndex")
                     {
-                        return CreateUIforTypeSelection(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, uiParent);
+                        return CreateUIforTypeSelection(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, uiParent, _MainTabColor);
                     }
                     else if (typeof(SerializableKeyValuePair<SO_Stat, int>).IsAssignableFrom(_Property.PropertyType))
                     {
-                        return CreateUIforStat(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, uiParent);
+                        return CreateUIforStat(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, uiParent, _MainTabColor);
                     }
                     else
                     {
@@ -95,7 +96,8 @@ namespace ItemSystem.Editor
         PropertyInfo _Property,
         InspectorPanel _ParentPanel,
         Action<bool> _InspectorValueChangeCallback,
-        VisualElement _UIParent)
+        VisualElement _UIParent,
+        int _MainTabColor)
         {
             List<SO_Stat> soList = ItemEditor_AssetLoader.LoadAssetsByType<SO_Stat>();
             if (soList == null)
@@ -203,6 +205,20 @@ namespace ItemSystem.Editor
 
                 dropdownField.style.minHeight = 20;
 
+                StyleSheet buttonStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/ItemSystem/Main Module/SystemStructure/Editor/Tabs and Windows/TabButton.uss");
+                dropdownField.styleSheets.Add(buttonStyle);
+
+                if (_MainTabColor != -1)
+                {
+                    VisualElement ve = dropdownField;
+                    ve.ElementAt(0).AddToClassList($"tab-c-{_MainTabColor}");
+                }
+                else
+                {
+                    VisualElement ve = dropdownField;
+                    ve.ElementAt(0).AddToClassList("tab-c-default");
+                }
+
                 _UIParent.Add(dropdownField);
 
                 return _UIParent;
@@ -217,7 +233,8 @@ namespace ItemSystem.Editor
            PropertyInfo _Property,
            InspectorPanel _ParentPanel,
            Action<bool> _InspectorValueChangeCallback,
-           VisualElement _UIParent)
+           VisualElement _UIParent,
+           int _MainTabColor)
         {
             List<string> enumNames = Enum.GetNames(_Property.PropertyType).ToList();
 
@@ -244,6 +261,20 @@ namespace ItemSystem.Editor
 
                 dropdownField.style.minHeight = 20;
 
+                StyleSheet buttonStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/ItemSystem/Main Module/SystemStructure/Editor/Tabs and Windows/TabButton.uss");
+                dropdownField.styleSheets.Add(buttonStyle);
+
+                if (_MainTabColor != -1)
+                {
+                    VisualElement ve = dropdownField;
+                    ve.ElementAt(0).AddToClassList($"tab-c-{_MainTabColor}");
+                }
+                else
+                {
+                    VisualElement ve = dropdownField;
+                    ve.ElementAt(0).AddToClassList("tab-c-default");
+                }
+
                 _UIParent.Add(dropdownField);
 
                 return _UIParent;
@@ -258,7 +289,8 @@ namespace ItemSystem.Editor
             PropertyInfo _Property,
             InspectorPanel _ParentPanel,
             Action<bool> _InspectorValueChangeCallback,
-            VisualElement _UIParent)
+            VisualElement _UIParent,
+            int _MainTabColor)
         {
             List<ScriptableObject> soList = ItemEditor_AssetLoader.LoadAssetsByType<ScriptableObject>();
             if (soList == null)
@@ -311,6 +343,20 @@ namespace ItemSystem.Editor
 
                 dropdownField.style.minHeight = 20;
 
+                StyleSheet buttonStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/ItemSystem/Main Module/SystemStructure/Editor/Tabs and Windows/TabButton.uss");
+                dropdownField.styleSheets.Add(buttonStyle);
+
+                if (_MainTabColor != -1)
+                {
+                    VisualElement ve = dropdownField;
+                    ve.ElementAt(0).AddToClassList($"tab-c-{_MainTabColor}");
+                }
+                else
+                {
+                    VisualElement ve = dropdownField;
+                    ve.ElementAt(0).AddToClassList("tab-c-default");
+                }
+
                 _UIParent.Add(dropdownField);
 
                 return _UIParent;
@@ -325,7 +371,8 @@ namespace ItemSystem.Editor
             PropertyInfo _Property,
             InspectorPanel _ParentPanel,
             Action<bool> _InspectorValueChangeCallback,
-            VisualElement _UIParent)
+            VisualElement _UIParent,
+            int _MainTabColor)
         {
             object dict = _Property.GetValue(_ParentSO);
 
@@ -381,6 +428,20 @@ namespace ItemSystem.Editor
                 {
                     dropdown = new DropdownField("", new List<string> { "No available stats" }, "No available stats");
                     dropdown.SetEnabled(false);
+                }
+
+                StyleSheet buttonStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/ItemSystem/Main Module/SystemStructure/Editor/Tabs and Windows/TabButton.uss");
+                dropdown.styleSheets.Add(buttonStyle);
+
+                if (_MainTabColor != -1)
+                {
+                    VisualElement ve = dropdown;
+                    ve.ElementAt(0).AddToClassList($"tab-c-{_MainTabColor}");
+                }
+                else
+                {
+                    VisualElement ve = dropdown;
+                    ve.ElementAt(0).AddToClassList("tab-c-default");
                 }
 
                 Action updateUI = null;
@@ -533,6 +594,20 @@ namespace ItemSystem.Editor
                             }
                         });
 
+                        StyleSheet buttonStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/ItemSystem/Main Module/SystemStructure/Editor/Tabs and Windows/TabButton.uss");
+                        statDropdown.styleSheets.Add(buttonStyle);
+
+                        if (_MainTabColor != -1)
+                        {
+                            VisualElement ve = statDropdown;
+                            ve.ElementAt(0).AddToClassList($"tab-c-{_MainTabColor}");
+                        }
+                        else
+                        {
+                            VisualElement ve = statDropdown;
+                            ve.ElementAt(0).AddToClassList("tab-c-default");
+                        }
+
                         row.Add(statDropdown);
 
                         var removeButton = new Button(() =>
@@ -553,6 +628,17 @@ namespace ItemSystem.Editor
                             _InspectorValueChangeCallback?.Invoke(true);
                         })
                         { text = "Remove" };
+
+                        removeButton.styleSheets.Add(buttonStyle);
+                        if (_MainTabColor != -1)
+                        {
+                            removeButton.AddToClassList($"tab-c-{_MainTabColor}");
+                        }
+                        else
+                        {
+                            removeButton.AddToClassList("tab-c-default");
+                        }
+
                         row.Add(removeButton);
 
                         scrollview.style.maxHeight = 300;
@@ -582,6 +668,17 @@ namespace ItemSystem.Editor
                     }
                 })
                 { text = "Add" };
+
+                addButton.styleSheets.Add(buttonStyle);
+
+                if (_MainTabColor != -1)
+                {
+                    addButton.AddToClassList($"tab-c-{_MainTabColor}");
+                }
+                else
+                {
+                    addButton.AddToClassList("tab-c-default");
+                }
 
                 if (!dropdown.enabledSelf)
                 {
@@ -614,11 +711,12 @@ namespace ItemSystem.Editor
             PropertyInfo _Property,
             InspectorPanel _ParentPanel,
             Action<bool> _InspectorValueChangeCallback,
-            VisualElement _UIParent)
+            VisualElement _UIParent,
+            int _MainTabColor)
         {
             if (_Property.PropertyType == typeof(SO_Item_Effect[]))
             {
-                InspectorList<SO_Item_Effect> effectList = ConvertArrayToInspectorList<SO_Item_Effect>(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, "Effects", true);
+                InspectorList<SO_Item_Effect> effectList = ConvertArrayToInspectorList<SO_Item_Effect>(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, "Effects", true, _MainTabColor);
 
                 _UIParent.Add(effectList);
                 return _UIParent;
@@ -626,7 +724,7 @@ namespace ItemSystem.Editor
 
             if (_Property.PropertyType == typeof(SO_Class_Type[]))
             {
-                InspectorList<SO_Class_Type> typeList = ConvertArrayToInspectorList<SO_Class_Type>(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, "Types", true);
+                InspectorList<SO_Class_Type> typeList = ConvertArrayToInspectorList<SO_Class_Type>(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, "Types", true, _MainTabColor);
 
                 _UIParent.Add(typeList);
                 return _UIParent;
@@ -634,7 +732,7 @@ namespace ItemSystem.Editor
 
             if (_Property.PropertyType == typeof(SO_Item_Class[]))
             {
-                InspectorList<SO_Item_Class> classList = ConvertArrayToInspectorList<SO_Item_Class>(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, "Classes", true);
+                InspectorList<SO_Item_Class> classList = ConvertArrayToInspectorList<SO_Item_Class>(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, "Classes", true, _MainTabColor);
 
                 _UIParent.Add(classList);
                 return _UIParent;
@@ -642,7 +740,7 @@ namespace ItemSystem.Editor
 
             if (_Property.PropertyType == typeof(SO_Tag[]))
             {
-                InspectorList<SO_Tag> classList = ConvertArrayToInspectorList<SO_Tag>(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, "Tags", true);
+                InspectorList<SO_Tag> classList = ConvertArrayToInspectorList<SO_Tag>(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, "Tags", true, _MainTabColor);
 
                 _UIParent.Add(classList);
                 return _UIParent;
@@ -650,7 +748,7 @@ namespace ItemSystem.Editor
 
             if (_Property.PropertyType == typeof(SO_Stat[]))
             {
-                InspectorList<SO_Stat> statList = ConvertArrayToInspectorList<SO_Stat>(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, "Stats", true);
+                InspectorList<SO_Stat> statList = ConvertArrayToInspectorList<SO_Stat>(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, "Stats", true, _MainTabColor);
 
                 _UIParent.Add(statList);
                 return _UIParent;
@@ -658,7 +756,7 @@ namespace ItemSystem.Editor
 
             if (_Property.PropertyType == typeof(SO_ToolTip[]))
             {
-                InspectorList<SO_ToolTip> toolTipList = ConvertArrayToInspectorList<SO_ToolTip>(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, "ToolTips", true);
+                InspectorList<SO_ToolTip> toolTipList = ConvertArrayToInspectorList<SO_ToolTip>(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, "ToolTips", true, _MainTabColor);
 
                 _UIParent.Add(toolTipList);
                 return _UIParent;
@@ -667,7 +765,7 @@ namespace ItemSystem.Editor
             if (m_BasicDataTypes.Contains(_Property.PropertyType.GetElementType()))
             {
                 System.Type elementType = _Property.PropertyType.GetElementType();
-                VisualElement basicArrayUI = CreateUIforDataTypeArray(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, elementType);
+                VisualElement basicArrayUI = CreateUIforDataTypeArray(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, elementType, _MainTabColor);
                 _UIParent.Add(basicArrayUI);
                 return _UIParent;
             }
@@ -675,7 +773,7 @@ namespace ItemSystem.Editor
             if (_Property.PropertyType == typeof(GameObject[]))
             {
                 System.Type elementType = _Property.PropertyType.GetElementType();
-                VisualElement projectileArrayUI = CreateUIforDataTypeArray(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, elementType);
+                VisualElement projectileArrayUI = CreateUIforDataTypeArray(_ParentSO, _Property, _ParentPanel, _InspectorValueChangeCallback, elementType, _MainTabColor);
                 _UIParent.Add(projectileArrayUI);
                 return _UIParent;
             }
@@ -689,7 +787,8 @@ namespace ItemSystem.Editor
            PropertyInfo _Property,
            InspectorPanel _ParentPanel,
            Action<bool> _InspectorValueChangeCallback,
-           VisualElement _UIParent)
+           VisualElement _UIParent,
+           int _MainTabColor)
         {
             List<GameObject> projectileList = ItemEditor_AssetLoader.LoadAssetsByType<GameObject>().Where(asset => asset.GetComponent<IProjectile>() != null).ToList();
             if (projectileList == null)
@@ -732,6 +831,20 @@ namespace ItemSystem.Editor
                     _InspectorValueChangeCallback?.Invoke(true);
                 });
 
+                StyleSheet buttonStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/ItemSystem/Main Module/SystemStructure/Editor/Tabs and Windows/TabButton.uss");
+                dropdownField.styleSheets.Add(buttonStyle);
+
+                if (_MainTabColor != -1)
+                {
+                    VisualElement ve = dropdownField;
+                    ve.ElementAt(0).AddToClassList($"tab-c-{_MainTabColor}");
+                }
+                else
+                {
+                    VisualElement ve = dropdownField;
+                    ve.ElementAt(0).AddToClassList("tab-c-default");
+                }
+
                 dropdownField.style.minHeight = 20;
 
                 _UIParent.Add(dropdownField);
@@ -768,6 +881,8 @@ namespace ItemSystem.Editor
                     _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
                 });
 
+            valueField.style.flexGrow = 1;
+
             if (valueField != null)
             {
                 _UIParent.Add(valueField);
@@ -781,7 +896,8 @@ namespace ItemSystem.Editor
             PropertyInfo _Property,
             InspectorPanel _ParentPanel,
             Action<bool> _InspectorValueChangeCallback,
-            System.Type _ElementType)
+            System.Type _ElementType,
+            int _MainTabColor)
         {
             Array currentArray = _Property.GetValue(_ParentSO) as Array ?? Array.CreateInstance(_ElementType, 0);
             VisualElement listRoot = new VisualElement { style = { flexDirection = FlexDirection.Column, marginBottom = 10 } };
@@ -819,6 +935,18 @@ namespace ItemSystem.Editor
                 _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
             })
             { text = $"Add" };
+
+            StyleSheet buttonStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/ItemSystem/Main Module/SystemStructure/Editor/Tabs and Windows/TabButton.uss");
+            addButton.styleSheets.Add(buttonStyle);
+
+            if (_MainTabColor != -1)
+            {
+                addButton.AddToClassList($"tab-c-{_MainTabColor}");
+            }
+            else
+            {
+                addButton.AddToClassList("tab-c-default");
+            }
 
             listRoot.Add(addButton);
 
@@ -881,6 +1009,17 @@ namespace ItemSystem.Editor
                     text = "Remove",
                     style = { width = 60 }
                 };
+
+                removeButton.styleSheets.Add(buttonStyle);
+
+                if (_MainTabColor != -1)
+                {
+                    removeButton.AddToClassList($"tab-c-{_MainTabColor}");
+                }
+                else
+                {
+                    removeButton.AddToClassList("tab-c-default");
+                }
 
                 row.Add(field);
                 row.Add(removeButton);
@@ -1182,7 +1321,8 @@ namespace ItemSystem.Editor
            PropertyInfo _Property,
            InspectorPanel _ParentPanel,
            Action<bool> _InspectorValueChangeCallback,
-           VisualElement _UIParent)
+           VisualElement _UIParent,
+           int _MainTabColor)
         {
             _UIParent.Clear();
             Label label = new Label("Type:");
@@ -1242,6 +1382,20 @@ namespace ItemSystem.Editor
                     _InspectorValueChangeCallback?.Invoke(true);
                 });
 
+                StyleSheet buttonStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/ItemSystem/Main Module/SystemStructure/Editor/Tabs and Windows/TabButton.uss");
+                dropdownField.styleSheets.Add(buttonStyle);
+
+                if (_MainTabColor != -1)
+                {
+                    VisualElement ve = dropdownField;
+                    ve.ElementAt(0).AddToClassList($"tab-c-{_MainTabColor}");
+                }
+                else
+                {
+                    VisualElement ve = dropdownField;
+                    ve.ElementAt(0).AddToClassList("tab-c-default");
+                }
+
                 _UIParent.Add(dropdownField);
 
                 return _UIParent;
@@ -1262,7 +1416,8 @@ namespace ItemSystem.Editor
             InspectorPanel _ParentPanel,
             Action<bool> _InspectorValueChangeCallback,
             string _Title,
-            bool _ShowAddAndRemove) where T : ScriptableObject
+            bool _ShowAddAndRemove,
+            int _MainTabColor) where T : ScriptableObject
         {
             T[] array = _Property.GetValue(_ParentSO) as T[];
             if (array == null)
@@ -1293,7 +1448,7 @@ namespace ItemSystem.Editor
                 filteredList = array.ToList();
             }
 
-            InspectorList<T> list = new InspectorList<T>(filteredList, null, _Title, _ShowAddAndRemove, -1);
+            InspectorList<T> list = new InspectorList<T>(filteredList, null, _Title, _ShowAddAndRemove, _MainTabColor);
 
             list.ItemAddCallback += (newItem) =>
             {

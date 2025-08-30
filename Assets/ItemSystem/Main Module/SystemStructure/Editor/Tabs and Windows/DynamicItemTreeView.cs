@@ -43,6 +43,8 @@ namespace ItemSystem.Editor
             this.style.flexDirection = FlexDirection.Column;
             this.style.flexGrow = 1;
             this.style.paddingRight = 50;
+            this.style.paddingTop = 10;
+            this.style.paddingLeft = 5;
 
             this.style.backgroundColor = Color.clear;
 

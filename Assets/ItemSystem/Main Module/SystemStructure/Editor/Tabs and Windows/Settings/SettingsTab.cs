@@ -41,7 +41,7 @@ namespace ItemSystem.Editor
         {
             m_Root?.Clear();
 
-            m_SubTabInspectorPanel = new InspectorPanel();
+            m_SubTabInspectorPanel = new InspectorPanel(_ButtonColor);
             ShowInspectorPanel("EditorSettings", m_InspectorValueChangeCallback);
 
             m_Root.Add(m_SubTabInspectorPanel);

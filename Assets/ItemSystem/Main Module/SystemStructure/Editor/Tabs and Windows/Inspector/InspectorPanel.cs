@@ -11,9 +11,14 @@ namespace ItemSystem.Editor
     /// </summary>
     public class InspectorPanel : VisualElement
     {
-        public InspectorPanel()
+        int m_MaintabColor = -1;
+
+        public InspectorPanel(int _MainTabColor)
         {
             style.flexGrow = 1;
+            style.paddingTop = 10;
+            style.paddingLeft = 5;
+            m_MaintabColor = _MainTabColor;
             Add(new Label("Select an item to view details"));
         }
 
@@ -30,7 +35,7 @@ namespace ItemSystem.Editor
 
             foreach (var property in _Obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
-                VisualElement entry = InspectorDataManager.CreateEntry(_Obj, property, this, _InspectorValueChangeCallback);
+                VisualElement entry = InspectorDataManager.CreateEntry(_Obj, property, this, _InspectorValueChangeCallback, m_MaintabColor);
                 if (entry != null)
                 {
                     Add(entry);

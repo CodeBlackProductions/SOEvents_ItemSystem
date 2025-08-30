@@ -49,7 +49,7 @@ namespace ItemSystem.Editor
             m_SubTabMenu = new TabbedMenu(statTypePairs.ToArray(), OnSubTabChanged, true, true, true, false, _MainTabColor: _ButtonColor);
 
             m_SubTabContent = new VisualElement();
-            m_SubTabInspectorPanel = new InspectorPanel();
+            m_SubTabInspectorPanel = new InspectorPanel(_ButtonColor);
 
             m_SubTabContent.style.flexDirection = FlexDirection.Row;
             m_SubTabContent.style.flexGrow = 1;

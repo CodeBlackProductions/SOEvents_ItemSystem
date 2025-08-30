@@ -9,7 +9,7 @@ namespace ItemSystem.Editor
     /// <summary>
     /// Main editor window for the Item System.
     /// </summary>
-    public class ItemSystemEditor : EditorWindow
+    public class ItemSystemUtilities : EditorWindow
     {
         private VisualElement m_Root;
         private TabbedMenu m_MainTabMenu;
@@ -20,10 +20,10 @@ namespace ItemSystem.Editor
         private Action<IEnumerable<System.Object>, bool, bool> m_TreeviewSelectionChangeCallback;
         private Action<IEnumerable<System.Object>> m_LocalFileTreeviewSelectionChangeCallback;
 
-        [MenuItem("Tools/Item System/Item Editor")]
+        [MenuItem("Tools/Item System/Settings and Filemanager")]
         public static void ShowWindow()
         {
-            ItemSystemEditor window = GetWindow<ItemSystemEditor>("Item System Editor");
+            ItemSystemUtilities window = GetWindow<ItemSystemUtilities>("Item System Utilities");
             window.minSize = new Vector2(800, 500);
 
             AssetDatabase.SaveAssets();
@@ -34,7 +34,7 @@ namespace ItemSystem.Editor
             m_Root = rootVisualElement;
 
             m_MainTabMenu = new TabbedMenu(
-                new string[] { "ItemModules", "StatsModules", "ToolTips", "Tags", "ItemContainers" },
+                new string[] { "FileManager", "Settings" },
                 OnMainTabChanged,
                 40
             );
@@ -50,7 +50,7 @@ namespace ItemSystem.Editor
 
             m_Root.Add(m_MainTabMenu);
 
-            OnMainTabChanged("ItemModules", 0);
+            OnMainTabChanged("FileManager", 0);
 
             m_Root.Add(m_MainTabContent);
         }
@@ -78,38 +78,17 @@ namespace ItemSystem.Editor
 
             switch (_MainTabType)
             {
-                case EMainTabType.ItemModules:
+                case EMainTabType.Settings:
                     m_MainTabContent?.Clear();
-                    temp = new ItemModuleTab(m_InspectorValueChangeCallback, m_TreeviewSelectionChangeCallback, _BGColor);
+                    temp = new SettingsTab(m_InspectorValueChangeCallback, _BGColor);
                     temp.style.flexGrow = 1;
                     m_MainTabContent.Add(temp);
                     break;
 
-                case EMainTabType.ItemContainers:
-                    m_MainTabContent?.Clear();
-                    temp = new ItemContainerTab(m_InspectorValueChangeCallback, m_TreeviewSelectionChangeCallback, _BGColor);
-                    temp.style.flexGrow = 1;
-                    m_MainTabContent.Add(temp);
-                    break;
-
-                case EMainTabType.StatsModules:
+                case EMainTabType.FileManager:
 
                     m_MainTabContent?.Clear();
-                    temp = new StatModuleTab(m_InspectorValueChangeCallback, m_TreeviewSelectionChangeCallback, _BGColor);
-                    temp.style.flexGrow = 1;
-                    m_MainTabContent.Add(temp);
-                    break;
-
-                case EMainTabType.Tags:
-                    m_MainTabContent?.Clear();
-                    temp = new TagManagerTab(m_InspectorValueChangeCallback, m_TreeviewSelectionChangeCallback, _BGColor);
-                    temp.style.flexGrow = 1;
-                    m_MainTabContent.Add(temp);
-                    break;
-
-                case EMainTabType.ToolTips:
-                    m_MainTabContent?.Clear();
-                    temp = new ToolTipManagerTab(m_InspectorValueChangeCallback, m_TreeviewSelectionChangeCallback, _BGColor);
+                    temp = new FileManagerTab(m_InspectorValueChangeCallback, m_TreeviewSelectionChangeCallback, m_LocalFileTreeviewSelectionChangeCallback, _BGColor);
                     temp.style.flexGrow = 1;
                     m_MainTabContent.Add(temp);
                     break;
@@ -121,11 +100,8 @@ namespace ItemSystem.Editor
 
         private enum EMainTabType
         {
-            ItemModules,
-            ItemContainers,
-            StatsModules,
-            ToolTips,
-            Tags
+            Settings,
+            FileManager
         }
     }
 }

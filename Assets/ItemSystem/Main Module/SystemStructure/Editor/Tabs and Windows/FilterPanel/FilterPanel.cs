@@ -122,7 +122,9 @@ namespace ItemSystem.Editor
             filterTypeDropdown.styleSheets.Add(buttonStyle);
 
             VisualElement ve = filterTypeDropdown;
-            ve.ElementAt(0).AddToClassList($"tab-c{_ButtonColor}");
+            ve.ElementAt(0).AddToClassList($"tab-c-{_ButtonColor}");
+
+            filterTypeDropdown.style.paddingLeft = 10;
 
             m_FilterPanelContent.Add(filterTypeDropdown);
             OnFilterOptionsChanged(containsAll);
@@ -142,6 +144,8 @@ namespace ItemSystem.Editor
                 OnFilterObjectsChanged(item, false);
             };
 
+            filterTypeList.style.paddingLeft = 10;
+
             m_FilterPanelContent.Add(filterTypeList);
         }
 
@@ -158,6 +162,8 @@ namespace ItemSystem.Editor
             {
                 OnFilterObjectsChanged(item, false);
             };
+
+            filterTagList.style.paddingLeft = 10;
 
             m_FilterPanelContent.Add(filterTagList);
         }
@@ -180,10 +186,13 @@ namespace ItemSystem.Editor
 
             StyleSheet buttonStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/ItemSystem/Main Module/SystemStructure/Editor/Tabs and Windows/TabButton.uss");
             m_SortingTypeDropdown.styleSheets.Add(buttonStyle);
+            m_SortingTypeDropdown.style.position = Position.Absolute;
+            m_SortingTypeDropdown.style.height = new Length(95, LengthUnit.Percent);
+            m_SortingTypeDropdown.style.right = new Length(1,LengthUnit.Percent);
 
             VisualElement ve = m_SortingTypeDropdown;
             ve.ElementAt(0).style.minWidth = 10;
-            ve.ElementAt(1).AddToClassList($"tab-c{_ButtonColor}");
+            ve.ElementAt(1).AddToClassList($"tab-c-{_ButtonColor}");
 
             m_FilterPanelContent.Add(m_SortingTypeDropdown);
 
