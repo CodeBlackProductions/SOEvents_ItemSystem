@@ -18,6 +18,8 @@ namespace ItemSystem.Editor
     /// </summary>
     public static class InspectorDataManager
     {
+        private static int m_LabelWidth = 200;
+
         private static List<System.Type> m_BasicDataTypes = new List<System.Type>()
         {
             typeof(string), typeof(int), typeof(float), typeof(bool), typeof(Vector2), typeof(Vector3), typeof(Color)
@@ -39,6 +41,7 @@ namespace ItemSystem.Editor
                     uiParent.style.alignSelf = Align.FlexStart;
                     uiParent.style.paddingBottom = 10;
                     Label label = new Label($"{_Property.Name}: ");
+                    label.style.minWidth = m_LabelWidth;
                     uiParent.Add(label);
 
                     uiParent.tooltip = _Property.GetAttribute<TooltipAttribute>()?.tooltip;
@@ -205,8 +208,8 @@ namespace ItemSystem.Editor
 
                 dropdownField.style.minHeight = 20;
 
-                StyleSheet buttonStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/ItemSystem/Main Module/SystemStructure/Editor/Tabs and Windows/TabButton.uss");
-                dropdownField.styleSheets.Add(buttonStyle);
+                StyleSheet styleSheet = UI_Styles_Lib.GetUIStyles();
+                dropdownField.styleSheets.Add(styleSheet);
 
                 if (_MainTabColor != -1)
                 {
@@ -261,8 +264,8 @@ namespace ItemSystem.Editor
 
                 dropdownField.style.minHeight = 20;
 
-                StyleSheet buttonStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/ItemSystem/Main Module/SystemStructure/Editor/Tabs and Windows/TabButton.uss");
-                dropdownField.styleSheets.Add(buttonStyle);
+                StyleSheet styleSheet = UI_Styles_Lib.GetUIStyles();
+                dropdownField.styleSheets.Add(styleSheet);
 
                 if (_MainTabColor != -1)
                 {
@@ -332,7 +335,7 @@ namespace ItemSystem.Editor
                 {
                     _Property.SetValue(
                         _ParentSO, soList.Find(so =>
-                        $"{(so as IItemModule).ModuleName} ({so.GetType().Name})" == c.newValue && _Property.PropertyType.IsAssignableFrom(so.GetType())
+                        $"{(so as IItemModule)?.ModuleName} ({so.GetType()?.Name})" == c?.newValue && _Property.PropertyType.IsAssignableFrom(so?.GetType())
                         )
                     );
                     EditorUtility.SetDirty(_ParentSO);
@@ -343,8 +346,8 @@ namespace ItemSystem.Editor
 
                 dropdownField.style.minHeight = 20;
 
-                StyleSheet buttonStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/ItemSystem/Main Module/SystemStructure/Editor/Tabs and Windows/TabButton.uss");
-                dropdownField.styleSheets.Add(buttonStyle);
+                StyleSheet styleSheet = UI_Styles_Lib.GetUIStyles();
+                dropdownField.styleSheets.Add(styleSheet);
 
                 if (_MainTabColor != -1)
                 {
@@ -430,8 +433,8 @@ namespace ItemSystem.Editor
                     dropdown.SetEnabled(false);
                 }
 
-                StyleSheet buttonStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/ItemSystem/Main Module/SystemStructure/Editor/Tabs and Windows/TabButton.uss");
-                dropdown.styleSheets.Add(buttonStyle);
+                StyleSheet styleSheet = UI_Styles_Lib.GetUIStyles();
+                dropdown.styleSheets.Add(styleSheet);
 
                 if (_MainTabColor != -1)
                 {
@@ -455,7 +458,9 @@ namespace ItemSystem.Editor
                     foreach (var stat in selectedStats)
                     {
                         var row = new VisualElement { style = { flexDirection = FlexDirection.Row } };
-                        row.Add(new Label(stat));
+                        Label label = new Label(stat);
+                        label.style.minWidth = 100;
+                        row.Add(label);
 
                         List<SO_Stat_StaticValue> matchingStaticStats = new List<SO_Stat_StaticValue>();
                         List<SO_Stat_DynamicValue> matchingDynamicStats = new List<SO_Stat_DynamicValue>();
@@ -594,8 +599,8 @@ namespace ItemSystem.Editor
                             }
                         });
 
-                        StyleSheet buttonStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/ItemSystem/Main Module/SystemStructure/Editor/Tabs and Windows/TabButton.uss");
-                        statDropdown.styleSheets.Add(buttonStyle);
+                        StyleSheet styleSheet = UI_Styles_Lib.GetUIStyles();
+                        statDropdown.styleSheets.Add(styleSheet);
 
                         if (_MainTabColor != -1)
                         {
@@ -629,7 +634,7 @@ namespace ItemSystem.Editor
                         })
                         { text = "Remove" };
 
-                        removeButton.styleSheets.Add(buttonStyle);
+                        removeButton.styleSheets.Add(styleSheet);
                         if (_MainTabColor != -1)
                         {
                             removeButton.AddToClassList($"tab-c-{_MainTabColor}");
@@ -669,7 +674,7 @@ namespace ItemSystem.Editor
                 })
                 { text = "Add" };
 
-                addButton.styleSheets.Add(buttonStyle);
+                addButton.styleSheets.Add(styleSheet);
 
                 if (_MainTabColor != -1)
                 {
@@ -831,8 +836,8 @@ namespace ItemSystem.Editor
                     _InspectorValueChangeCallback?.Invoke(true);
                 });
 
-                StyleSheet buttonStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/ItemSystem/Main Module/SystemStructure/Editor/Tabs and Windows/TabButton.uss");
-                dropdownField.styleSheets.Add(buttonStyle);
+                StyleSheet styleSheet = UI_Styles_Lib.GetUIStyles();
+                dropdownField.styleSheets.Add(styleSheet);
 
                 if (_MainTabColor != -1)
                 {
@@ -936,8 +941,8 @@ namespace ItemSystem.Editor
             })
             { text = $"Add" };
 
-            StyleSheet buttonStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/ItemSystem/Main Module/SystemStructure/Editor/Tabs and Windows/TabButton.uss");
-            addButton.styleSheets.Add(buttonStyle);
+            StyleSheet styleSheet = UI_Styles_Lib.GetUIStyles();
+            addButton.styleSheets.Add(styleSheet);
 
             if (_MainTabColor != -1)
             {
@@ -1010,7 +1015,7 @@ namespace ItemSystem.Editor
                     style = { width = 60 }
                 };
 
-                removeButton.styleSheets.Add(buttonStyle);
+                removeButton.styleSheets.Add(styleSheet);
 
                 if (_MainTabColor != -1)
                 {
@@ -1326,6 +1331,7 @@ namespace ItemSystem.Editor
         {
             _UIParent.Clear();
             Label label = new Label("Type:");
+            label.style.minWidth = m_LabelWidth;
             _UIParent.Add(label);
 
             PropertyInfo classProp = _ParentSO.GetType().GetProperty("Class");
@@ -1382,8 +1388,8 @@ namespace ItemSystem.Editor
                     _InspectorValueChangeCallback?.Invoke(true);
                 });
 
-                StyleSheet buttonStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/ItemSystem/Main Module/SystemStructure/Editor/Tabs and Windows/TabButton.uss");
-                dropdownField.styleSheets.Add(buttonStyle);
+                StyleSheet styleSheet = UI_Styles_Lib.GetUIStyles();
+                dropdownField.styleSheets.Add(styleSheet);
 
                 if (_MainTabColor != -1)
                 {

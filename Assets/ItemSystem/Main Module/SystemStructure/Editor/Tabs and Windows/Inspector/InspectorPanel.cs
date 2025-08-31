@@ -19,7 +19,11 @@ namespace ItemSystem.Editor
             style.paddingTop = 10;
             style.paddingLeft = 5;
             m_MaintabColor = _MainTabColor;
-            Add(new Label("Select an item to view details"));
+
+            Label title = new Label("Select an item to view details");
+            title.style.unityFontStyleAndWeight = FontStyle.Bold;
+            title.style.fontSize = 15;
+            Add(title);
         }
 
         public void Show(ScriptableObject _Obj, Action<bool> _InspectorValueChangeCallback)
@@ -31,7 +35,11 @@ namespace ItemSystem.Editor
                 return;
             }
 
-            Add(new Label($"Editing: {(_Obj as IItemModule).ModuleName}"));
+            Label title = new Label($"Editing: {(_Obj as IItemModule).ModuleName}");
+            title.style.unityFontStyleAndWeight = FontStyle.Bold;
+            title.style.fontSize = 15;
+            title.style.paddingBottom = 10;
+            Add(title);
 
             foreach (var property in _Obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {

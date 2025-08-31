@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -20,7 +19,7 @@ namespace ItemSystem.Editor
         private VisualElement m_ButtonPanel;
         private Button m_BTN_AddNewSO;
         private Button m_BTN_RemoveSelectedModule;
-        private Button m_BTN_CopySelectedModule;
+        private Button m_BTN_DuplicateSelectedModule;
 
         private Func<object, bool> m_Filter = null;
         private List<ScriptableObject> m_FilterObjects = new List<ScriptableObject>();
@@ -57,8 +56,8 @@ namespace ItemSystem.Editor
                 m_ButtonPanel.style.alignSelf = Align.Center;
                 m_ButtonPanel.style.flexGrow = 0;
 
-                StyleSheet ButtonStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/ItemSystem/Main Module/SystemStructure/Editor/Tabs and Windows/TabButton.uss");
-                m_ButtonPanel.styleSheets.Add(ButtonStyle);
+                StyleSheet styleSheet = UI_Styles_Lib.GetUIStyles();
+                m_ButtonPanel.styleSheets.Add(styleSheet);
 
                 m_BTN_AddNewSO = new Button(() => ModuleCreatorWindow.ShowWindow(RefreshTreeView, typeof(T)))
                 {
@@ -69,11 +68,15 @@ namespace ItemSystem.Editor
                     alignSelf = Align.Center
                 }
                 };
-                m_BTN_AddNewSO.AddToClassList($".tab-c{_ButtonColor}");
+                m_BTN_AddNewSO.AddToClassList($"tab-c-{_ButtonColor}");
 
                 m_ButtonPanel.Add(m_BTN_AddNewSO);
 
-                m_BTN_RemoveSelectedModule = new Button(() => RemoveSelectedModule(_LoadSubTypes))
+                m_BTN_RemoveSelectedModule = new Button(() =>
+                {
+                    RemoveSelectedModule(_LoadSubTypes);
+                    m_TreeView.selectedIndex = 0;
+                })
                 {
                     text = "Remove",
                     style =
@@ -82,11 +85,11 @@ namespace ItemSystem.Editor
                     alignSelf = Align.Center
                 }
                 };
-                m_BTN_RemoveSelectedModule.AddToClassList($".tab-c{_ButtonColor}");
+                m_BTN_RemoveSelectedModule.AddToClassList($"tab-c-{_ButtonColor}");
 
                 m_ButtonPanel.Add(m_BTN_RemoveSelectedModule);
 
-                m_BTN_CopySelectedModule = new Button(() =>
+                m_BTN_DuplicateSelectedModule = new Button(() =>
                 {
                     object selection = m_TreeView.selectedItem;
                     if (selection != null)
@@ -98,16 +101,16 @@ namespace ItemSystem.Editor
                     }
                 })
                 {
-                    text = "Copy",
+                    text = "Duplicate",
                     style =
                 {
                     height = 25,
                     alignSelf = Align.Center
                 }
                 };
-                m_BTN_CopySelectedModule.AddToClassList($".tab-c{_ButtonColor}");
+                m_BTN_DuplicateSelectedModule.AddToClassList($"tab-c-{_ButtonColor}");
 
-                m_ButtonPanel.Add(m_BTN_CopySelectedModule);
+                m_ButtonPanel.Add(m_BTN_DuplicateSelectedModule);
 
                 hierarchy.Add(m_ButtonPanel);
             }
@@ -169,8 +172,8 @@ namespace ItemSystem.Editor
 
         private void LoadHierarchy(bool _LoadSubTypes)
         {
-            List<TreeViewItemData<TreeViewEntryData>> treeItems = LoadModules(typeof(T), _LoadSubTypes);
-            m_TreeView.SetRootItems(treeItems);
+            var modules = LoadModules(typeof(T), _LoadSubTypes);
+            m_TreeView.SetRootItems(modules);
             m_TreeView.Rebuild();
         }
 

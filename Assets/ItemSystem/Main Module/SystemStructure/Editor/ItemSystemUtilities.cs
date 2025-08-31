@@ -7,7 +7,7 @@ using UnityEngine.UIElements;
 namespace ItemSystem.Editor
 {
     /// <summary>
-    /// Main editor window for the Item System.
+    /// Item System Utilities window that provides access to the FileManager and Settings tabs.
     /// </summary>
     public class ItemSystemUtilities : EditorWindow
     {
@@ -36,7 +36,8 @@ namespace ItemSystem.Editor
             m_MainTabMenu = new TabbedMenu(
                 new string[] { "FileManager", "Settings" },
                 OnMainTabChanged,
-                40
+                40,
+               _MainTabIndexOffset: 5
             );
             m_MainTabMenu.style.minHeight = 45;
             m_MainTabMenu.style.borderBottomWidth = 2;
@@ -50,7 +51,7 @@ namespace ItemSystem.Editor
 
             m_Root.Add(m_MainTabMenu);
 
-            OnMainTabChanged("FileManager", 0);
+            OnMainTabChanged("FileManager", 6);
 
             m_Root.Add(m_MainTabContent);
         }
@@ -60,11 +61,11 @@ namespace ItemSystem.Editor
             m_MainTabContent.Clear();
             m_CurrentMainTab = (EMainTabType)System.Enum.Parse(typeof(EMainTabType), _TabName);
 
-            StyleSheet tabButtonStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/ItemSystem/Main Module/SystemStructure/Editor/Tabs and Windows/TabButton.uss");
+            StyleSheet styleSheet = UI_Styles_Lib.GetUIStyles();
 
-            if (!m_MainTabMenu.styleSheets.Contains(tabButtonStyle))
+            if (!m_MainTabMenu.styleSheets.Contains(styleSheet))
             {
-                m_MainTabMenu.styleSheets.Add(tabButtonStyle);
+                m_MainTabMenu.styleSheets.Add(styleSheet);
             }
             m_MainTabMenu.ClearClassList();
             m_MainTabMenu.AddToClassList($"tab-c-{_BGColor}-dark");

@@ -33,23 +33,23 @@ namespace ItemSystem.Editor
 
         protected void SetTabBackgroundColor(int _Color)
         {
-            StyleSheet tabButtonStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/ItemSystem/Main Module/SystemStructure/Editor/Tabs and Windows/TabButton.uss");
+            StyleSheet styleSheet = UI_Styles_Lib.GetUIStyles();
 
             if (m_FilterPanel != null)
             {
-                ApplyStyle(m_FilterPanel,_Color,tabButtonStyle);
+                ApplyStyle(m_FilterPanel,_Color,styleSheet);
             }
             if (m_SubTabMenu != null)
             {
-                ApplyStyle(m_SubTabMenu, _Color, tabButtonStyle);
+                ApplyStyle(m_SubTabMenu, _Color, styleSheet);
             }
             if (m_SubTabContent != null)
             {
-                ApplyStyle(m_SubTabContent, _Color, tabButtonStyle);
+                ApplyStyle(m_SubTabContent, _Color, styleSheet);
             }
             if (m_SubTabInspectorPanel != null)
             {
-                ApplyStyle(m_SubTabInspectorPanel, _Color, tabButtonStyle);
+                ApplyStyle(m_SubTabInspectorPanel, _Color, styleSheet);
             }
         }
 

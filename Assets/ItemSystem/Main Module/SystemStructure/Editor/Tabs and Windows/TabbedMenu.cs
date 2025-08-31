@@ -24,8 +24,8 @@ namespace ItemSystem.Editor
             var tabContainer = new VisualElement { style = { flexDirection = FlexDirection.Row } };
             tabContainer.style.paddingTop = 5;
 
-            StyleSheet tabButtonStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/ItemSystem/Main Module/SystemStructure/Editor/Tabs and Windows/TabButton.uss");
-            tabContainer.styleSheets.Add(tabButtonStyle);
+            StyleSheet styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/ItemSystem/Main Module/SystemStructure/Editor/Tabs and Windows/UI_Styles.uss");
+            tabContainer.styleSheets.Add(styleSheet);
 
             foreach (KeyValuePair<string, System.Type> tab in _Tabs)
             {
@@ -58,15 +58,17 @@ namespace ItemSystem.Editor
             string[] _TabNames,
             System.Action<string, int> _OnTabChanged,
             float _ButtonMinHeight = 0,
-            float _ButtonMinWidth = 0
+            float _ButtonMinWidth = 0,
+            int _MainTabIndexOffset = 0
             )
         {
             var tabContainer = new VisualElement { style = { flexDirection = FlexDirection.Row } };
             tabContainer.style.paddingTop = 5;
             int index = -1;
+            index += _MainTabIndexOffset;
 
-            StyleSheet tabButtonStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/ItemSystem/Main Module/SystemStructure/Editor/Tabs and Windows/TabButton.uss");
-            tabContainer.styleSheets.Add(tabButtonStyle);
+            StyleSheet styleSheet = UI_Styles_Lib.GetUIStyles();
+            tabContainer.styleSheets.Add(styleSheet);
 
             foreach (var tabName in _TabNames)
             {

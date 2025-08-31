@@ -60,11 +60,11 @@ namespace ItemSystem.Editor
             m_MainTabContent.Clear();
             m_CurrentMainTab = (EMainTabType)System.Enum.Parse(typeof(EMainTabType), _TabName);
 
-            StyleSheet tabButtonStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/ItemSystem/Main Module/SystemStructure/Editor/Tabs and Windows/TabButton.uss");
+            StyleSheet styleSheet = UI_Styles_Lib.GetUIStyles();
 
-            if (!m_MainTabMenu.styleSheets.Contains(tabButtonStyle))
+            if (!m_MainTabMenu.styleSheets.Contains(styleSheet))
             {
-                m_MainTabMenu.styleSheets.Add(tabButtonStyle);
+                m_MainTabMenu.styleSheets.Add(styleSheet);
             }
             m_MainTabMenu.ClearClassList();
             m_MainTabMenu.AddToClassList($"tab-c-{_BGColor}-dark");

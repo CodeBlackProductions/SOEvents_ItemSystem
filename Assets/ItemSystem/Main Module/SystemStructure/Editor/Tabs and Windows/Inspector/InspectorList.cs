@@ -93,10 +93,10 @@ namespace ItemSystem.Editor
 
             var buttonContainer = new VisualElement { style = { flexDirection = FlexDirection.Row } };
 
-            StyleSheet buttonStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/ItemSystem/Main Module/SystemStructure/Editor/Tabs and Windows/TabButton.uss");
-            buttonContainer.styleSheets.Add(buttonStyle);
+            StyleSheet styleSheet = UI_Styles_Lib.GetUIStyles();
+            buttonContainer.styleSheets.Add(styleSheet);
 
-            Button addButton = new Button(() => ChooseNewItem()) { text = "Add", style = { minHeight = 20} };
+            Button addButton = new Button(() => ChooseNewItem(styleSheet, _ButtonColor)) { text = "Add", style = { minHeight = 20} };
             addButton.AddToClassList($"tab-c-{_ButtonColor}");
 
             Button removeButton = new Button(() => RemoveSelectedItem()) { text = "Remove", style = { minHeight = 20} };
@@ -120,7 +120,7 @@ namespace ItemSystem.Editor
             (_Element as Label).text = m_Items[_Index] != null ? (m_Items[_Index] as IItemModule).ModuleName : "Null";
         }
 
-        private void ChooseNewItem()
+        private void ChooseNewItem(StyleSheet _StyleSheet, int _ColorIndex)
         {
             List<T> soList = ItemEditor_AssetLoader.LoadAssetsByType<T>();
             List<string> soNames = new List<string>();
@@ -147,8 +147,14 @@ namespace ItemSystem.Editor
                 }
                 soNames.Add((soList[i] as IItemModule).ModuleName);
             }
+
             DropdownField dropdownField = new DropdownField(soNames, soNames[0]);
             dropdownField.RegisterValueChangedCallback(v => AddItem(v.newValue, dropdownField));
+
+            dropdownField.styleSheets.Add(_StyleSheet);
+            VisualElement ve = dropdownField;
+            ve.ElementAt(0).AddToClassList($"tab-c-{_ColorIndex}");
+
             m_ParentView.Add(dropdownField);
         }
 
@@ -156,7 +162,7 @@ namespace ItemSystem.Editor
         {
             _SelectionDropdown.RemoveFromHierarchy();
 
-            T newItem = ItemEditor_AssetLoader.LoadAssetsByType<T>().FirstOrDefault(so => (so as IItemModule).ModuleName == _Item);
+            T newItem = ItemEditor_AssetLoader.LoadAssetsByType<T>().FirstOrDefault(so => (so as IItemModule)?.ModuleName == _Item);
 
             if (newItem != null)
             {

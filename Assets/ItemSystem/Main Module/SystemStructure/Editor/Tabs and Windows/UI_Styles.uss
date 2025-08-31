@@ -20,53 +20,53 @@
 }
 .tab-c-0
 {
-    background-color: #16a085;
+    background-color: #0E6755;
 }
 .tab-c-1
 {
-    background-color: #2ecc71;
+    background-color: #1E8549;
 }
 .tab-c-2
 {
-    background-color: #2980b9;
+    background-color: #1D5C86;
 }
 .tab-c-3
 {
-    background-color: #8e44ad;
+    background-color: #7B3B97;
 }
 .tab-c-4
 {
-    background-color: #f39c12;
+    background-color: #156060;
 }
 .tab-c-5
 {
-    background-color: #d35400;
+    background-color: #A34100;
 }
 .tab-c-6
 {
-    background-color: #c0392b;
+    background-color: #696969;
 }
 
 
 .tab-c-0-dark
 {
-    background-color: #194d42;
+    background-color: #093F34;
 }
 .tab-c-1-dark
 {
-    background-color: #194d2f;
+    background-color: #0D3A20;
 }
 .tab-c-2-dark
 {
-    background-color: #19384d;
+    background-color: #0D283B;
 }
 .tab-c-3-dark
 {
-    background-color: #3d194d;
+    background-color: #452154;
 }
 .tab-c-4-dark
 {
-    background-color: #4d3919;
+    background-color: #0D3B3B;
 }
 .tab-c-5-dark
 {
@@ -74,5 +74,5 @@
 }
 .tab-c-6-dark
 {
-    background-color: #4d1f19;
+    background-color: #383838;
 }
