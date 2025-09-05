@@ -133,7 +133,7 @@ namespace ItemSystem.Editor
         private void LoadFilterTypes(int _ButtonColor)
         {
             List<ScriptableObject> empty = new List<ScriptableObject>();
-            InspectorList<ScriptableObject> filterTypeList = new InspectorList<ScriptableObject>(empty, new List<System.Type>() { typeof(SO_Tag) }, "Filter types", true, _ButtonColor);
+            InspectorList<ScriptableObject> filterTypeList = new InspectorList<ScriptableObject>(empty, new List<System.Type>() { typeof(SO_Tag) }, "Filter types", true, _ButtonColor, true);
 
             filterTypeList.ItemAddCallback += (item) =>
             {
@@ -152,7 +152,7 @@ namespace ItemSystem.Editor
         private void LoadFilterTags(int _ButtonColor)
         {
             List<SO_Tag> empty = new List<SO_Tag>();
-            InspectorList<SO_Tag> filterTagList = new InspectorList<SO_Tag>(empty, null, "Filter tags", true, _ButtonColor);
+            InspectorList<SO_Tag> filterTagList = new InspectorList<SO_Tag>(empty, null, "Filter tags", true, _ButtonColor, true);
 
             filterTagList.ItemAddCallback += (item) =>
             {
@@ -188,7 +188,7 @@ namespace ItemSystem.Editor
             m_SortingTypeDropdown.styleSheets.Add(styleSheet);
             m_SortingTypeDropdown.style.position = Position.Absolute;
             m_SortingTypeDropdown.style.height = new Length(95, LengthUnit.Percent);
-            m_SortingTypeDropdown.style.right = new Length(1,LengthUnit.Percent);
+            m_SortingTypeDropdown.style.right = new Length(1, LengthUnit.Percent);
 
             VisualElement ve = m_SortingTypeDropdown;
             ve.ElementAt(0).style.minWidth = 10;

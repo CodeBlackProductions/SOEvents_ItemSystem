@@ -37,9 +37,9 @@ namespace ItemSystem.Editor
                 if (ConditionalHideAttribute.ShouldShowProperty(_ParentSO, _Property))
                 {
                     VisualElement uiParent = new VisualElement();
-                    uiParent.style.flexDirection = FlexDirection.Row;
-                    uiParent.style.alignSelf = Align.FlexStart;
-                    uiParent.style.paddingBottom = 10;
+
+                    uiParent.AddToClassList("inspector-entry");
+
                     Label label = new Label($"{_Property.Name}: ");
                     label.style.minWidth = m_LabelWidth;
                     uiParent.Add(label);
@@ -262,8 +262,6 @@ namespace ItemSystem.Editor
                     _InspectorValueChangeCallback?.Invoke(true);
                 });
 
-                dropdownField.style.minHeight = 20;
-
                 StyleSheet styleSheet = UI_Styles_Lib.GetUIStyles();
                 dropdownField.styleSheets.Add(styleSheet);
 
@@ -271,6 +269,7 @@ namespace ItemSystem.Editor
                 {
                     VisualElement ve = dropdownField;
                     ve.ElementAt(0).AddToClassList($"tab-c-{_MainTabColor}");
+                    ve.ElementAt(0).AddToClassList("inspector-dropdown");
                 }
                 else
                 {
@@ -344,8 +343,6 @@ namespace ItemSystem.Editor
                     _InspectorValueChangeCallback?.Invoke(true);
                 });
 
-                dropdownField.style.minHeight = 20;
-
                 StyleSheet styleSheet = UI_Styles_Lib.GetUIStyles();
                 dropdownField.styleSheets.Add(styleSheet);
 
@@ -353,6 +350,7 @@ namespace ItemSystem.Editor
                 {
                     VisualElement ve = dropdownField;
                     ve.ElementAt(0).AddToClassList($"tab-c-{_MainTabColor}");
+                    ve.ElementAt(0).AddToClassList("inspector-dropdown");
                 }
                 else
                 {
@@ -436,14 +434,15 @@ namespace ItemSystem.Editor
                 StyleSheet styleSheet = UI_Styles_Lib.GetUIStyles();
                 dropdown.styleSheets.Add(styleSheet);
 
+                VisualElement ve = dropdown;
+                ve.ElementAt(0).AddToClassList("inspector-dropdown");
+
                 if (_MainTabColor != -1)
                 {
-                    VisualElement ve = dropdown;
                     ve.ElementAt(0).AddToClassList($"tab-c-{_MainTabColor}");
                 }
                 else
                 {
-                    VisualElement ve = dropdown;
                     ve.ElementAt(0).AddToClassList("tab-c-default");
                 }
 
@@ -460,6 +459,7 @@ namespace ItemSystem.Editor
                         var row = new VisualElement { style = { flexDirection = FlexDirection.Row } };
                         Label label = new Label(stat);
                         label.style.minWidth = 100;
+                        label.style.marginLeft = 2;
                         row.Add(label);
 
                         List<SO_Stat_StaticValue> matchingStaticStats = new List<SO_Stat_StaticValue>();
@@ -602,14 +602,15 @@ namespace ItemSystem.Editor
                         StyleSheet styleSheet = UI_Styles_Lib.GetUIStyles();
                         statDropdown.styleSheets.Add(styleSheet);
 
+                        VisualElement ve = statDropdown;
+                        ve.ElementAt(0).AddToClassList("inspector-dropdown");
+
                         if (_MainTabColor != -1)
                         {
-                            VisualElement ve = statDropdown;
                             ve.ElementAt(0).AddToClassList($"tab-c-{_MainTabColor}");
                         }
                         else
                         {
-                            VisualElement ve = statDropdown;
                             ve.ElementAt(0).AddToClassList("tab-c-default");
                         }
 
@@ -645,6 +646,7 @@ namespace ItemSystem.Editor
                         }
 
                         row.Add(removeButton);
+                        row.style.paddingTop = 5;
 
                         scrollview.style.maxHeight = 300;
                         scrollview.Add(row);
@@ -675,6 +677,7 @@ namespace ItemSystem.Editor
                 { text = "Add" };
 
                 addButton.styleSheets.Add(styleSheet);
+                addButton.style.minWidth = 60;
 
                 if (_MainTabColor != -1)
                 {
@@ -690,10 +693,19 @@ namespace ItemSystem.Editor
                     addButton.SetEnabled(false);
                 }
 
+                Label newStatLabel = new Label("Select new stat:");
+                newStatLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
+                newStatLabel.style.minWidth = 100;
+                newStatLabel.style.marginLeft = 2;
+
                 VisualElement selectionContainer = new VisualElement { style = { flexDirection = FlexDirection.Row } };
+                selectionContainer.Add(newStatLabel);
                 selectionContainer.Add(dropdown);
                 selectionContainer.Add(addButton);
                 selectionContainer.style.minHeight = 20;
+                selectionContainer.style.paddingBottom = 2;
+                selectionContainer.style.borderBottomColor = Color.gray;
+                selectionContainer.style.borderBottomWidth = 1;
 
                 container.Add(selectionContainer);
                 container.Add(selectedList);
@@ -707,7 +719,7 @@ namespace ItemSystem.Editor
                 return _UIParent;
             }
 
-            Debug.LogWarning($"Could not generate InspectorList for Dictionary {_ParentSO} : {_Property.Name}");
+            Debug.LogWarning($"Could not generate UI for Dictionary {_ParentSO} : {_Property.Name}");
             return null;
         }
 
@@ -839,18 +851,17 @@ namespace ItemSystem.Editor
                 StyleSheet styleSheet = UI_Styles_Lib.GetUIStyles();
                 dropdownField.styleSheets.Add(styleSheet);
 
+                VisualElement ve = dropdownField;
+                ve.ElementAt(0).AddToClassList("inspector-dropdown");
+
                 if (_MainTabColor != -1)
                 {
-                    VisualElement ve = dropdownField;
                     ve.ElementAt(0).AddToClassList($"tab-c-{_MainTabColor}");
                 }
                 else
                 {
-                    VisualElement ve = dropdownField;
                     ve.ElementAt(0).AddToClassList("tab-c-default");
                 }
-
-                dropdownField.style.minHeight = 20;
 
                 _UIParent.Add(dropdownField);
 
@@ -993,7 +1004,9 @@ namespace ItemSystem.Editor
                     () =>
                     {
                         _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
-                    });
+                    },
+                    _MainTabColor
+                    );
 
                 Button removeButton = new Button(() =>
                 {
@@ -1012,7 +1025,7 @@ namespace ItemSystem.Editor
                 })
                 {
                     text = "Remove",
-                    style = { width = 60 }
+                    style = { width = 60, height = new Length(100,LengthUnit.Percent)}
                 };
 
                 removeButton.styleSheets.Add(styleSheet);
@@ -1036,31 +1049,19 @@ namespace ItemSystem.Editor
             return listRoot;
         }
 
-        private static VisualElement CreateFieldForType(System.Type _Type, object _Value, Action<object> _OnChange, Action _OnFocusOut)
+        private static VisualElement CreateFieldForType(System.Type _Type, object _Value, Action<object> _OnChange, Action _OnFocusOut, int _MainTabColor = -1)
         {
             if (_Type == typeof(string))
             {
                 TextField field = new TextField
                 {
-                    value = (string)_Value,
-                    style =
-                    {
-                        flexGrow = 0,
-                        flexShrink = 1,
-                        width = StyleKeyword.Auto,
-                        minWidth = 40,
-                        minHeight = 20,
-                        marginRight = 6
-                    }
+                    value = (string)_Value
                 };
 
                 var textInput = field.Q("unity-text-input");
                 if (textInput != null)
                 {
-                    textInput.style.flexGrow = 0;
-                    textInput.style.flexShrink = 1;
-                    textInput.style.width = StyleKeyword.Auto;
-                    textInput.style.minWidth = 40;
+                    textInput.AddToClassList("inspector-inputfield");
                 }
 
                 field.RegisterCallback<FocusOutEvent>(evt =>
@@ -1074,25 +1075,13 @@ namespace ItemSystem.Editor
             {
                 IntegerField field = new IntegerField
                 {
-                    value = (int)_Value,
-                    style =
-                    {
-                        flexGrow = 0,
-                        flexShrink = 1,
-                        width = StyleKeyword.Auto,
-                        minWidth = 40,
-                        minHeight = 20,
-                        marginRight = 6
-                    }
+                    value = (int)_Value
                 };
 
                 var textInput = field.Q("unity-text-input");
                 if (textInput != null)
                 {
-                    textInput.style.flexGrow = 0;
-                    textInput.style.flexShrink = 1;
-                    textInput.style.width = StyleKeyword.Auto;
-                    textInput.style.minWidth = 40;
+                    textInput.AddToClassList("inspector-inputfield");
                 }
 
                 field.RegisterCallback<FocusOutEvent>(evt =>
@@ -1106,25 +1095,13 @@ namespace ItemSystem.Editor
             {
                 FloatField field = new FloatField
                 {
-                    value = (float)_Value,
-                    style =
-                    {
-                        flexGrow = 0,
-                        flexShrink = 1,
-                        width = StyleKeyword.Auto,
-                        minWidth = 40,
-                        minHeight = 20,
-                        marginRight = 6
-                    }
+                    value = (float)_Value
                 };
 
                 var textInput = field.Q("unity-text-input");
                 if (textInput != null)
                 {
-                    textInput.style.flexGrow = 0;
-                    textInput.style.flexShrink = 1;
-                    textInput.style.width = StyleKeyword.Auto;
-                    textInput.style.minWidth = 40;
+                    textInput.AddToClassList("inspector-inputfield");
                 }
 
                 field.RegisterCallback<FocusOutEvent>(evt =>
@@ -1153,39 +1130,30 @@ namespace ItemSystem.Editor
                         flexShrink = 1,
                         width = StyleKeyword.Auto,
                         minWidth = 50,
-                        borderBottomWidth = 2,
-                        borderBottomColor = new Color(0.8f, 0.8f, 0.8f, 1)
+                        borderBottomWidth = 1,
+                        borderBottomColor = Color.gray,
+                        marginBottom = 3
                     }
                 };
                 FloatField Xfield = new FloatField("X")
                 {
-                    value = ((Vector2)_Value).x,
-                    style =
-                    {
-                        flexGrow = 0,
-                        flexShrink = 1,
-                        width = StyleKeyword.Auto,
-                        minWidth = 40,
-                        marginRight = 6
-                    }
+                    value = ((Vector2)_Value).x
                 };
-                VisualElement ve = Xfield;
-                ve.ElementAt(0).style.minWidth = 10;
+                var textInput = Xfield.Q("unity-text-input");
+                if (textInput != null)
+                {
+                    textInput.AddToClassList("inspector-inputfield-small");
+                }
 
                 FloatField Yfield = new FloatField("Y")
                 {
-                    value = ((Vector2)_Value).y,
-                    style =
-                    {
-                        flexGrow = 0,
-                        flexShrink = 1,
-                        width = StyleKeyword.Auto,
-                        minWidth = 40,
-                        marginRight = 6
-                    }
+                    value = ((Vector2)_Value).y
                 };
-                ve = Yfield;
-                ve.ElementAt(0).style.minWidth = 10;
+                textInput = Yfield.Q("unity-text-input");
+                if (textInput != null)
+                {
+                    textInput.AddToClassList("inspector-inputfield-small");
+                }
 
                 Xfield.RegisterCallback<FocusOutEvent>(evt => _OnChange(new Vector2(Xfield.value, Yfield.value)));
 
@@ -1208,54 +1176,40 @@ namespace ItemSystem.Editor
                         flexShrink = 1,
                         width = StyleKeyword.Auto,
                         minWidth = 50,
-                        borderBottomWidth = 2,
-                        borderBottomColor = new Color(0.8f, 0.8f, 0.8f, 1)
+                        borderBottomWidth = 1,
+                        borderBottomColor = Color.gray,
+                        marginBottom = 3
                     }
                 };
                 FloatField Xfield = new FloatField("X")
                 {
-                    value = ((Vector3)_Value).x,
-                    style =
-                    {
-                        flexGrow = 0,
-                        flexShrink = 1,
-                        width = StyleKeyword.Auto,
-                        minWidth = 40,
-                        marginRight = 6
-                    }
+                    value = ((Vector3)_Value).x
                 };
-                VisualElement ve = Xfield;
-                ve.ElementAt(0).style.minWidth = 10;
+                var textInput = Xfield.Q("unity-text-input");
+                if (textInput != null)
+                {
+                    textInput.AddToClassList("inspector-inputfield-small");
+                }
 
                 FloatField Yfield = new FloatField("Y")
                 {
-                    value = ((Vector3)_Value).y,
-                    style =
-                    {
-                        flexGrow = 0,
-                        flexShrink = 1,
-                        width = StyleKeyword.Auto,
-                        minWidth = 40,
-                        marginRight = 6
-                    }
+                    value = ((Vector3)_Value).y
                 };
-                ve = Yfield;
-                ve.ElementAt(0).style.minWidth = 10;
+                textInput = Yfield.Q("unity-text-input");
+                if (textInput != null)
+                {
+                    textInput.AddToClassList("inspector-inputfield-small");
+                }
 
                 FloatField Zfield = new FloatField("Z")
                 {
-                    value = ((Vector3)_Value).z,
-                    style =
-                    {
-                        flexGrow = 0,
-                        flexShrink = 1,
-                        width = StyleKeyword.Auto,
-                        minWidth = 40,
-                        marginRight = 6
-                    }
+                    value = ((Vector3)_Value).z
                 };
-                ve = Zfield;
-                ve.ElementAt(0).style.minWidth = 10;
+                textInput = Zfield.Q("unity-text-input");
+                if (textInput != null)
+                {
+                    textInput.AddToClassList("inspector-inputfield-small");
+                }
 
                 Xfield.RegisterCallback<FocusOutEvent>(evt => _OnChange(new Vector3(Xfield.value, Yfield.value, Zfield.value)));
 
@@ -1271,7 +1225,7 @@ namespace ItemSystem.Editor
             }
             if (_Type == typeof(Color))
             {
-                ColorField field = new ColorField { value = (Color)_Value, style = { width = 140, marginRight = 6, minHeight = 20 } };
+                ColorField field = new ColorField { value = (Color)_Value, style = { width = 300, marginRight = 6, minHeight = 20 } };
                 field.RegisterValueChangedCallback(evt => _OnChange(evt.newValue));
                 return field;
             }
@@ -1307,7 +1261,22 @@ namespace ItemSystem.Editor
                     _OnChange(
                         projectileList.Find(obj => obj.GetComponent<IProjectile>() != null && obj.GetComponent<IProjectile>()?.ProjectileName == evt.newValue)
                     ));
-                    dropdownField.style.minHeight = 20;
+
+                    StyleSheet styleSheet = UI_Styles_Lib.GetUIStyles();
+                    dropdownField.styleSheets.Add(styleSheet);
+
+                    VisualElement ve = dropdownField;
+                    ve.ElementAt(0).AddToClassList("inspector-dropdown");
+
+                    if (_MainTabColor != -1)
+                    {
+                        ve.ElementAt(0).AddToClassList($"tab-c-{_MainTabColor}");
+                    }
+                    else
+                    {
+                        ve.ElementAt(0).AddToClassList("tab-c-default");
+                    }
+
                     return dropdownField;
                 }
                 else
@@ -1374,7 +1343,6 @@ namespace ItemSystem.Editor
                 string currentEntryName = soNames[currentEntry];
 
                 DropdownField dropdownField = new DropdownField(soNames, currentEntryName);
-                dropdownField.style.minHeight = 20;
 
                 dropdownField.RegisterValueChangedCallback(c =>
                 {
@@ -1391,14 +1359,15 @@ namespace ItemSystem.Editor
                 StyleSheet styleSheet = UI_Styles_Lib.GetUIStyles();
                 dropdownField.styleSheets.Add(styleSheet);
 
+                VisualElement ve = dropdownField;
+                ve.ElementAt(0).AddToClassList("inspector-dropdown");
+
                 if (_MainTabColor != -1)
                 {
-                    VisualElement ve = dropdownField;
                     ve.ElementAt(0).AddToClassList($"tab-c-{_MainTabColor}");
                 }
                 else
                 {
-                    VisualElement ve = dropdownField;
                     ve.ElementAt(0).AddToClassList("tab-c-default");
                 }
 
@@ -1454,7 +1423,7 @@ namespace ItemSystem.Editor
                 filteredList = array.ToList();
             }
 
-            InspectorList<T> list = new InspectorList<T>(filteredList, null, _Title, _ShowAddAndRemove, _MainTabColor);
+            InspectorList<T> list = new InspectorList<T>(filteredList, null, _Title, _ShowAddAndRemove, _MainTabColor, _HideTitle: true);
 
             list.ItemAddCallback += (newItem) =>
             {

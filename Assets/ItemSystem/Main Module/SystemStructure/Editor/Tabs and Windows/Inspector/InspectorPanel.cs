@@ -41,12 +41,15 @@ namespace ItemSystem.Editor
             title.style.paddingBottom = 10;
             Add(title);
 
+            ScrollView scrollView = new ScrollView();
+            Add(scrollView);
+
             foreach (var property in _Obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
                 VisualElement entry = InspectorDataManager.CreateEntry(_Obj, property, this, _InspectorValueChangeCallback, m_MaintabColor);
                 if (entry != null)
                 {
-                    Add(entry);
+                    scrollView.Add(entry);
                 }
             }
         }

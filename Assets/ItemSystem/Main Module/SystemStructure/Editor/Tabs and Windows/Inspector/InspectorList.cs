@@ -2,7 +2,6 @@ using ItemSystem.MainModule;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -19,11 +18,22 @@ namespace ItemSystem.Editor
         private List<T> m_Items;
         private List<System.Type> m_TypesToExclude = new List<System.Type>();
 
+        private string m_selectedToAdd = "";
+        private DropdownField m_DropdownField;
+
         public Action<T> ItemAddCallback;
         public Action<T> ItemRemoveCallback;
         public Action<T> ItemSelectCallback;
 
-        public InspectorList(List<T> _SourceList, List<System.Type> _TypesToExclude, string _Title, bool _ShowAddAndRemove, int _ButtonColor)
+        public InspectorList(
+            List<T> _SourceList,
+            List<System.Type> _TypesToExclude,
+            string _Title,
+            bool _ShowAddAndRemove,
+            int _ButtonColor = -1,
+            bool _CompactSize = false,
+            bool _HideTitle = false
+            )
         {
             if (_SourceList == null)
             {
@@ -39,10 +49,18 @@ namespace ItemSystem.Editor
                 m_TypesToExclude = _TypesToExclude;
             }
 
-            InstantiateUI(_Title, _ShowAddAndRemove, _ButtonColor);
+            InstantiateUI(_Title, _ShowAddAndRemove, _ButtonColor, _CompactSize, _HideTitle);
         }
 
-        public InspectorList(T[] _SourceArray, List<System.Type> _TypesToExclude, string _Title, bool _ShowAddAndRemove, int _ButtonColor)
+        public InspectorList(
+            T[] _SourceArray,
+            List<System.Type> _TypesToExclude,
+            string _Title,
+            bool _ShowAddAndRemove,
+            int _ButtonColor = -1,
+            bool _CompactSize = false,
+            bool _HideTitle = false
+            )
         {
             if (_SourceArray == null)
             {
@@ -58,10 +76,18 @@ namespace ItemSystem.Editor
                 m_TypesToExclude = _TypesToExclude;
             }
 
-            InstantiateUI(_Title, _ShowAddAndRemove, _ButtonColor);
+            InstantiateUI(_Title, _ShowAddAndRemove, _ButtonColor, _CompactSize, _HideTitle);
         }
 
-        public InspectorList(Dictionary<string, T> _SourceDictionary, List<System.Type> _TypesToExclude, string _Title, bool _ShowAddAndRemove, int _ButtonColor)
+        public InspectorList(
+            Dictionary<string, T> _SourceDictionary,
+            List<System.Type> _TypesToExclude,
+            string _Title,
+            bool _ShowAddAndRemove,
+            int _ButtonColor = -1,
+            bool _CompactSize = false,
+            bool _HideTitle = false
+            )
         {
             if (_SourceDictionary == null)
             {
@@ -77,39 +103,70 @@ namespace ItemSystem.Editor
                 m_TypesToExclude = _TypesToExclude;
             }
 
-            InstantiateUI(_Title, _ShowAddAndRemove, _ButtonColor);
+            InstantiateUI(_Title, _ShowAddAndRemove, _ButtonColor, _CompactSize, _HideTitle);
         }
 
-        private void InstantiateUI(string _Title, bool _ShowAddAndRemove, int _ButtonColor)
+        private void InstantiateUI(string _Title, bool _ShowAddAndRemove, int _ButtonColor = -1, bool _CompactSize = false, bool _HideTitle = false)
         {
-            Label titleLabel = new Label(_Title) { style = { unityFontStyleAndWeight = FontStyle.Bold } };
-            m_ParentView.Add(titleLabel);
+            if (!_HideTitle)
+            {
+                Label title = new Label(_Title);
+                title.style.unityFontStyleAndWeight = FontStyle.Bold;
+                title.style.minWidth = 100;
+                title.style.marginLeft = 2;
+                m_ParentView.Add(title);
+            }
 
             m_ListView = new ListView(m_Items, 20, CreateItem, BindItem);
             m_ListView.selectionType = SelectionType.Single;
             m_ListView.style.flexGrow = 1;
+            m_ListView.style.minHeight = 20;
+
+            if (_CompactSize)
+            {
+                m_ListView.style.maxHeight = 60;
+            }
 
             m_ListView.selectionChanged += (s) => ItemSelectCallback?.Invoke((T)m_ListView.selectedItem);
 
-            var buttonContainer = new VisualElement { style = { flexDirection = FlexDirection.Row } };
-
             StyleSheet styleSheet = UI_Styles_Lib.GetUIStyles();
-            buttonContainer.styleSheets.Add(styleSheet);
 
-            Button addButton = new Button(() => ChooseNewItem(styleSheet, _ButtonColor)) { text = "Add", style = { minHeight = 20} };
+            m_DropdownField = InstantiateDropDown(styleSheet, _ButtonColor, _CompactSize);
+
+            Button addButton = new Button(() => AddSelectedItem(m_selectedToAdd)) { text = "Add", style = { minHeight = 20, minWidth = 60 } };
             addButton.AddToClassList($"tab-c-{_ButtonColor}");
 
-            Button removeButton = new Button(() => RemoveSelectedItem()) { text = "Remove", style = { minHeight = 20} };
+            Button removeButton = new Button(() => RemoveSelectedItem()) { text = "Remove", style = { minHeight = 20 } };
             removeButton.AddToClassList($"tab-c-{_ButtonColor}");
 
-            buttonContainer.Add(addButton);
-            buttonContainer.Add(removeButton);
-            m_ParentView.Add(m_ListView);
+            var selectionContainer = new VisualElement { style = { flexDirection = FlexDirection.Row } };
+
+            selectionContainer.styleSheets.Add(styleSheet);
+
+            if (!_CompactSize)
+            {
+                Label newElementLabel = new Label("Select new:");
+                newElementLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
+                newElementLabel.style.minWidth = 100;
+                newElementLabel.style.marginLeft = 2;
+                selectionContainer.Add(newElementLabel);
+            }
+
+            selectionContainer.Add(m_DropdownField);
+            selectionContainer.Add(addButton);
+            selectionContainer.style.minHeight = 20;
+            selectionContainer.style.paddingBottom = 2;
+            selectionContainer.style.borderBottomColor = Color.gray;
+            selectionContainer.style.borderBottomWidth = 1;
 
             if (_ShowAddAndRemove)
             {
-                m_ParentView.Add(buttonContainer);
+                m_ParentView.Add(selectionContainer);
             }
+
+            m_ParentView.Add(m_ListView);
+            m_ParentView.Add(removeButton);
+
             Add(m_ParentView);
         }
 
@@ -117,10 +174,18 @@ namespace ItemSystem.Editor
 
         private void BindItem(VisualElement _Element, int _Index)
         {
+            for (int i = m_DropdownField.choices.Count - 1; i >= 0; i--)
+            {
+                if ((m_Items[_Index] as IItemModule).ModuleName == m_DropdownField.choices[i])
+                {
+                    m_DropdownField.choices.RemoveAt(i);
+                }
+            }
+
             (_Element as Label).text = m_Items[_Index] != null ? (m_Items[_Index] as IItemModule).ModuleName : "Null";
         }
 
-        private void ChooseNewItem(StyleSheet _StyleSheet, int _ColorIndex)
+        private DropdownField InstantiateDropDown(StyleSheet _StyleSheet, int _ButtonColor = -1, bool _CompactSize = false)
         {
             List<T> soList = ItemEditor_AssetLoader.LoadAssetsByType<T>();
             List<string> soNames = new List<string>();
@@ -149,19 +214,35 @@ namespace ItemSystem.Editor
             }
 
             DropdownField dropdownField = new DropdownField(soNames, soNames[0]);
-            dropdownField.RegisterValueChangedCallback(v => AddItem(v.newValue, dropdownField));
+            dropdownField.RegisterValueChangedCallback(v => { m_selectedToAdd = v.newValue; });
 
             dropdownField.styleSheets.Add(_StyleSheet);
-            VisualElement ve = dropdownField;
-            ve.ElementAt(0).AddToClassList($"tab-c-{_ColorIndex}");
 
-            m_ParentView.Add(dropdownField);
+            VisualElement ve = dropdownField;
+
+            if (_CompactSize)
+            {
+                ve.ElementAt(0).AddToClassList("inspector-dropdown-compact");
+            }
+            else
+            {
+                ve.ElementAt(0).AddToClassList("inspector-dropdown");
+            }
+
+            if (_ButtonColor != -1)
+            {
+                ve.ElementAt(0).AddToClassList($"tab-c-{_ButtonColor}");
+            }
+            else
+            {
+                ve.ElementAt(0).AddToClassList("tab-c-default");
+            }
+
+            return dropdownField;
         }
 
-        private void AddItem(string _Item, DropdownField _SelectionDropdown)
+        private void AddSelectedItem(string _Item)
         {
-            _SelectionDropdown.RemoveFromHierarchy();
-
             T newItem = ItemEditor_AssetLoader.LoadAssetsByType<T>().FirstOrDefault(so => (so as IItemModule)?.ModuleName == _Item);
 
             if (newItem != null)
@@ -172,6 +253,8 @@ namespace ItemSystem.Editor
 
                 m_ListView.Rebuild();
             }
+
+            m_DropdownField.index = 0;
         }
 
         private void RemoveSelectedItem()
