@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ed37ad9e12e02ad46a5476aeb72d7183, type: 3}
-  m_Name: Type_Weapon_bebc2a0d6513d684f8246ec4a1e34a29
+  m_Name: Type_9e2f6842dc7778642ad8a9a78c2246c7
   m_EditorClassIdentifier: 
-  m_TypeName: Type/OneHanded/Range
+  m_TypeName: Type/OneHanded/Melee
   m_ToolTips: []
   m_TypeStats:
-  - {fileID: 11400000, guid: c6c5ff2088dda084ebd51bc5f39a86b7, type: 2}
-  - {fileID: 11400000, guid: 9710fd439be214247b38b036a32a8f15, type: 2}
   - {fileID: 11400000, guid: 15eda8ca333740c4a9dc4ac95cf050b7, type: 2}
-  m_TypeStatIndices: 000000000100000000000000
+  - {fileID: 11400000, guid: 9710fd439be214247b38b036a32a8f15, type: 2}
+  - {fileID: 11400000, guid: c6c5ff2088dda084ebd51bc5f39a86b7, type: 2}
+  m_TypeStatIndices: 000000000000000000000000
   m_Tags: []

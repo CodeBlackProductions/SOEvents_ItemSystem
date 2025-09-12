@@ -1,14 +1,10 @@
-using Codice.Client.BaseCommands;
 using ItemSystem.MainModule;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Unity.Burst.Intrinsics;
 using UnityEditor;
 using UnityEngine;
-using static Unity.VisualScripting.Member;
-using static UnityEngine.GraphicsBuffer;
 
 namespace ItemSystem.Editor
 {

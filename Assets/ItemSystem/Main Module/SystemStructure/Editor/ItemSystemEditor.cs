@@ -26,6 +26,7 @@ namespace ItemSystem.Editor
             ItemSystemEditor window = GetWindow<ItemSystemEditor>("Item System Editor");
             window.minSize = new Vector2(800, 500);
 
+
             AssetDatabase.SaveAssets();
         }
 
