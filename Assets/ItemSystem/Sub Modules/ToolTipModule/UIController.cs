@@ -17,7 +17,7 @@ public class UIController : MonoBehaviour
         {
             if (m_instance == null)
             {
-                m_instance = FindObjectOfType<UIController>();
+                m_instance = FindFirstObjectByType<UIController>();
 
                 if (m_instance == null)
                 {

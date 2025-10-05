@@ -16,7 +16,7 @@ namespace ItemSystem.MainModule
             {
                 if (m_instance == null)
                 {
-                    m_instance = FindObjectOfType<ItemEventHandler>();
+                    m_instance = FindFirstObjectByType<ItemEventHandler>();
 
                     if (m_instance == null)
                     {

@@ -13,7 +13,7 @@ public class ItemCoroutineHandler : MonoBehaviour
         {
             if (m_instance == null)
             {
-                m_instance = FindObjectOfType<ItemCoroutineHandler>();
+                m_instance = FindFirstObjectByType<ItemCoroutineHandler>();
 
                 if (m_instance == null)
                 {
