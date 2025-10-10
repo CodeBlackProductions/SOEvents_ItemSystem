@@ -1,4 +1,5 @@
 using ItemSystem.MainModule;
+using ItemSystem.SubModules;
 using UnityEngine;
 
 public class SO_Effect_Trigger_OnHit : SO_Effect_Trigger
@@ -7,7 +8,10 @@ public class SO_Effect_Trigger_OnHit : SO_Effect_Trigger
     //always returns true if not customized
     protected override bool CheckCondition(IItemUser _Source, IItemUser _Target)
     {
-        if (((float)_Source.UserStats["Health"].Value) <= ((float)_Target.UserStats["Damage"].Value))
+        Runtime_Stat health = _Source.UserStats[EUserStats.Health.ToString()];
+        Runtime_Stat damage = _Target.UserStats[EUserStats.Damage.ToString()];
+
+        if ((float)health.Value <= (float)damage.Value)
         {
             Debug.LogWarning("Omae wa mou shindeiru");
             return false;

@@ -882,20 +882,42 @@ namespace ItemSystem.Editor
             _UIParent.tooltip = _Property.GetAttribute<TooltipAttribute>()?.tooltip;
             System.Type type = _Property.PropertyType;
 
-            VisualElement valueField = CreateFieldForType(
-                type,
-                _Property.GetValue(_ParentSO),
-                newValue =>
-                {
-                    _Property.SetValue(_ParentSO, newValue);
-                    EditorUtility.SetDirty(_ParentSO);
-                    AssetDatabase.SaveAssets();
-                    _InspectorValueChangeCallback?.Invoke(true);
-                },
-                () =>
-                {
-                    _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
-                });
+            VisualElement valueField;
+            if (_Property.Name == "TargetUserStat")
+            {
+                valueField = CreateFieldForType(
+              type,
+              _Property.GetValue(_ParentSO),
+              newValue =>
+              {
+                  _Property.SetValue(_ParentSO, newValue);
+                  EditorUtility.SetDirty(_ParentSO);
+                  AssetDatabase.SaveAssets();
+                  _InspectorValueChangeCallback?.Invoke(true);
+              },
+              () =>
+              {
+                  _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
+                  ItemEditor_DynamicEnumSystem.UpdateDynamicEnum();
+              });
+            }
+            else
+            {
+                valueField = CreateFieldForType(
+                 type,
+                 _Property.GetValue(_ParentSO),
+                 newValue =>
+                 {
+                     _Property.SetValue(_ParentSO, newValue);
+                     EditorUtility.SetDirty(_ParentSO);
+                     AssetDatabase.SaveAssets();
+                     _InspectorValueChangeCallback?.Invoke(true);
+                 },
+                 () =>
+                 {
+                     _ParentPanel.Show(_ParentSO, _InspectorValueChangeCallback);
+                 });
+            }
 
             valueField.style.flexGrow = 1;
 
@@ -1025,7 +1047,7 @@ namespace ItemSystem.Editor
                 })
                 {
                     text = "Remove",
-                    style = { width = 60, height = new Length(100,LengthUnit.Percent)}
+                    style = { width = 60, height = new Length(100, LengthUnit.Percent) }
                 };
 
                 removeButton.styleSheets.Add(styleSheet);

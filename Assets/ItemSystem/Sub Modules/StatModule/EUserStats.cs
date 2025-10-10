@@ -1,0 +1,1 @@
+public enum EUserStats {Bool,BaseUserStats,Color,Damage,MaxHealth,AttackRange,Health,AttackCD,AttackMinRange,Hands,Projectile,RangeType,ArmorType,Vector2,Vector3}

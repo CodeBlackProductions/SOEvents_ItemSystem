@@ -36,6 +36,8 @@ public class UnitController : MonoBehaviour, IItemUser
 
     private ItemEventHandler m_ItemEventHandler;
 
+    private float testtimer = 1f;
+
     private void Start()
     {
         m_ItemEventHandler = ItemEventHandler.Instance;
@@ -73,11 +75,22 @@ public class UnitController : MonoBehaviour, IItemUser
         {
             UIController.Instance.LoadTooltip(item);
         }
+    }
 
-        ItemEventHandler.Instance.InvokeEvent<SO_Effect_Trigger_Interval>(this, this);
-        if (m_TestTargetUser != null)
+    private void Update()
+    {
+        if (testtimer <= 0)
         {
-            ItemEventHandler.Instance.InvokeEvent<SO_Effect_Trigger_OnHit>(this, m_TestTargetUser);
+            ItemEventHandler.Instance.InvokeEvent<SO_Effect_Trigger_Interval>(this, this);
+            if (m_TestTargetUser != null)
+            {
+                ItemEventHandler.Instance.InvokeEvent<SO_Effect_Trigger_OnHit>(this, m_TestTargetUser);
+            }
         }
+        else
+        {
+            testtimer -= Time.deltaTime;
+        }
+       
     }
 }

@@ -1064,6 +1064,24 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5288092132675201374, guid: 8bc569bf85a2f4840ab3eba412160082,
         type: 3}
+      propertyPath: m_TestSlot
+      value: 
+      objectReference: {fileID: 11400000, guid: 52a0c8b13f893b343aeb3451867d1521,
+        type: 2}
+    - target: {fileID: 5288092132675201374, guid: 8bc569bf85a2f4840ab3eba412160082,
+        type: 3}
+      propertyPath: m_TestItem1
+      value: 
+      objectReference: {fileID: 11400000, guid: cc7ccd3bd65b9b847b7ad001d2316230,
+        type: 2}
+    - target: {fileID: 5288092132675201374, guid: 8bc569bf85a2f4840ab3eba412160082,
+        type: 3}
+      propertyPath: m_TestItem2
+      value: 
+      objectReference: {fileID: 11400000, guid: d4d1169eaeacb0140bf129fdb2a7b995,
+        type: 2}
+    - target: {fileID: 5288092132675201374, guid: 8bc569bf85a2f4840ab3eba412160082,
+        type: 3}
       propertyPath: 'm_unitStats.Array.data[0]'
       value: 
       objectReference: {fileID: 11400000, guid: 09613c71dd4b10a46a111e05d9d42669,

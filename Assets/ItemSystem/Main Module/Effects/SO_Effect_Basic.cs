@@ -30,5 +30,6 @@ public class SO_Effect_Basic : SO_Item_Effect
     protected override void ItemEffect(IItemUser _Source, IItemUser _Target)
     {
         Debug.Log("This is just a " + EffectName + " Source: " + _Source + " Target: " + _Target);
+        Debug.Log($"Stats can be accessed via EUserStats (auto generated Enum) like this:{_Source.UserStats[EUserStats.Health.ToString()].Value}");
     }
 }
